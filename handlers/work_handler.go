@@ -93,7 +93,7 @@ func GetWorks(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 查询数据
-	query := "SELECT work_id, person_id, title, category, style_period, material, creation_date, description, work_image_url, created_at, updated_at FROM works" + whereClause + " ORDER BY work_id LIMIT ? OFFSET ?"
+	query := "SELECT work_id, person_id, title, category, style_period, creation_year, dimensions, seal, inscription, material, creation_date, description, work_image_url, created_at, updated_at FROM works" + whereClause + " ORDER BY work_id LIMIT ? OFFSET ?"
 	queryArgs := append(args, pageSize, offset)
 
 	rows, err := db.Query(query, queryArgs...)
@@ -106,7 +106,7 @@ func GetWorks(w http.ResponseWriter, r *http.Request) {
 	works := []models.Work{}
 	for rows.Next() {
 		var work models.Work
-		err := rows.Scan(&work.WorkID, &work.PersonID, &work.Title, &work.Category, &work.StylePeriod, &work.Material, &work.CreationDate, &work.Description, &work.WorkImageURL, &work.CreatedAt, &work.UpdatedAt)
+		err := rows.Scan(&work.WorkID, &work.PersonID, &work.Title, &work.Category, &work.StylePeriod, &work.CreationYear, &work.Dimensions, &work.Seal, &work.Inscription, &work.Material, &work.CreationDate, &work.Description, &work.WorkImageURL, &work.CreatedAt, &work.UpdatedAt)
 		if err != nil {
 			ErrorResponse(w, http.StatusInternalServerError, "Failed to scan work")
 			return
@@ -131,10 +131,10 @@ func GetWork(w http.ResponseWriter, r *http.Request) {
 	}
 
 	db := database.GetDB()
-	query := "SELECT work_id, person_id, title, category, style_period, material, creation_date, description, work_image_url, created_at, updated_at FROM works WHERE work_id = ?"
+	query := "SELECT work_id, person_id, title, category, style_period, creation_year, dimensions, seal, inscription, material, creation_date, description, work_image_url, created_at, updated_at FROM works WHERE work_id = ?"
 
 	var work models.Work
-	err = db.QueryRow(query, id).Scan(&work.WorkID, &work.PersonID, &work.Title, &work.Category, &work.StylePeriod, &work.Material, &work.CreationDate, &work.Description, &work.WorkImageURL, &work.CreatedAt, &work.UpdatedAt)
+	err = db.QueryRow(query, id).Scan(&work.WorkID, &work.PersonID, &work.Title, &work.Category, &work.StylePeriod, &work.CreationYear, &work.Dimensions, &work.Seal, &work.Inscription, &work.Material, &work.CreationDate, &work.Description, &work.WorkImageURL, &work.CreatedAt, &work.UpdatedAt)
 	if err == sql.ErrNoRows {
 		ErrorResponse(w, http.StatusNotFound, "Work not found")
 		return
@@ -183,9 +183,9 @@ func CreateWork(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := "INSERT INTO works (person_id, title, category, style_period, material, creation_date, description, work_image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+	query := "INSERT INTO works (person_id, title, category, style_period, creation_year, dimensions, seal, inscription, material, creation_date, description, work_image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
-	result, err := db.Exec(query, req.PersonID, req.Title, req.Category, req.StylePeriod, req.Material, req.CreationDate, req.Description, req.WorkImageURL)
+	result, err := db.Exec(query, req.PersonID, req.Title, req.Category, req.StylePeriod, req.CreationYear, req.Dimensions, req.Seal, req.Inscription, req.Material, req.CreationDate, req.Description, req.WorkImageURL)
 	if err != nil {
 		ErrorResponse(w, http.StatusInternalServerError, "Failed to create work")
 		return
@@ -199,8 +199,8 @@ func CreateWork(w http.ResponseWriter, r *http.Request) {
 
 	// 返回创建的作品
 	var work models.Work
-	query = "SELECT work_id, person_id, title, category, style_period, material, creation_date, description, work_image_url, created_at, updated_at FROM works WHERE work_id = ?"
-	err = db.QueryRow(query, id).Scan(&work.WorkID, &work.PersonID, &work.Title, &work.Category, &work.StylePeriod, &work.Material, &work.CreationDate, &work.Description, &work.WorkImageURL, &work.CreatedAt, &work.UpdatedAt)
+	query = "SELECT work_id, person_id, title, category, style_period, creation_year, dimensions, seal, inscription, material, creation_date, description, work_image_url, created_at, updated_at FROM works WHERE work_id = ?"
+	err = db.QueryRow(query, id).Scan(&work.WorkID, &work.PersonID, &work.Title, &work.Category, &work.StylePeriod, &work.CreationYear, &work.Dimensions, &work.Seal, &work.Inscription, &work.Material, &work.CreationDate, &work.Description, &work.WorkImageURL, &work.CreatedAt, &work.UpdatedAt)
 	if err != nil {
 		ErrorResponse(w, http.StatusInternalServerError, "Failed to query created work")
 		return
@@ -257,6 +257,22 @@ func UpdateWork(w http.ResponseWriter, r *http.Request) {
 		updates = append(updates, "style_period = ?")
 		args = append(args, *req.StylePeriod)
 	}
+	if req.CreationYear != nil {
+		updates = append(updates, "creation_year = ?")
+		args = append(args, *req.CreationYear)
+	}
+	if req.Dimensions != nil {
+		updates = append(updates, "dimensions = ?")
+		args = append(args, *req.Dimensions)
+	}
+	if req.Seal != nil {
+		updates = append(updates, "seal = ?")
+		args = append(args, *req.Seal)
+	}
+	if req.Inscription != nil {
+		updates = append(updates, "inscription = ?")
+		args = append(args, *req.Inscription)
+	}
 	if req.Material != nil {
 		updates = append(updates, "material = ?")
 		args = append(args, *req.Material)
@@ -291,8 +307,8 @@ func UpdateWork(w http.ResponseWriter, r *http.Request) {
 
 	// 返回更新后的作品
 	var work models.Work
-	query = "SELECT work_id, person_id, title, category, style_period, material, creation_date, description, work_image_url, created_at, updated_at FROM works WHERE work_id = ?"
-	err = db.QueryRow(query, id).Scan(&work.WorkID, &work.PersonID, &work.Title, &work.Category, &work.StylePeriod, &work.Material, &work.CreationDate, &work.Description, &work.WorkImageURL, &work.CreatedAt, &work.UpdatedAt)
+	query = "SELECT work_id, person_id, title, category, style_period, creation_year, dimensions, seal, inscription, material, creation_date, description, work_image_url, created_at, updated_at FROM works WHERE work_id = ?"
+	err = db.QueryRow(query, id).Scan(&work.WorkID, &work.PersonID, &work.Title, &work.Category, &work.StylePeriod, &work.CreationYear, &work.Dimensions, &work.Seal, &work.Inscription, &work.Material, &work.CreationDate, &work.Description, &work.WorkImageURL, &work.CreatedAt, &work.UpdatedAt)
 	if err != nil {
 		ErrorResponse(w, http.StatusInternalServerError, "Failed to query updated work")
 		return

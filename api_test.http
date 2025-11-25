@@ -1,8 +1,17 @@
 # API 测试文件
-# https://show.shuanglin33984.xyz/
-# http://localhost:8080
-@baseUrl = https://show.shuanglin33984.xyz/
+# 线上地址: https://show.shuanglin33984.xyz/
+# 本地地址: http://localhost:8080
+@baseUrl = http://localhost:8080
 @apiUrl = {{baseUrl}}/api/v1
+
+###############################################
+# 数据库当前状态
+###############################################
+# Persons: 1 条记录（黄宾虹）
+# Works: 332 条记录（黄宾虹书法作品）
+# Events: 55 条记录（黄宾虹生平事件）
+# Locations: 0 条记录（暂无数据）
+# Relations: 0 条记录（暂无数据）
 
 ###############################################
 # 1. 健康检查
@@ -30,19 +39,19 @@ GET {{apiUrl}}/persons?search=宾虹
 ### 获取单个人物详情（黄宾虹）
 GET {{apiUrl}}/persons/1
 
-### 获取单个人物详情（齐白石）
-GET {{apiUrl}}/persons/20
+### 获取不存在的人物（测试 404）
+GET {{apiUrl}}/persons/999
 
 ### 创建新人物
 POST {{apiUrl}}/persons
 Content-Type: application/json
 
 {
-  "name": "张大千",
-  "alias": "大千居士",
-  "birth_date": "1899-05-10",
-  "death_date": "1983-04-02",
-  "biography": "张大千，中国现代著名画家，擅长山水、人物、花鸟画。"
+  "name": "齐白石",
+  "alias": "白石",
+  "birth_date": "1864-01-01",
+  "death_date": "1957-09-16",
+  "biography": "齐白石，湖南湘潭人，近现代著名画家、书法家、篆刻家。"
 }
 
 ### 更新人物信息
@@ -50,7 +59,7 @@ PUT {{apiUrl}}/persons/1
 Content-Type: application/json
 
 {
-  "biography": "黄宾虹，浙江金华人，近现代山水画大师，擅长以积墨法表现山水。"
+  "biography": "黄宾虹，原名质，字朴存、朴岑、亦作朴丞、劈琴，号宾虹，别署予向、虹叟、黄山山中人等。近现代画家、学者。擅画山水，为山水画一代宗师。"
 }
 
 ### 删除人物（谨慎操作！会级联删除相关数据）
@@ -63,41 +72,25 @@ Content-Type: application/json
 ### 获取黄宾虹的所有事件（按日期排序）
 GET {{apiUrl}}/persons/1/events
 
-### 获取齐白石的所有事件
-GET {{apiUrl}}/persons/20/events
-
 ### 为黄宾虹创建新事件
 POST {{apiUrl}}/persons/1/events
 Content-Type: application/json
 
 {
-  "title": "求学于上海",
-  "type": "study",
-  "event_date": "1880-01-01",
-  "location": "上海",
-  "location_id": 11,
-  "period": "少年时期",
-  "description": "黄宾虹在上海求学，接触西方绘画技法。",
-  "detailed_content": "年少的黄宾虹来到上海，在这里他接触到了更广阔的艺术世界...",
-  "historical_events": ["洋务运动兴起", "上海租界发展"],
-  "images": [
-    {
-      "id": 2,
-      "url": "/images/events/shanghai_1880.jpg",
-      "alt": "1880年代上海",
-      "caption": "19世纪80年代的上海街景"
-    }
-  ]
+  "title": "游历黄山",
+  "type": "travel",
+  "event_date": "1895-07-15",
+  "location": "安徽黄山",
+  "period": "青年时期",
+  "description": "首次游历黄山，被其雄奇景色深深吸引。",
+  "historical_events": ["甲午战争结束", "洋务运动进入新阶段"]
 }
 
-### 获取黄宾虹的所有关系
+### 获取黄宾虹的所有关系（当前为空）
 GET {{apiUrl}}/persons/1/relations
 
-### 获取齐白石的所有关系
-GET {{apiUrl}}/persons/20/relations
-
 ###############################################
-# 4. 作品 (Works) API
+# 4. 作品 (Works) API - 黄宾虹书法作品
 ###############################################
 
 ### 获取作品列表
@@ -106,70 +99,55 @@ GET {{apiUrl}}/works
 ### 获取作品列表（带分页）
 GET {{apiUrl}}/works?page=1&pageSize=10
 
-### 按类别筛选作品（画作）
-GET {{apiUrl}}/works?category=画作
-
-### 按风格时期筛选（晚期）
-GET {{apiUrl}}/works?stylePeriod=晚期
-
-### 按材质筛选
-GET {{apiUrl}}/works?material=纸本设色
+### 按类别筛选作品（书法）
+GET {{apiUrl}}/works?category=书法
 
 ### 按人物筛选（黄宾虹的作品）
 GET {{apiUrl}}/works?personId=1
 
 ### 模糊搜索作品（标题或描述）
-GET {{apiUrl}}/works?search=黄山
+GET {{apiUrl}}/works?search=草书
 
-### 组合筛选（晚期+画作+黄宾虹）
-GET {{apiUrl}}/works?personId=1&category=画作&stylePeriod=晚期
+### 获取单个作品详情（第1件作品）
+GET {{apiUrl}}/works/1
 
-### 获取单个作品详情
-GET {{apiUrl}}/works/101
+### 获取单个作品详情（第100件作品）
+GET {{apiUrl}}/works/100
 
-### 创建新作品
+### 获取单个作品详情（第332件作品）
+GET {{apiUrl}}/works/332
+
+### 创建新书法作品（包含新字段）
 POST {{apiUrl}}/works
 Content-Type: application/json
 
 {
   "person_id": 1,
-  "title": "青城山色图",
-  "category": "画作",
-  "style_period": "晚期",
-  "material": "水墨纸本",
-  "creation_date": "1948-06-15",
-  "description": "描绘青城山美景的山水画作品，笔墨苍劲有力。",
-  "work_image_url": "/images/works/qingcheng.jpg"
-}
-
-### 创建书法作品
-POST {{apiUrl}}/works
-Content-Type: application/json
-
-{
-  "person_id": 1,
-  "title": "草书七言诗",
+  "title": "行书七言联",
   "category": "书法",
-  "style_period": "中期",
+  "creation_year": "公元 1940 年",
+  "dimensions": "136×34 厘米",
+  "seal": "黄宾虹印",
+  "inscription": "云山烟霭千峰秀，水绿花红万木春。",
   "material": "纸本墨笔",
-  "creation_date": "1930-03-20",
-  "description": "黄宾虹草书作品，笔势流畅。",
-  "work_image_url": "/images/works/calligraphy.jpg"
+  "creation_date": "1940-01-01",
+  "work_image_url": "http://example.com/image.jpg"
 }
 
 ### 更新作品信息
-PUT {{apiUrl}}/works/101
+PUT {{apiUrl}}/works/1
 Content-Type: application/json
 
 {
-  "description": "黄山纪游图，黄宾虹晚期代表作之一，展现了其独特的积墨法。"
+  "dimensions": "72×23 厘米",
+  "seal": "黄宾虹、宾虹草堂"
 }
 
 ### 删除作品
-# DELETE {{apiUrl}}/works/101
+# DELETE {{apiUrl}}/works/1
 
 ###############################################
-# 5. 事件 (Events) API
+# 5. 事件 (Events) API - 黄宾虹生平事件
 ###############################################
 
 ### 获取事件列表
@@ -178,17 +156,20 @@ GET {{apiUrl}}/events
 ### 获取事件列表（带分页）
 GET {{apiUrl}}/events?page=1&pageSize=10
 
-### 按人物筛选事件
+### 按人物筛选事件（黄宾虹）
 GET {{apiUrl}}/events?personId=1
 
 ### 按事件类型筛选
-GET {{apiUrl}}/events?type=birth
+GET {{apiUrl}}/events?type=早年求学
 
-### 组合筛选（黄宾虹的出生事件）
-GET {{apiUrl}}/events?personId=1&type=birth
+### 按时期筛选
+GET {{apiUrl}}/events?period=早年求学
 
-### 获取单个事件详情
+### 获取单个事件详情（第1个事件）
 GET {{apiUrl}}/events/1
+
+### 获取单个事件详情（第30个事件）
+GET {{apiUrl}}/events/30
 
 ### 创建新事件
 POST {{apiUrl}}/events
@@ -196,38 +177,14 @@ Content-Type: application/json
 
 {
   "person_id": 1,
-  "location_id": 11,
-  "title": "移居上海",
-  "type": "migration",
-  "event_date": "1937-01-01",
-  "location": "上海",
-  "period": "中年时期",
-  "description": "黄宾虹移居上海，开始新的艺术生涯。",
-  "detailed_content": "1937年，黄宾虹决定移居上海，在这座繁华的都市中，他的艺术风格逐渐成熟...",
-  "historical_events": ["抗日战争爆发", "上海孤岛时期开始"],
-  "images": [
-    {
-      "id": 3,
-      "url": "/images/events/shanghai_1937.jpg",
-      "alt": "1937年上海",
-      "caption": "抗战前夕的上海"
-    }
-  ]
-}
-
-### 创建展览事件
-POST {{apiUrl}}/events
-Content-Type: application/json
-
-{
-  "person_id": 1,
-  "location_id": 11,
   "title": "举办个人画展",
   "type": "exhibition",
   "event_date": "1943-05-20",
   "location": "上海",
   "period": "中年时期",
-  "description": "在上海举办个人山水画展，引起轰动。"
+  "description": "在上海举办个人山水画展，引起轰动。",
+  "historical_events": ["抗日战争进入相持阶段", "上海处于日占时期"],
+  "images": []
 }
 
 ### 更新事件信息
@@ -235,38 +192,34 @@ PUT {{apiUrl}}/events/1
 Content-Type: application/json
 
 {
-  "description": "黄宾虹于1865年1月27日出生于浙江金华的书香门第。",
-  "detailed_content": "黄宾虹，原名懋质，字朴存，号宾虹，1865年1月27日出生于浙江金华的一个书香世家..."
+  "description": "黄宾虹于1865年1月27日出生于浙江金华铁岭头街的书香门第。"
 }
 
 ### 删除事件
 # DELETE {{apiUrl}}/events/1
 
 ###############################################
-# 6. 地点 (Locations) API
+# 6. 地点 (Locations) API - 当前无数据
 ###############################################
 
-### 获取地点列表
+### 获取地点列表（当前为空）
 GET {{apiUrl}}/locations
 
 ### 获取地点列表（带分页）
 GET {{apiUrl}}/locations?page=1&pageSize=10
 
-### 获取单个地点详情（浙江金华）
-GET {{apiUrl}}/locations/10
-
-### 获取单个地点详情（上海）
-GET {{apiUrl}}/locations/11
+### 获取不存在的地点（测试 404）
+GET {{apiUrl}}/locations/1
 
 ### 创建新地点
 POST {{apiUrl}}/locations
 Content-Type: application/json
 
 {
-  "name": "北京",
-  "latitude": 39.9042,
-  "longitude": 116.4074,
-  "description": "中国首都，黄宾虹曾在此举办展览。"
+  "name": "浙江金华",
+  "latitude": 29.0781,
+  "longitude": 119.6528,
+  "description": "黄宾虹出生地，位于浙江省金华市。"
 }
 
 ### 创建地点（黄山）
@@ -281,7 +234,7 @@ Content-Type: application/json
 }
 
 ### 更新地点信息
-PUT {{apiUrl}}/locations/10
+PUT {{apiUrl}}/locations/1
 Content-Type: application/json
 
 {
@@ -289,13 +242,13 @@ Content-Type: application/json
 }
 
 ### 删除地点（注意：如果有事件关联会设为 NULL）
-# DELETE {{apiUrl}}/locations/10
+# DELETE {{apiUrl}}/locations/1
 
 ###############################################
-# 7. 关系 (Relations) API
+# 7. 关系 (Relations) API - 当前无数据
 ###############################################
 
-### 获取关系列表
+### 获取关系列表（当前为空）
 GET {{apiUrl}}/relations
 
 ### 获取关系列表（带分页）
@@ -304,47 +257,33 @@ GET {{apiUrl}}/relations?page=1&pageSize=10
 ### 按关系类型筛选
 GET {{apiUrl}}/relations?type=朋友
 
-### 按人物筛选关系（查看涉及黄宾虹的所有关系）
+### 按人物筛选关系
 GET {{apiUrl}}/relations?personId=1
 
-### 按人物筛选关系（查看涉及齐白石的所有关系）
-GET {{apiUrl}>/relations?personId=20
+### 获取不存在的关系（测试 404）
+GET {{apiUrl}}/relations/1
 
-### 获取单个关系详情
-GET {{apiUrl}}/relations/5001
-
-### 创建新关系（师生关系）
+### 创建新关系（需要先创建第二个人物）
 POST {{apiUrl}}/relations
 Content-Type: application/json
 
 {
   "from_person_id": 1,
-  "to_person_id": 3,
-  "relation_type": "师生",
-  "description": "黄宾虹是张大千的老师，曾指导其山水画技法。"
-}
-
-### 创建新关系（同行）
-POST {{apiUrl}}/relations
-Content-Type: application/json
-
-{
-  "from_person_id": 1,
-  "to_person_id": 20,
-  "relation_type": "同行",
-  "description": "黄宾虹与齐白石是同时代的艺术家，互相尊重，经常切磋画艺。"
+  "to_person_id": 2,
+  "relation_type": "朋友",
+  "description": "黄宾虹与齐白石是挚友，经常一起参加艺术活动。"
 }
 
 ### 更新关系信息
-PUT {{apiUrl}}/relations/5001
+PUT {{apiUrl}}/relations/1
 Content-Type: application/json
 
 {
-  "description": "黄宾虹与齐白石是挚友，经常一起参加艺术活动，互相交流心得。"
+  "description": "黄宾虹与齐白石是挚友，互相尊重，经常切磋画艺。"
 }
 
 ### 删除关系
-# DELETE {{apiUrl}}/relations/5001
+# DELETE {{apiUrl}}/relations/1
 
 ###############################################
 # 8. 错误测试
@@ -352,6 +291,12 @@ Content-Type: application/json
 
 ### 测试 404 错误（不存在的人物）
 GET {{apiUrl}}/persons/999
+
+### 测试 404 错误（不存在的作品）
+GET {{apiUrl}}/works/999999
+
+### 测试 404 错误（不存在的事件）
+GET {{apiUrl}}/events/999
 
 ### 测试 400 错误（缺少必填字段）
 POST {{apiUrl}}/persons
@@ -361,15 +306,14 @@ Content-Type: application/json
   "alias": "测试"
 }
 
-### 测试 409 错误（重复关系）
-POST {{apiUrl}}/relations
+### 测试 400 错误（person_id 不存在）
+POST {{apiUrl}}/works
 Content-Type: application/json
 
 {
-  "from_person_id": 1,
-  "to_person_id": 20,
-  "relation_type": "朋友",
-  "description": "重复的关系"
+  "person_id": 999,
+  "title": "测试作品",
+  "category": "书法"
 }
 
 ###############################################
@@ -377,71 +321,39 @@ Content-Type: application/json
 ###############################################
 
 ### 场景1：查看黄宾虹的完整资料
-# 1. 基本信息
+
+### 1. 基本信息
 GET {{apiUrl}}/persons/1
 
-### 2. 生平事件
+### 2. 生平事件（55条）
 GET {{apiUrl}}/persons/1/events
 
-### 3. 作品集
+### 3. 作品集（332件书法作品）
 GET {{apiUrl}}/works?personId=1
 
-### 4. 人际关系
+### 4. 人际关系（当前为空）
 GET {{apiUrl}}/persons/1/relations
 
 ### 场景2：按时间线查看所有事件
-GET {{apiUrl}}/events?personId=1
+GET {{apiUrl}}/events?personId=1&pageSize=100
 
-### 场景3：查看特定地点的历史事件
-# 先获取地点ID，然后查询该地点的事件（需要后端支持按location_id筛选）
-GET {{apiUrl}}/locations/11
+### 场景3：浏览书法作品（分页）
+GET {{apiUrl}}/works?category=书法&page=1&pageSize=20
 
-### 场景4：艺术家关系网络分析
-GET {{apiUrl}}/relations
+### 场景4：搜索特定年代的作品
+GET {{apiUrl}}/works?search=1940
 
 ###############################################
-# 10. 批量操作示例
+# 10. 数据统计查询
 ###############################################
 
-### 批量创建黄宾虹的生平事件
-
-### 事件1：童年时期
-POST {{apiUrl}}/persons/1/events
-Content-Type: application/json
-
-{
-  "title": "开始学画",
-  "type": "study",
-  "event_date": "1875-01-01",
-  "location": "浙江金华",
-  "location_id": 10,
-  "period": "童年时期",
-  "description": "10岁开始跟随父亲学习绘画。"
-}
-
-### 事件2：青年时期
-POST {{apiUrl}}/persons/1/events
-Content-Type: application/json
-
-{
-  "title": "游历黄山",
-  "type": "travel",
-  "event_date": "1895-07-15",
-  "location": "安徽黄山",
-  "period": "青年时期",
-  "description": "首次游历黄山，被其雄奇景色深深吸引。"
-}
-
-### 事件3：成名时期
-POST {{apiUrl}>/persons/1/events
-Content-Type: application/json
-
-{
-  "title": "作品入选全国美展",
-  "type": "exhibition",
-  "event_date": "1929-10-10",
-  "location": "上海",
-  "location_id": 11,
-  "period": "成名时期",
-  "description": "作品《黄山图》入选全国美术展览，声名鹊起。"
-}
+### 查看总记录数（第一页即可看到 total）
+GET {{apiUrl}}/persons?pageSize=1
+###
+GET {{apiUrl}}/works?pageSize=1
+###
+GET {{apiUrl}}/events?pageSize=1
+###
+GET {{apiUrl}}/locations?pageSize=1
+###
+GET {{apiUrl}}/relations?pageSize=1

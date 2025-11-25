@@ -23,10 +23,14 @@ CREATE TABLE IF NOT EXISTS works (
     title VARCHAR(255) NOT NULL,
     category VARCHAR(50) NOT NULL,
     style_period VARCHAR(50),
-    material VARCHAR(100),
-    creation_date DATE,
-    description TEXT,
-    work_image_url VARCHAR(255),
+    creation_year VARCHAR(50),      -- 创作年代（原始文本）
+    dimensions VARCHAR(100),         -- 尺寸
+    seal TEXT,                       -- 钤印
+    inscription TEXT,                -- 款识
+    material VARCHAR(100),           -- 材质
+    creation_date DATE,              -- 标准化的创作日期
+    description TEXT,                -- 其他描述
+    work_image_url VARCHAR(255),     -- 图片文件路径
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (person_id) REFERENCES persons(person_id) ON DELETE CASCADE

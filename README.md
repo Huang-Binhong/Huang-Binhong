@@ -18,12 +18,20 @@
 
 ## ✨ 功能特性
 
+### 数据库当前状态
+
+- **👤 人物 (Persons)**: 1 条记录（黄宾虹完整信息）✅
+- **🎨 作品 (Works)**: 332 条记录（黄宾虹书法作品，含尺寸、钤印、款识等完整字段）✅
+- **📅 事件 (Events)**: 55 条记录（黄宾虹生平事件，含历史背景）✅
+- **📍 地点 (Locations)**: 0 条记录（支持 API 创建）
+- **🔗 关系 (Relations)**: 0 条记录（支持 API 创建）
+
 ### 核心功能
 
 - **完整 CRUD API**: 5大核心实体的增删改查
   - 👤 人物管理（Persons）
-  - 🎨 作品管理（Works）
-  - 📅 事件管理（Events）
+  - 🎨 作品管理（Works）- 支持书法作品专属字段（创作年代、尺寸、钤印、款识、图片网址）
+  - 📅 事件管理（Events）- 支持 JSON 历史事件数组
   - 📍 地点管理（Locations）
   - 🔗 关系管理（Relations）
 
@@ -102,7 +110,10 @@ ArtChronicle/
 ├── database/                        # 数据库管理
 │   ├── db.go                        # SQLite 初始化逻辑
 │   ├── schema.sql                   # 数据库表结构（5张表）
-│   └── seed.sql                     # 示例数据（黄宾虹、齐白石）
+│   ├── seed_huangbinhong_works.sql  # 黄宾虹作品数据（332条）
+│   └── seed_huangbinhong_events.sql # 黄宾虹事件数据（55条）
+│
+├── import_excel_to_sql.py           # Excel 转 SQL 导入脚本
 │
 ├── data/                            # 数据存储
 │   └── myapp.db                     # SQLite 数据库文件（自动生成）
@@ -310,9 +321,30 @@ DELETE /api/v1/relations/{id}             # 删除
 
 **筛选参数**: `type`, `personId`
 
+### API 数据状态说明
+
+当前数据库中各端点的数据情况：
+
+| API 端点 | 数据状态 | 记录数 | 说明 |
+|---------|---------|--------|------|
+| `GET /api/v1/persons` | ✅ 有数据 | 1 | 黄宾虹完整信息 |
+| `GET /api/v1/persons/1` | ✅ 正常 | - | 返回黄宾虹详情 |
+| `GET /api/v1/works` | ✅ 有数据 | 332 | 黄宾虹书法作品（含完整字段）|
+| `GET /api/v1/works/{id}` | ✅ 正常 | - | 支持 ID 1-332 |
+| `GET /api/v1/events` | ✅ 有数据 | 55 | 黄宾虹生平事件 |
+| `GET /api/v1/events/{id}` | ✅ 正常 | - | 支持 ID 1-55 |
+| `GET /api/v1/locations` | ⚪ 空表 | 0 | 可通过 POST 添加 |
+| `GET /api/v1/locations/{id}` | ❌ 404 | - | 表为空，返回 404 |
+| `GET /api/v1/relations` | ⚪ 空表 | 0 | 可通过 POST 添加 |
+| `GET /api/v1/relations/{id}` | ❌ 404 | - | 表为空，返回 404 |
+
+**嵌套路由**:
+- `GET /api/v1/persons/1/events` ✅ 返回 55 条事件
+- `GET /api/v1/persons/1/relations` ✅ 返回空数组（无关系数据）
+
 ### 使用 API 测试文件
 
-项目包含完整的 `api_test.http` 文件，内含 **60+ 测试用例**。
+项目包含完整的 `api_test.http` 文件，内含测试用例，已根据当前数据库状态更新。
 
 #### VSCode 使用方法
 
@@ -358,19 +390,51 @@ curl "http://localhost:8080/api/v1/persons?page=1&pageSize=10"
 }
 ```
 
-#### 创建作品
+#### 获取作品详情（含完整字段）
+
+```bash
+curl http://localhost:8080/api/v1/works/1
+```
+
+**响应**:
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "work_id": 1,
+    "person_id": 1,
+    "title": ""识字一首"书法横幅",
+    "category": "书法",
+    "style_period": "",
+    "creation_year": "公元 2009 年",
+    "dimensions": "72×23　厘米",
+    "seal": "黄宾虹",
+    "inscription": "识字一首。经典通假行，形声各乳孳...",
+    "creation_date": "2009-01-01T00:00:00Z",
+    "work_image_url": "http://baike.shufami.com/datafile/sc/ap/2010/06/29/X2011021412141745061.jpg",
+    "created_at": "2025-11-25T07:00:37Z",
+    "updated_at": "2025-11-25T07:00:37Z"
+  }
+}
+```
+
+#### 创建作品（书法作品）
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/works \
   -H "Content-Type: application/json" \
   -d '{
     "person_id": 1,
-    "title": "青城山色图",
-    "category": "画作",
-    "style_period": "晚期",
-    "material": "水墨纸本",
-    "creation_date": "1948-06-15",
-    "description": "描绘青城山美景的山水画作品。"
+    "title": "行书七言联",
+    "category": "书法",
+    "creation_year": "公元 1940 年",
+    "dimensions": "136×34 厘米",
+    "seal": "黄宾虹印",
+    "inscription": "云山烟霭千峰秀，水绿花红万木春。",
+    "material": "纸本墨笔",
+    "creation_date": "1940-01-01",
+    "work_image_url": "http://example.com/image.jpg"
   }'
 ```
 
@@ -418,15 +482,26 @@ curl http://localhost:8080/api/v1/persons/1/events
 | title | VARCHAR(255) | 作品标题（必填） |
 | category | VARCHAR(50) | 类别（画作/书法） |
 | style_period | VARCHAR(50) | 创作时期（早期/中期/晚期） |
+| creation_year | VARCHAR(50) | **创作年代**（原始文本，如"公元 2009 年"）|
+| dimensions | VARCHAR(100) | **尺寸**（如"72×23 厘米"）|
+| seal | TEXT | **钤印**（印章款识）|
+| inscription | TEXT | **款识**（题字内容）|
 | material | VARCHAR(100) | 材质媒介 |
-| creation_date | DATE | 创作日期 |
+| creation_date | DATE | 创作日期（标准化格式） |
 | description | TEXT | 作品描述 |
-| work_image_url | VARCHAR(255) | 图像路径 |
+| work_image_url | VARCHAR(255) | **图片网址**（完整 URL）|
 | created_at | DATETIME | 创建时间 |
 | updated_at | DATETIME | 更新时间 |
 
 **外键**: `person_id` → `persons.person_id` (ON DELETE CASCADE)
 **索引**: `person_id`, `category`, `style_period`, `material`, `title`
+
+**书法作品专属字段说明**:
+- `creation_year`: 保存原始创作年代文本，便于展示
+- `dimensions`: 作品尺寸（长×宽）
+- `seal`: 钤印内容（印章文字）
+- `inscription`: 款识（题写的文字内容）
+- `work_image_url`: 作品图片网址（使用外部图片链接）
 
 #### 3. events（生平事件表）
 
@@ -511,20 +586,24 @@ curl http://localhost:8080/api/v1/persons/1/events
    └────┘ (from_person ↔ to_person)
 ```
 
-### 示例数据
+### 数据库初始数据
 
-数据库初始化时会自动插入示例数据：
+数据库初始化时会自动加载黄宾虹相关数据：
 
-- **2 位人物**: 黄宾虹、齐白石
-- **1 件作品**: 黄山纪游图
-- **2 个地点**: 浙江金华、上海
-- **1 个事件**: 黄宾虹出生于浙江金华（包含 JSON 格式的历史事件和图片）
-- **1 个关系**: 黄宾虹与齐白石是朋友
+- **1 位人物**: 黄宾虹（完整生平信息）
+- **332 件作品**: 黄宾虹书法作品（包含创作年代、尺寸、钤印、款识、图片网址等完整字段）
+- **55 个事件**: 黄宾虹生平事件（从出生到晚年，包含同时期历史事件背景）
+- **0 个地点**: 暂无（可通过 API 添加）
+- **0 个关系**: 暂无（可通过 API 添加）
+
+**数据来源**: Excel 文件自动导入
+- 作品数据: `332项黄宾虹书法作品.xlsx`
+- 事件数据: `黄宾虹年份事件与历史事件.xlsx`
 
 ### 数据库文件位置
 
-- **生产环境**: `./data/myapp.db`
-- **Docker 挂载**: `/root/data/myapp.db` → `./data/myapp.db`
+- **容器内路径**: `/app/data/myapp.db`
+- **宿主机挂载**: `./data/myapp.db`
 
 ## 🔧 中间件
 
@@ -617,7 +696,11 @@ api.HandleFunc("/books", handlers.CreateBook).Methods("POST")
 
 #### 添加示例数据
 
-编辑 `database/seed.sql`，添加 INSERT 语句。
+数据通过以下方式加载：
+1. **黄宾虹人物数据**: 在 `database/db.go` 中直接插入
+2. **作品和事件数据**: 从 Excel 文件生成 SQL
+   - 修改 Excel 文件后，运行 `import_excel_to_sql.py` 重新生成 SQL
+   - 重新构建 Docker 镜像并启动服务
 
 ### 代码规范
 

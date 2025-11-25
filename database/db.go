@@ -92,26 +92,59 @@ func InitDB() error {
 
 	log.Println("✅ Database schema initialized successfully")
 
-	// 检查是否需要插入示例数据
+	// 检查是否需要插入数据
 	var personCount int
 	err = db.QueryRow("SELECT COUNT(*) FROM persons").Scan(&personCount)
 	if err == nil && personCount == 0 {
-		// 读取并执行seed.sql插入示例数据
-		seedSQL, err := os.ReadFile("./database/seed.sql")
+		// 插入黄宾虹人物数据
+		_, err = db.Exec(`INSERT INTO persons (person_id, name, alias, birth_date, death_date, biography) VALUES
+			(1, '黄宾虹', '宾虹', '1865-01-27', '1955-03-25', '黄宾虹，原名质，字朴存、朴岑、亦作朴丞、劈琴，号宾虹，别署予向、虹叟、黄山山中人等。近现代画家、学者。擅画山水，为山水画一代宗师。六岁时，临摹家藏的沈庭瑞（樗崖）山水册，精研传统与关注写生齐头并进，为后来的艺术发展奠定了坚实基础。')`)
 		if err != nil {
-			log.Printf("Warning: Could not read seed.sql: %v", err)
+			log.Printf("Warning: Failed to insert person data: %v", err)
 		} else {
-			seedStatements := parseSQLStatements(string(seedSQL))
-			for _, stmt := range seedStatements {
+			log.Println("✅ Person data inserted successfully")
+		}
+
+		// 读取并执行黄宾虹作品数据
+		worksSQL, err := os.ReadFile("./database/seed_huangbinhong_works.sql")
+		if err != nil {
+			log.Printf("Warning: Could not read seed_huangbinhong_works.sql: %v", err)
+		} else {
+			worksStatements := parseSQLStatements(string(worksSQL))
+			workCount := 0
+			for _, stmt := range worksStatements {
 				if stmt == "" {
 					continue
 				}
 				_, err = db.Exec(stmt)
 				if err != nil {
-					log.Printf("Warning: Failed to execute seed statement: %v\nStatement: %s", err, stmt)
+					log.Printf("Warning: Failed to execute works statement: %v\nStatement: %s", err, stmt)
+				} else {
+					workCount++
 				}
 			}
-			log.Println("✅ Sample data inserted successfully")
+			log.Printf("✅ Huang Binhong works data inserted successfully (%d records)", workCount)
+		}
+
+		// 读取并执行黄宾虹事件数据
+		eventsSQL, err := os.ReadFile("./database/seed_huangbinhong_events.sql")
+		if err != nil {
+			log.Printf("Warning: Could not read seed_huangbinhong_events.sql: %v", err)
+		} else {
+			eventsStatements := parseSQLStatements(string(eventsSQL))
+			eventCount := 0
+			for _, stmt := range eventsStatements {
+				if stmt == "" {
+					continue
+				}
+				_, err = db.Exec(stmt)
+				if err != nil {
+					log.Printf("Warning: Failed to execute events statement: %v\nStatement: %s", err, stmt)
+				} else {
+					eventCount++
+				}
+			}
+			log.Printf("✅ Huang Binhong events data inserted successfully (%d records)", eventCount)
 		}
 	} else {
 		log.Println("ℹ️  Database already contains data, skipping seed")
