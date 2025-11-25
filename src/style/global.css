@@ -1,0 +1,60 @@
+/* src/styles/global.css */
+:root {
+    /* 主色调 */
+    --ink-black: #2E2E2E;
+    --ink-green: #3B4F3A;
+    --rice-white: #F7F5F0;
+    --gold: #D4A451;
+
+    /* 辅助色 */
+    --light-green: #5A6D59;
+    --dark-green: #2A3A29;
+    --light-gold: #E6C78A;
+    --dark-gold: #B38C40;
+
+    /* 字体 */
+    --font-title: 'Source Han Sans', '思源黑体', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-body: 'PingFang SC', '苹方', 'Microsoft YaHei', sans-serif;
+}
+
+/* 全局字体设置 */
+body {
+    font-family: var(--font-body);
+    color: var(--ink-black);
+    background-color: var(--rice-white);
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-title);
+    color: var(--ink-black);
+    font-weight: 600;
+}
+
+/* Ant Design 组件样式覆盖 */
+.ant-card {
+    background: var(--rice-white);
+    border: 1px solid var(--light-green);
+    border-radius: 8px;
+}
+
+.ant-card .ant-card-head {
+    border-bottom: 1px solid var(--light-green);
+    font-family: var(--font-title);
+}
+
+.ant-tabs {
+    color: var(--ink-black);
+}
+
+.ant-tabs-tab {
+    font-family: var(--font-title);
+}
+
+.ant-tabs-tab-active {
+    color: var(--gold) !important;
+}
+
+.ant-tabs-ink-bar {
+    background: var(--gold);
+}

@@ -1,0 +1,348 @@
+/* pages/Bio/BioPage.css */
+.bio-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px;
+    background: var(--rice-white, #F7F5F0);
+    min-height: 100vh;
+}
+
+.person-basic-info {
+    margin-bottom: 32px;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(46, 46, 46, 0.08);
+    border: 1px solid var(--light-green, #5A6D59);
+    background: var(--rice-white, #F7F5F0);
+    overflow: hidden;
+}
+
+.portrait-container {
+    text-align: center;
+    padding: 24px;
+    background: linear-gradient(135deg, var(--rice-white, #F7F5F0) 0%, rgba(59, 79, 58, 0.02) 100%);
+    border-right: 1px solid var(--light-green, #5A6D59);
+}
+
+.person-portrait {
+    width: 100%;
+    max-width: 280px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(46, 46, 46, 0.12);
+    border: 2px solid var(--light-green, #5A6D59);
+    transition: all 0.3s ease;
+}
+
+.person-portrait:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 164, 81, 0.15);
+    border-color: var(--gold, #D4A451);
+}
+
+.person-info {
+    padding: 32px;
+    background: var(--rice-white, #F7F5F0);
+}
+
+.person-name {
+    color: var(--ink-black, #2E2E2E);
+    font-size: 36px;
+    margin-bottom: 16px;
+    font-weight: 700;
+    font-family: var(--font-title, 'Source Han Sans', '思源黑体', sans-serif);
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--gold, #D4A451);
+    padding-bottom: 12px;
+    display: inline-block;
+}
+
+.person-dates {
+    font-size: 18px;
+    color: var(--ink-green, #3B4F3A);
+    margin-bottom: 12px;
+    font-family: var(--font-body, 'PingFang SC', '苹方', sans-serif);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.person-dates::before {
+    content: '📅';
+    font-size: 16px;
+}
+
+.person-birthplace {
+    font-size: 16px;
+    color: var(--ink-green, #3B4F3A);
+    margin-bottom: 24px;
+    font-family: var(--font-body, 'PingFang SC', '苹方', sans-serif);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.person-birthplace::before {
+    content: '📍';
+    font-size: 14px;
+}
+
+.person-intro {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--ink-black, #2E2E2E);
+    text-align: justify;
+    font-family: var(--font-body, 'PingFang SC', '苹方', sans-serif);
+    margin-bottom: 24px;
+    padding: 16px;
+    background: rgba(247, 245, 240, 0.8);
+    border-left: 3px solid var(--gold, #D4A451);
+    border-radius: 4px;
+}
+
+.person-achievements {
+    margin-top: 24px;
+}
+
+.person-achievements h3 {
+    color: var(--ink-black, #2E2E2E);
+    margin-bottom: 16px;
+    font-size: 20px;
+    font-family: var(--font-title, 'Source Han Sans', '思源黑体', sans-serif);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.person-achievements h3::before {
+    content: '⭐';
+    font-size: 18px;
+}
+
+.person-achievements ul {
+    padding-left: 0;
+    list-style: none;
+}
+
+.person-achievements li {
+    margin-bottom: 12px;
+    line-height: 1.6;
+    color: var(--ink-black, #2E2E2E);
+    font-family: var(--font-body, 'PingFang SC', '苹方', sans-serif);
+    padding: 8px 12px;
+    background: rgba(59, 79, 58, 0.03);
+    border-radius: 4px;
+    border-left: 2px solid var(--light-green, #5A6D59);
+    transition: all 0.3s ease;
+}
+
+.person-achievements li:hover {
+    background: rgba(212, 164, 81, 0.05);
+    border-left-color: var(--gold, #D4A451);
+    transform: translateX(4px);
+}
+
+.person-achievements li::before {
+    content: '•';
+    color: var(--gold, #D4A451);
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-right: 8px;
+}
+
+.bio-details-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(46, 46, 46, 0.08);
+    border: 1px solid var(--light-green, #5A6D59);
+    background: var(--rice-white, #F7F5F0);
+    overflow: hidden;
+}
+
+.bio-details-card .ant-card-head {
+    background: rgba(59, 79, 58, 0.05);
+    border-bottom: 1px solid var(--light-green, #5A6D59);
+    padding: 16px 24px;
+}
+
+.bio-details-card .ant-card-head-title {
+    color: var(--ink-black, #2E2E2E);
+    font-family: var(--font-title, 'Source Han Sans', '思源黑体', sans-serif);
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.bio-details-card .ant-card-body {
+    padding: 24px;
+    background: var(--rice-white, #F7F5F0);
+}
+
+.bio-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+    flex-direction: column;
+    gap: 16px;
+    color: var(--ink-green, #3B4F3A);
+    font-family: var(--font-body, 'PingFang SC', '苹方', sans-serif);
+}
+
+.art-thought,
+.important-locations {
+    padding: 24px;
+    min-height: 400px;
+    background: var(--rice-white, #F7F5F0);
+}
+
+.art-thought h3,
+.important-locations h3 {
+    color: var(--ink-black, #2E2E2E);
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-family: var(--font-title, 'Source Han Sans', '思源黑体', sans-serif);
+    font-weight: 600;
+    border-bottom: 2px solid var(--gold, #D4A451);
+    padding-bottom: 8px;
+    display: inline-block;
+}
+
+/* 标签页样式优化 */
+.bio-details-card .ant-tabs-nav {
+    margin-bottom: 0;
+    background: rgba(59, 79, 58, 0.05);
+    padding: 0 24px;
+}
+
+.bio-details-card .ant-tabs-tab {
+    padding: 16px 24px;
+    font-family: var(--font-title, 'Source Han Sans', '思源黑体', sans-serif);
+    font-weight: 500;
+    color: var(--ink-green, #3B4F3A);
+    transition: all 0.3s ease;
+}
+
+.bio-details-card .ant-tabs-tab:hover {
+    color: var(--gold, #D4A451);
+}
+
+.bio-details-card .ant-tabs-tab-active {
+    color: var(--gold, #D4A451) !important;
+}
+
+.bio-details-card .ant-tabs-ink-bar {
+    background: var(--gold, #D4A451);
+    height: 3px;
+}
+
+.bio-details-card .ant-tabs-content {
+    background: var(--rice-white, #F7F5F0);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .bio-page {
+        padding: 16px;
+    }
+
+    .person-basic-info {
+        margin-bottom: 24px;
+    }
+
+    .portrait-container {
+        padding: 16px;
+        border-right: none;
+        border-bottom: 1px solid var(--light-green, #5A6D59);
+    }
+
+    .person-info {
+        padding: 24px;
+    }
+
+    .person-name {
+        font-size: 28px;
+    }
+
+    .person-dates {
+        font-size: 16px;
+    }
+
+    .person-birthplace {
+        font-size: 14px;
+    }
+
+    .person-intro {
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    .person-achievements h3 {
+        font-size: 18px;
+    }
+
+    .art-thought,
+    .important-locations {
+        padding: 16px;
+        min-height: 300px;
+    }
+
+    .art-thought h3,
+    .important-locations h3 {
+        font-size: 20px;
+    }
+
+    .bio-details-card .ant-card-body {
+        padding: 16px;
+    }
+
+    .bio-details-card .ant-tabs-nav {
+        padding: 0 16px;
+    }
+
+    .bio-details-card .ant-tabs-tab {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .bio-page {
+        padding: 12px;
+    }
+
+    .person-name {
+        font-size: 24px;
+    }
+
+    .person-info {
+        padding: 20px;
+    }
+
+    .portrait-container {
+        padding: 12px;
+    }
+
+    .person-portrait {
+        max-width: 200px;
+    }
+}
+
+/* 特殊效果 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.person-basic-info {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.bio-details-card {
+    animation: fadeInUp 0.8s ease-out;
+}
