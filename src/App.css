@@ -1,0 +1,451 @@
+.App {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* 固定的地图容器 */
+.map-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 地图内的交互元素需要能点击 */
+.map-container * {
+  pointer-events: auto;
+}
+
+/* 滚动的时间线容器 */
+.timeline-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  pointer-events: none;
+}
+
+.timeline-header {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: auto;
+  background: #F7F5F0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景山水画图片层 */
+.timeline-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('./assets/huangbinhong-landscape.jpg?v=2');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+  z-index: 0;
+  pointer-events: none;
+  filter: grayscale(10%) sepia(10%);
+}
+
+/* 渐变遮罩层 */
+.timeline-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg,
+      rgba(247, 245, 240, 0.7) 0%,
+      rgba(247, 245, 240, 0.5) 50%,
+      rgba(247, 245, 240, 0.7) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+
+
+.main-title {
+  font-size: 56px;
+  font-weight: 700;
+  color: #2E2E2E;
+  letter-spacing: 12px;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(59, 79, 58, 0.1);
+  animation: fadeInDown 1s ease;
+  position: relative;
+  z-index: 1;
+}
+
+/* 标题装饰 */
+.main-title::before,
+.main-title::after {
+  content: '◆';
+  color: #D4A451;
+  margin: 0 20px;
+  font-size: 24px;
+}
+
+.subtitle {
+  font-size: 20px;
+  color: #3B4F3A;
+  letter-spacing: 4px;
+  animation: fadeInUp 1s ease 0.3s both;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 滚动指引 - 墨绿主题 */
+.scroll-indicator {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.scroll-text {
+  font-size: 16px;
+  color: #3B4F3A;
+  letter-spacing: 3px;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8),
+    0 0 10px rgba(247, 245, 240, 0.8);
+  animation: scrollTextPulse 2s ease-in-out infinite;
+}
+
+.scroll-arrow {
+  width: 30px;
+  height: 50px;
+  border: 3px solid #3B4F3A;
+  border-radius: 20px;
+  position: relative;
+  animation: scrollBounce 2s ease-in-out infinite;
+  background: rgba(247, 245, 240, 0.5);
+  box-shadow: 0 2px 8px rgba(59, 79, 58, 0.2);
+}
+
+.scroll-arrow::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: #D4A451;
+  border-radius: 50%;
+  animation: scrollDot 2s ease-in-out infinite;
+}
+
+@keyframes scrollBounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+@keyframes scrollDot {
+  0% {
+    top: 10px;
+    opacity: 1;
+  }
+
+  100% {
+    top: 35px;
+    opacity: 0;
+  }
+}
+
+@keyframes scrollTextPulse {
+
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* 游历章节 - 墨绿主题 */
+.journey-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 50px 0;
+  pointer-events: none;
+  transition: all 0.5s ease;
+}
+
+.journey-section.active {
+  background: transparent;
+}
+
+/* 章节内的内容需要能交互 */
+.journey-section>* {
+  pointer-events: auto;
+}
+
+.timeline-footer {
+  height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  background: linear-gradient(180deg,
+      rgba(247, 245, 240, 0.8) 0%,
+      rgba(247, 245, 240, 0.9) 50%,
+      rgba(247, 245, 240, 1) 100%);
+}
+
+.footer-text {
+  font-size: 24px;
+  color: #3B4F3A;
+  letter-spacing: 8px;
+}
+
+/* 固定控制按钮组 */
+.fixed-controls {
+  position: fixed;
+  z-index: 10000;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* 地图控制在右上角 */
+.map-style-control {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+}
+
+/* 地图样式控制 */
+.map-style-control {
+  display: flex;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(247, 245, 240, 0.98) 0%, rgba(247, 245, 240, 0.95) 100%);
+  border: 2px solid #3B4F3A;
+  border-radius: 50px;
+  padding: 6px;
+  box-shadow: 0 6px 20px rgba(46, 46, 46, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  position: fixed;
+  top: 30px;
+  right: 30px;
+}
+
+.control-btn {
+  padding: 10px 26px;
+  border: none;
+  background: transparent;
+  color: #3B4F3A;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 50px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 2px;
+  font-family: 'Noto Serif SC', serif;
+  user-select: none;
+  min-width: 95px;
+  position: relative;
+  overflow: hidden;
+}
+
+.control-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(212, 164, 81, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s, height 0.4s;
+}
+
+.control-btn:hover::before {
+  width: 200%;
+  height: 200%;
+}
+
+.map-btn.active {
+  background: linear-gradient(135deg, #D4A451 0%, #c49641 100%);
+  color: #2E2E2E;
+  box-shadow: 0 4px 12px rgba(212, 164, 81, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.map-btn.active:hover {
+  background: linear-gradient(135deg, #c49641 0%, #b38631 100%);
+  box-shadow: 0 6px 16px rgba(212, 164, 81, 0.5);
+}
+
+.map-btn:hover:not(.active) {
+  background: rgba(59, 79, 58, 0.1);
+  color: #2E2E2E;
+}
+
+.map-btn:active {
+  transform: scale(0.96);
+}
+
+/* 音频控制 - 右下角纯圆形 */
+.audio-control {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.audio-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 1px solid #eee;
+  background: #fff;
+  color: #3B4F3A;
+  font-size: 28px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  position: relative;
+}
+
+.audio-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.audio-btn:active {
+  transform: scale(1.05);
+}
+
+.audio-btn.loading {
+  opacity: 0.7;
+  cursor: wait;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+}
+
+.audio-loading {
+  font-size: 11px;
+  color: #3B4F3A;
+  background: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 36px;
+    letter-spacing: 6px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    letter-spacing: 2px;
+  }
+
+  .scroll-indicator {
+    bottom: 60px;
+  }
+
+  .scroll-text {
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+
+  .map-style-control {
+    top: 20px;
+    right: 20px;
+    padding: 5px;
+    gap: 6px;
+  }
+
+  .map-btn {
+    padding: 8px 18px;
+    font-size: 13px;
+    min-width: 80px;
+  }
+
+  .audio-control {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .audio-btn {
+    width: 56px;
+    height: 56px;
+    font-size: 24px;
+  }
+}

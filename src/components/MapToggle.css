@@ -1,0 +1,60 @@
+.map-toggle {
+    position: absolute !important;
+    top: 30px !important;
+    right: 30px !important;
+    display: flex;
+    gap: 10px;
+    background: rgba(230, 245, 235, 0.98);
+    border: 2px solid #8bc34a;
+    border-radius: 10px;
+    padding: 6px;
+    box-shadow: 0 4px 16px rgba(107, 142, 107, 0.3);
+    z-index: 99999 !important;
+    pointer-events: auto !important;
+}
+
+.toggle-btn {
+    padding: 10px 24px;
+    border: none;
+    background: transparent;
+    color: #5a7a3c;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer !important;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+    font-family: 'Noto Serif SC', serif;
+    pointer-events: auto !important;
+    user-select: none;
+    -webkit-user-select: none;
+    position: relative;
+    z-index: 99999 !important;
+}
+
+.toggle-btn.active {
+    background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(139, 195, 74, 0.4);
+}
+
+.toggle-btn:hover:not(.active) {
+    background: rgba(139, 195, 74, 0.2);
+    color: #2d5016;
+}
+
+.toggle-btn:active {
+    transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+    .map-toggle {
+        top: 20px !important;
+        right: 20px !important;
+    }
+
+    .toggle-btn {
+        padding: 8px 18px;
+        font-size: 12px;
+    }
+}

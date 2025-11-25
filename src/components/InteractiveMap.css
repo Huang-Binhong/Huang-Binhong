@@ -1,0 +1,433 @@
+.interactive-map-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background: transparent;
+}
+
+/* 现代地图画布 */
+.map-canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    transition: opacity 0.5s ease;
+}
+
+/* 隐藏高德地图的瓦片图层（底图），但保留标记层 */
+.map-canvas .amap-layers .amap-layer {
+    opacity: 0 !important;
+}
+
+/* 确保标记层显示 */
+.map-canvas .amap-markers,
+.map-canvas .amap-marker,
+.map-canvas .amap-overlays {
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 100 !important;
+}
+
+/* 古风地图背景层 - 在地图瓦片上方，标记下方 */
+.ancient-map-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 50;
+    pointer-events: none;
+    transition: all 0.5s ease;
+}
+
+/* 古地图纹理覆盖层已移除 */
+
+/* 毛笔标记 */
+.brush-marker {
+    position: relative;
+    cursor: pointer;
+    animation: brushFloat 3s ease-in-out infinite;
+    background: transparent !important;
+    z-index: 1000 !important;
+}
+
+/* 移除毛笔标记背景 */
+
+.brush-container {
+    position: relative;
+    width: 50px;
+    height: 100px;
+    filter: drop-shadow(0 10px 20px rgba(46, 46, 46, 0.5));
+}
+
+.brush-svg {
+    width: 100%;
+    height: 100%;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.brush-shadow {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25px;
+    height: 10px;
+    background: radial-gradient(ellipse, rgba(46, 46, 46, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: shadowPulse 3s ease-in-out infinite;
+}
+
+@keyframes shadowPulse {
+
+    0%,
+    100% {
+        opacity: 0.4;
+        transform: translateX(-50%) scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: translateX(-50%) scale(1.1);
+    }
+}
+
+.brush-marker:hover .brush-svg {
+    transform: scale(1.15) rotate(8deg);
+}
+
+@keyframes brushFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(-10deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(10deg);
+    }
+}
+
+/* 起点终点标记 - 圆形样式 */
+.route-marker {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index: 1000 !important;
+}
+
+/* 移除起点终点标记背景 */
+
+.route-marker:hover {
+    transform: scale(1.15);
+}
+
+/* 圆形标记容器 */
+.route-circle-marker {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 外圈 */
+.circle-outer {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(59, 79, 58, 0.2);
+    border: 3px solid #3B4F3A;
+}
+
+/* 内圈 */
+.circle-inner {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #3B4F3A;
+    box-shadow: 0 3px 8px rgba(46, 46, 46, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 圆圈内文字 */
+.circle-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: #F7F5F0;
+    z-index: 1;
+}
+
+/* 起点标记样式 */
+.start-marker .circle-outer {
+    background: rgba(212, 164, 81, 0.2);
+    border-color: #D4A451;
+}
+
+.start-marker .circle-inner {
+    background: #D4A451;
+}
+
+/* 终点标记样式 */
+.end-marker .circle-outer {
+    background: rgba(46, 46, 46, 0.2);
+    border-color: #2E2E2E;
+}
+
+.end-marker .circle-inner {
+    background: #2E2E2E;
+}
+
+.route-marker-label {
+    position: absolute;
+    top: 56px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background: #FFFFFF;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2E2E2E;
+    border: 4px solid #D4A451;
+    box-shadow:
+        0 0 0 3px rgba(212, 164, 81, 0.3),
+        0 10px 35px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes markerPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 12px rgba(61, 90, 92, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 4px 20px rgba(120, 158, 158, 0.6), 0 0 20px rgba(120, 158, 158, 0.4);
+    }
+}
+
+/* 地点标记 - 统一墨绿色主题，50x50px水滴形状，增强对比度 */
+.location-marker {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    z-index: 1000 !important;
+}
+
+/* 移除地点标记背景 */
+
+.location-marker:hover {
+    transform: scale(1.15);
+    z-index: 200 !important;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+}
+
+/* 移除 hover 背景效果 */
+
+.marker-pin {
+    position: relative;
+    width: 55px;
+    height: 65px;
+}
+
+.marker-icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(135deg, #C49641 0%, #D4A451 50%, #E8C589 100%);
+    border: 3px solid #8B6F47;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        0 8px 20px rgba(139, 111, 71, 0.5),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.location-marker:hover .marker-icon {
+    background: linear-gradient(135deg, #D4A451 0%, #E8C589 50%, #F5D9A0 100%);
+    border-color: #6B5A3D;
+    box-shadow:
+        0 10px 30px rgba(212, 164, 81, 0.6),
+        inset 0 2px 4px rgba(255, 255, 255, 0.4);
+    transform: rotate(-45deg) scale(1.05);
+}
+
+.marker-icon::after {
+    content: attr(data-text);
+    transform: rotate(45deg);
+    font-size: 24px;
+    font-weight: 900;
+    color: #3B2F1F;
+    text-shadow:
+        1px 1px 2px rgba(255, 255, 255, 0.5),
+        -1px -1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.marker-label {
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background: linear-gradient(135deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.98) 100%);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #3B2F1F;
+    border: 2px solid #D4A451;
+    box-shadow:
+        0 6px 20px rgba(139, 111, 71, 0.4),
+        inset 0 1px 2px rgba(255, 255, 255, 0.5);
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+}
+
+.location-marker:hover .marker-label {
+    background: linear-gradient(135deg, rgba(232, 197, 137, 0.98) 0%, rgba(212, 164, 81, 0.98) 100%);
+    color: #2E2E2E;
+    border-color: #8B6F47;
+    border-width: 2px;
+    box-shadow:
+        0 0 0 2px rgba(139, 111, 71, 0.3),
+        0 8px 25px rgba(212, 164, 81, 0.6),
+        inset 0 1px 2px rgba(255, 255, 255, 0.6);
+    transform: translateX(-50%) translateY(-2px);
+}
+
+/* Ornate Journey Indicator */
+.journey-indicator {
+    position: absolute;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    background: rgba(247, 245, 240, 0.95); /* Creamy white background */
+    border: 2px solid #D4A451;
+    border-radius: 12px;
+    padding: 20px 40px;
+    box-shadow: 0 8px 24px rgba(46, 46, 46, 0.2);
+    pointer-events: none;
+}
+
+.indicator-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.indicator-year {
+    font-size: 16px;
+    color: #3B4F3A; /* Dark green text */
+    font-weight: 600;
+}
+
+.indicator-location {
+    font-size: 28px;
+    color: #3B4F3A; /* Dark green text */
+    font-weight: 700;
+    letter-spacing: 5px;
+}
+
+.ornament {
+    position: absolute;
+    width: 35px;
+    height: 35px;
+}
+
+.corner-tl {
+    top: -5px;
+    left: -5px;
+}
+
+.corner-tr {
+    top: -5px;
+    right: -5px;
+}
+
+.corner-bl {
+    bottom: -5px;
+    left: -5px;
+}
+
+.corner-br {
+    bottom: -5px;
+    right: -5px;
+}
+
+
+/* 古风装饰边角 */
+.ancient-decorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 150;
+}
+
+.corner-decoration {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    opacity: 0.7;
+}
+
+.corner-decoration.top-left {
+    top: 20px;
+    left: 20px;
+}
+
+.corner-decoration.top-right {
+    top: 20px;
+    right: 20px;
+}
+
+.corner-decoration.bottom-left {
+    bottom: 20px;
+    left: 20px;
+}
+
+.corner-decoration.bottom-right {
+    bottom: 20px;
+    right: 20px;
+}
+
+/* 云雾效果已移除 */
+
+@media (max-width: 768px) {
+    .journey-indicator {
+        top: 100px;
+        padding: 15px 25px;
+    }
+
+    .indicator-location {
+        font-size: 18px;
+    }
+
+    .brush-image {
+        width: 60px !important;
+    }
+}

@@ -1,0 +1,5 @@
+<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" fill="#D4A451">
+  <path d="M0,35 L35,35 L35,0 L40,0 L40,40 L0,40 Z" opacity="0.3"/>
+  <path d="M8,8 L27,8 L27,27 L32,27 L32,8 L8,8 Z" transform="translate(0, 0)" opacity="0.5"/>
+  <path d="M16,16 L19,16 L19,19 L24,19 L24,24 L16,24 Z" transform="translate(0, 0)" opacity="0.8"/>
+</svg>
