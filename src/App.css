@@ -1,0 +1,207 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+  background: linear-gradient(135deg, #F5F3F0 0%, #E8F0E8 50%, #F5F3F0 100%);
+  min-height: 100vh;
+  background-attachment: fixed;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 1800px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 30px 0;
+}
+
+header h1 {
+  color: #3B4F3A;
+  font-size: 2.8em;
+  text-shadow: 0 2px 4px rgba(212, 164, 81, 0.3);
+  letter-spacing: 6px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-family: 'Source Han Sans', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+}
+
+header .tips {
+  color: #D4A451;
+  font-size: 13px;
+  letter-spacing: 2px;
+  opacity: 0.9;
+  font-family: 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+}
+
+.main-content {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+  position: relative;
+}
+
+.canvas-container {
+  flex: 1;
+  background: linear-gradient(135deg, #FAFAF8 0%, #F0F5F0 100%),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><defs><pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(91,142,125,0.04)"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+  border-radius: 15px;
+  padding: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), inset 0 0 60px rgba(212, 164, 81, 0.04);
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(91, 142, 125, 0.15);
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
+}
+
+.control-panel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 250, 245, 0.98) 100%);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  min-width: 240px;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(91, 142, 125, 0.2);
+}
+
+.view-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(91, 142, 125, 0.15);
+}
+
+.view-buttons button {
+  padding: 12px 16px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #E8F0E8 0%, #DFE8DF 100%);
+  color: #3B4F3A;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+  border: 1px solid rgba(91, 142, 125, 0.2);
+}
+
+.view-buttons button:hover {
+  background: linear-gradient(135deg, #C85A54 0%, #A85A54 100%);
+  color: #F7F5F0;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(200, 90, 84, 0.2);
+  border-color: #C85A54;
+}
+
+.view-buttons button.active {
+  background: linear-gradient(135deg, #D4A451 0%, #B8860B 100%);
+  color: #2E2E2E;
+  box-shadow: 0 5px 15px rgba(212, 164, 81, 0.4);
+  border-color: #D4A451;
+}
+
+.detail-info {
+  background: linear-gradient(135deg, #FFFFFF 0%, #F5FAF5 100%);
+  padding: 18px;
+  border-radius: 10px;
+  border-left: 5px solid #D4A451;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.detail-info h3 {
+  color: #3B4F3A;
+  margin-bottom: 12px;
+  font-size: 1.3em;
+  border-bottom: 2px solid #D4A451;
+  padding-bottom: 8px;
+  font-weight: 600;
+  font-family: 'Source Han Sans', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+}
+
+.relation-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, #D4A451 0%, #B8860B 100%);
+  color: #2E2E2E;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  border: 1px solid rgba(212, 164, 81, 0.5);
+}
+
+.detail-info p {
+  color: #3B4F3A;
+  line-height: 1.8;
+  font-size: 14px;
+  font-family: 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+}
+
+@media (max-width: 1200px) {
+  .control-panel {
+    min-width: 200px;
+    padding: 15px;
+  }
+
+  header h1 {
+    font-size: 2.2em;
+  }
+}
+
+@media (max-width: 1024px) {
+  .control-panel {
+    position: static;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .main-content {
+    flex-direction: column;
+  }
+
+  canvas {
+    min-height: 500px;
+  }
+}
