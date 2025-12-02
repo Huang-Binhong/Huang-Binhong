@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import App from './App';
-import AIExplanationPage from './AIExplanationPage';
+import AIExplanationPage from './pages/AIExplanationPage';
 import './App.css';
 
 function AppWithRouter() {

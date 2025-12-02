@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { analyzeArtwork } from './services/aiService';
-import './AIExplanationPage.css';
+import { analyzeArtwork } from '../utils/aiService';
+import '../styles/AIExplanationPage.css';
 
 function AIExplanationPage() {
   const [uploadedImage, setUploadedImage] = useState(null);
@@ -100,37 +100,47 @@ function AIExplanationPage() {
           </div>
         </div>
         <div className="artwork-info">
-          {analysisResult && analysisResult.success && (
-            <div className="ai-analysis-result">
-              <h3>AI分析结果</h3>
-              <div className="ai-response-content">
-                {analysisResult.data.choices && analysisResult.data.choices[0] && analysisResult.data.choices[0].message ? (
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {analysisResult.data.choices[0].message.content}
-                  </ReactMarkdown>
-                ) : (
-                  <p>收到分析结果，但格式未知。原始响应数据已记录到控制台。</p>
-                )}
-              </div>
+          {isAnalyzing ? (
+            <div className="ai-analyzing">
+              <h3>正在分析中...</h3>
+              <div className="loading-spinner"></div>
+              <p>AI正在深入解读这幅作品，请稍候...</p>
             </div>
-          )}
-          {!analysisResult && !uploadedImage && (
-            <div className="ai-prompt">
-              <h3>欢迎使用AI艺术讲解系统</h3>
-              <p>请先上传一幅艺术作品图片，然后点击"AI智能分析"按钮开始分析。</p>
-            </div>
-          )}
-          {!analysisResult && uploadedImage && (
-            <div className="ai-analysis-section">
-              <h3>准备分析</h3>
-              <p>图片已上传，请点击"AI智能分析"按钮开始分析。</p>
-            </div>
-          )}
-          {analysisResult && !analysisResult.success && (
-            <div className="ai-analysis-error">
-              <h3>AI分析失败</h3>
-              <p>{analysisResult.error}</p>
-            </div>
+          ) : (
+            <>
+              {analysisResult && analysisResult.success && (
+                <div className="ai-analysis-result">
+                  <h3>AI分析结果</h3>
+                  <div className="ai-response-content">
+                    {analysisResult.data.choices && analysisResult.data.choices[0] && analysisResult.data.choices[0].message ? (
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {analysisResult.data.choices[0].message.content}
+                      </ReactMarkdown>
+                    ) : (
+                      <p>收到分析结果，但格式未知。原始响应数据已记录到控制台。</p>
+                    )}
+                  </div>
+                </div>
+              )}
+              {!analysisResult && !uploadedImage && (
+                <div className="ai-prompt">
+                  <h3>欢迎使用AI艺术讲解系统</h3>
+                  <p>请先上传一幅艺术作品图片，然后点击"AI智能分析"按钮开始分析。</p>
+                </div>
+              )}
+              {!analysisResult && uploadedImage && (
+                <div className="ai-analysis-section">
+                  <h3>准备分析</h3>
+                  <p>图片已上传，请点击"AI智能分析"按钮开始分析。</p>
+                </div>
+              )}
+              {analysisResult && !analysisResult.success && (
+                <div className="ai-analysis-error">
+                  <h3>AI分析失败</h3>
+                  <p>{analysisResult.error}</p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </main>
