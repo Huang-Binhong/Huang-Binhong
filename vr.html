@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="数字黄宾虹——沉浸式 VR 笔墨空间">
+    <title>黄宾虹 VR 笔墨空间</title>
+
+    <link href="css/z_style.css" rel="stylesheet">
+
+    <!-- jQuery 与背景脚本，与其他页面保持一致 -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-migrate@3.4.1/dist/jquery-migrate.min.js"></script>
+    <script type="text/javascript" src="js/jquery.bcat.bgswitcher.js"></script>
+
+    <!-- 禁止右键 -->
+    <script>
+    if (window.Event){
+       document.captureEvents(Event.MOUSEUP);
+    }
+
+    function nocontextmenu(){
+       event.cancelBubble = true;
+       event.returnValue = false;
+       return false;
+    }
+
+    function norightclick(e) {
+       if (window.Event) {
+           if (e.which == 2 || e.which == 3)
+               return false;
+       } else if (event.button == 2 || event.button == 3){
+           event.cancelBubble = true;
+           event.returnValue = false;
+           return false;
+       }
+    }
+    document.oncontextmenu = nocontextmenu; // for IE5+
+    document.onmousedown = norightclick; // for all others
+    </script>
+</head>
+
+<body>
+<div class="main">
+    <!-- 顶部 logo 与导航，沿用 list.html 风格 -->
+    <div class="nav_logo" data-scroll-reveal="enter right after 0.5s"><img src="images/list_logo.png" alt=""></div>
+    <div class="nav_logo2" data-scroll-reveal="enter left after 0.5s"><img src="images/list_logo2.png" alt=""></div>
+    <div class="nav_logo3"  data-scroll-reveal="enter left after 1s"><img src="images/list_logo3.png" alt=""></div>
+
+    <div class="list_nav_bg" data-scroll-reveal="enter left after 0.5s"><img src="images/list_nav_bg.png" alt=""></div>
+
+    <div class="l_gk2" data-scroll-reveal="enter bottom after 1s">
+        <a href="#"><img src="images/l_gk.png" alt=""></a>
+        <div id="nav_1" class="l_list" style="display: none;">
+            <a href="list.html" class="a_guangkan_zpql" title="观看"></a>
+        </div>
+    </div>
+    <div class="l_ts2"  data-scroll-reveal="enter bottom after 1.5s">
+        <a href="#"><img src="images/l_ts.png" alt=""></a>
+        <div id="nav_2" class="l_list" style="display: none;">
+            <a href="sp_help.html" target="_blank" class="a_tangsuo_rs" title="探索·人物"></a>
+            <a href="shc_help.html" target="_blank" class="a_tangsuo_bf" title="探索·笔法"></a>
+            <a href="jy_help.html" target="_blank" class="a_tangsuo_sh" title="探索·山河"></a>
+        </div>
+    </div>
+    <div class="l_cz2"   data-scroll-reveal="enter bottom after 2s">
+        <a href="#"><img src="images/l_cz.png" alt=""></a>
+        <div id="nav_3" class="l_list" style="display: none;">
+            <a href="sm.html" target="_blank" class="a_chuanz"></a>
+            <a href="vr.html" class="a_vr" title="VR 笔墨空间"></a>
+            <a href="vf.html" target="_blank" class="a_vf" title="VF"></a>
+        </div>
+    </div>
+
+    <div class="a_home" data-scroll-reveal="enter right after 1s">
+        <a href="index.html"><img src="images/a_home.png" alt=""></a>
+    </div>
+
+    <div class="list_main">
+        <div class="padding_50">
+            <div class="lujin">首页 / 创作 / VR 笔墨空间</div>
+
+            <div class="main_w clearfix">
+                <!-- 左侧：沉浸式 3D 场景 -->
+                <div class="fl main_w_left">
+                    <div id="vr-canvas-container" style="width: 650px; height: 650px;">
+                        <!-- three.js canvas 会插入到这里 -->
+                    </div>
+                </div>
+
+                <!-- 右侧：作品选择与说明 -->
+                <div class="fr main_w_right">
+                    <h2>黄宾虹 VR 笔墨空间</h2>
+                    <p>
+                        选择一幅黄宾虹作品，进入由模拟 AI 驱动生成的笔墨空间，
+                        在三维场景中沉浸式观察笔墨气韵和画面结构。
+                    </p>
+
+                    <div class="m_t_20">
+                        <b>选择作品：</b><br>
+                        <select id="vr-art-select" style="width: 220px; padding: 4px;"></select>
+                    </div>
+
+                    <div class="m_t_20">
+                        <b>场景说明：</b>
+                        <p id="vr-scene-desc" style="line-height: 24px;"></p>
+                    </div>
+
+                    <div class="m_t_20">
+                        <b>操作提示：</b>
+                        <p>
+                            鼠标拖拽：旋转视角；<br>
+                            滚轮：缩放远近；<br>
+                            右键拖拽：平移视角。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="cb"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="bg-body"></div>
+
+<!-- 背景切换，与列表页统一 -->
+<script type="text/javascript">
+var srcBgArray = ["images/list_bg1.jpg","images/list_bg2.jpg"];
+
+$(document).ready(function() {
+  $('#bg-body').bcatBGSwitcher({
+    urls: srcBgArray,
+    alt: ''
+  });
+});
+</script>
+
+<!-- 导航鼠标移入 -->
+<script type="text/javascript">
+$(function (){
+    $(".l_gk2").mouseover(function (){
+        $("#nav_1").show();
+    }).mouseout(function (){
+        $("#nav_1").hide();
+    });
+
+    $(".l_ts2").mouseover(function (){
+        $("#nav_2").show();
+    }).mouseout(function (){
+        $("#nav_2").hide();
+    });
+
+    $(".l_cz2").mouseover(function (){
+        $("#nav_3").show();
+    }).mouseout(function (){
+        $("#nav_3").hide();
+    });
+});
+</script>
+
+<!-- three.js 模块脚本：3D 笔墨空间（基于后端模拟数据） -->
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.150.1/examples/jsm/controls/OrbitControls.js';
+
+(function(){
+    // 由后端 /frontend/pg/huang/vr-works 填充
+    let VR_WORKS = [];
+
+    const container = document.getElementById('vr-canvas-container');
+    let scene, camera, renderer, controls;
+    let currentGroup = null;
+    let textureLoader = null;
+
+    function initThreeScene() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xccc09a);
+
+        camera = new THREE.PerspectiveCamera(
+            45,
+            container.clientWidth / container.clientHeight,
+            0.1,
+            1000
+        );
+        camera.position.set(0, 1.6, 4);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio || 1);
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        container.appendChild(renderer.domElement);
+
+        controls = new OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 1.4, 0);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        textureLoader = new THREE.TextureLoader();
+
+        // 环境光 + 方向光
+        const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambient);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+        dirLight.position.set(2, 4, 2);
+        scene.add(dirLight);
+
+        // 地面
+        const floorGeo = new THREE.PlaneGeometry(12, 12);
+        const floorMat = new THREE.MeshPhongMaterial({ color: 0xb7a574, shininess: 10 });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = 0;
+        scene.add(floor);
+
+        window.addEventListener('resize', onWindowResize);
+        animate();
+    }
+
+    function onWindowResize() {
+        if (!renderer || !camera) return;
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        if (controls) controls.update();
+        if (renderer && scene && camera) {
+            renderer.render(scene, camera);
+        }
+    }
+
+    function clearCurrentGroup() {
+        if (!currentGroup) return;
+        scene.remove(currentGroup);
+        currentGroup.traverse(obj => {
+            if (obj.isMesh) {
+                if (obj.geometry) obj.geometry.dispose();
+                if (obj.material) {
+                    if (Array.isArray(obj.material)) {
+                        obj.material.forEach(m => { if (m.map) m.map.dispose(); m.dispose(); });
+                    } else {
+                        if (obj.material.map) obj.material.map.dispose();
+                        obj.material.dispose();
+                    }
+                }
+            }
+        });
+        currentGroup = null;
+    }
+
+    function buildSceneForTexture(tex, work) {
+        clearCurrentGroup();
+        currentGroup = new THREE.Group();
+        scene.add(currentGroup);
+
+        tex.encoding = THREE.sRGBEncoding;
+        tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+        const imgW = tex.image.width || 1;
+        const imgH = tex.image.height || 1;
+        const aspect = imgH / imgW;
+        const wallWidth = 3.0;
+        const wallHeight = wallWidth * aspect;
+
+        // 中央展墙上的主画面
+        const wallGeo = new THREE.PlaneGeometry(wallWidth, wallHeight);
+        const wallMat = new THREE.MeshPhongMaterial({ map: tex });
+        const wall = new THREE.Mesh(wallGeo, wallMat);
+        wall.position.set(0, 1.6, -0.01);
+        currentGroup.add(wall);
+
+        // 左右辅助墙：轻微旋转的平面，营造包围感
+        const sideGeo = new THREE.PlaneGeometry(wallWidth * 0.8, wallHeight);
+        const sideMat = new THREE.MeshPhongMaterial({
+            map: tex,
+            transparent: true,
+            opacity: 0.35,
+            side: THREE.DoubleSide
+        });
+
+        const leftWall = new THREE.Mesh(sideGeo, sideMat);
+        leftWall.position.set(-wallWidth * 0.9, 1.6, -1.5);
+        leftWall.rotation.y = Math.PI / 6;
+        currentGroup.add(leftWall);
+
+        const rightWall = new THREE.Mesh(sideGeo, sideMat.clone());
+        rightWall.position.set(wallWidth * 0.9, 1.6, -1.5);
+        rightWall.rotation.y = -Math.PI / 6;
+        currentGroup.add(rightWall);
+
+        // “墨云”方块
+        const boxGeo = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+        const boxMat = new THREE.MeshPhongMaterial({ color: 0x444444, transparent: true, opacity: 0.35 });
+        for (let j = 0; j < 12; j++) {
+            const box = new THREE.Mesh(boxGeo, boxMat);
+            box.position.set(
+                (Math.random() - 0.5) * 4.0,
+                0.8 + Math.random() * 2.0,
+                -1.5 + Math.random() * 3.0
+            );
+            currentGroup.add(box);
+        }
+
+        // 更新说明文字
+        const descEl = document.getElementById('vr-scene-desc');
+        if (descEl) descEl.innerText = work.desc || '';
+    }
+
+    function loadWork(work) {
+        if (!textureLoader) return;
+        clearCurrentGroup();
+        textureLoader.load(
+            work.img,
+            tex => {
+                buildSceneForTexture(tex, work);
+            },
+            undefined,
+            () => {
+                const descEl = document.getElementById('vr-scene-desc');
+                if (descEl) descEl.innerText = '作品纹理加载失败，请检查图片路径。';
+            }
+        );
+    }
+
+    // 初始化 three.js 并从后端加载 VR 作品列表
+    $(function(){
+        initThreeScene();
+
+        const $select = $('#vr-art-select');
+
+        $.ajax({
+            url: 'frontend/pg/huang/vr-works',
+            type: 'post',
+            dataType: 'json',
+            success: function(data) {
+                VR_WORKS = (data && data.works) ? data.works : [];
+
+                $select.empty();
+                VR_WORKS.forEach(w => {
+                    const name = w.name || w.collectionName || w.id;
+                    $('<option>').val(w.id).text(name).appendTo($select);
+                });
+
+                $select.on('change', function() {
+                    const id = $(this).val();
+                    const work = VR_WORKS.find(w => w.id === id);
+                    if (work) loadWork(work);
+                });
+
+                if (VR_WORKS.length) {
+                    $select.val(VR_WORKS[0].id);
+                    loadWork(VR_WORKS[0]);
+                } else {
+                    const descEl = document.getElementById('vr-scene-desc');
+                    if (descEl) descEl.innerText = '未获取到可用的作品数据，请检查 main.py 中的模拟数据配置。';
+                }
+            },
+            error: function() {
+                const descEl = document.getElementById('vr-scene-desc');
+                if (descEl) descEl.innerText = 'VR 作品列表获取失败，请确认后端接口 /frontend/pg/huang/vr-works 是否可用。';
+            }
+        });
+    });
+})();
+</script>
+
+<script>
+   document.oncontextmenu = function(){return false;};
+</script>
+
+</body>
+</html>

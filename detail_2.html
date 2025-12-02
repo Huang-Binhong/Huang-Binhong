@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>黄宾虹书画艺术大展--单品详情</title>
+
+    <link href="css/z_style.css" rel="stylesheet">
+
+    <!-- 显式 https，避免 file:// 协议继承 -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-migrate@3.4.1/dist/jquery-migrate.min.js"></script>
+
+    <!-- 背景全屏 -->
+    <script type="text/javascript" src="js/jquery.bcat.bgswitcher.js"></script>
+
+    <!-- 禁止右键 -->
+    <script>
+    if (window.Event) {
+        document.captureEvents(Event.MOUSEUP);
+    }
+
+    function nocontextmenu() {
+        event.cancelBubble = true;
+        event.returnValue = false;
+        return false;
+    }
+
+    function norightclick(e) {
+        if (window.Event) {
+            if (e.which === 2 || e.which === 3)
+                return false;
+        } else if (event.button === 2 || event.button === 3) {
+            event.cancelBubble = true;
+            event.returnValue = false;
+            return false;
+        }
+    }
+    document.oncontextmenu = nocontextmenu; // for IE5+
+    document.onmousedown = norightclick; // for all others
+    </script>
+</head>
+
+<body>
+<div class="main">
+    <div class="nav_logo" data-scroll-reveal="enter right after 0.5s"><img src="images/list_logo.png" alt=""></div>
+    <div class="nav_logo2" data-scroll-reveal="enter left after 0.5s"><img src="images/list_logo2.png" alt=""></div>
+    <div class="nav_logo3" data-scroll-reveal="enter left after 1s"><img src="images/list_logo3.png" alt=""></div>
+
+    <div class="list_nav_bg" data-scroll-reveal="enter left after 0.5s"><img src="images/list_nav_bg.png" alt=""></div>
+
+    <div class="l_gk2" data-scroll-reveal="enter bottom after 1s">
+        <a href="#"><img src="images/l_gk.png" alt=""></a>
+        <div id="nav_1" class="l_list" style="display: none;">
+            <a href="list.html" class="a_guangkan_zpql"></a>
+        </div>
+    </div>
+    <div class="l_ts2" data-scroll-reveal="enter bottom after 1.5s">
+        <a href="#"><img src="images/l_ts.png" alt=""></a>
+        <div id="nav_2" class="l_list" style="display: none;">
+            <a href="sp_help.html" target="_blank" class="a_tangsuo_rs"></a>
+            <a href="shc_help.html" target="_blank" class="a_tangsuo_bf"></a>
+            <a href="jy_help.html" target="_blank" class="a_tangsuo_sh"></a>
+        </div>
+    </div>
+    <div class="l_cz2" data-scroll-reveal="enter bottom after 2s">
+        <a href="#"><img src="images/l_cz.png" alt=""></a>
+        <div id="nav_3" class="l_list" style="display: none;">
+            <a href="sm.html" target="_blank" class="a_chuanz"></a>
+            <a href="videopano/" target="_blank" class="a_vr"></a>
+            <a href="vf.html" target="_blank" class="a_vf"></a>
+        </div>
+    </div>
+
+    <div class="a_home" data-scroll-reveal="enter right after 1s">
+        <a href="index.html"><img src="images/a_home.png" alt=""></a>
+    </div>
+
+    <div class="list_main">
+        <div class="padding_50">
+            <div class="lujin">首页 / 观看 / 藏品展示</div>
+
+            <div class="main_w clearfix">
+                <div class="fl main_w_left">
+                    <div class="wz_ab" style="display: none;"><div class="tj"><img src="images/tj.png" alt=""></div></div>
+                    <ul>
+                        <span id="lightgallery">
+                        </span>
+                    </ul>
+                </div>
+
+                <div class="fr main_w_right">
+                    <h2><span id="dong-collection-name"></span></h2>
+                    <b>作者：</b><span id="dong-author"></span>
+                    &nbsp;&nbsp;<b>时代：</b><span id="dong-age"></span>
+                    &nbsp;&nbsp;<b>创作年份：</b><span id="dong-collection-time"></span><br>
+                    <b>质地：</b><span id="dong-texture"></span>
+                    &nbsp;&nbsp;<b>尺寸（内）：</b><span id="dong-collection-size"></span><br>
+                    <b>收藏单位：</b><span id="dong-collection-unit"></span><br><br>
+                    <b>简介：</b>
+                    <p><span id="dong-intro"></span></p>
+
+                    <div class="m_t_20">
+                        <a href="javascript:window.close();" class="a_close">关闭窗口</a>
+                    </div>
+                </div>
+                <div class="cb"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div style="width: 1000px; margin: 10px auto; color: #000000; text-align: center;"></div>
+    <div style="width: 1000px; margin: 10px auto; color: #000000;text-align: center;"></div>
+</div>
+
+<div id="bg-body"></div>
+
+<!-- 全屏背景切换 -->
+<script type="text/javascript">
+    var srcBgArray = ["images/list_bg1.jpg", "images/list_bg2.jpg"];
+
+    $(document).ready(function () {
+        $('#bg-body').bcatBGSwitcher({
+            urls: srcBgArray,
+            alt: ''
+        });
+    });
+</script>
+
+<!-- 导航鼠标移入 -->
+<script type="text/javascript">
+$(function (){
+    $(".l_ts2").mouseover(function (){
+        $("#nav_2").show();
+    }).mouseout(function (){
+        $("#nav_2").hide();
+    });
+
+    $(".l_gk2").mouseover(function (){
+        $("#nav_1").show();
+    }).mouseout(function (){
+        $("#nav_1").hide();
+    });
+
+    $(".l_cz2").mouseover(function (){
+        $("#nav_3").show();
+    }).mouseout(function (){
+        $("#nav_3").hide();
+    });
+});
+</script>
+
+<!-- 过渡动画 -->
+<script src="js/scrollReveal.js"></script>
+<script type="text/javascript">
+  (function($) {
+    window.scrollReveal = new scrollReveal({ reset: true, move: '30px' });
+  })(jQuery);
+</script>
+
+<!-- 详情数据加载 -->
+<script type="text/javascript">
+$(function () {
+    function getQueryId() {
+        var params = new URLSearchParams(window.location.search || "");
+        return params.get("id");
+    }
+
+    var id = getQueryId();
+    if (!id) {
+        return;
+    }
+
+    $.ajax({
+        url: "frontend/pg/huang/get-dong-by-id",
+        type: "post",
+        data: {
+            infomationId: id
+        },
+        dataType: "json",
+        error: function () {
+            alert("服务器通讯失败，请稍后再刷新页面。 ^_^");
+        },
+        success: function (data) {
+            if (!data || !data.infomation) {
+                return;
+            }
+
+            var info = data.infomation;
+            $("#dong-collection-name").html(info.collectionName || "");
+            $("#dong-author").html(info.author || "");
+            $("#dong-age").html(info.age || "");
+            $("#dong-collection-time").html(info.collectionTime || "");
+            $("#dong-texture").html(info.texture || "");
+            $("#dong-collection-size").html(info.collectionSize || "");
+            $("#dong-collection-unit").html(info.collectionUnit || "");
+            $("#dong-intro").html(info.intro || "");
+
+            var pics = [];
+            if (Array.isArray(data.bigPicSrcs) && data.bigPicSrcs.length > 0) {
+                pics = data.bigPicSrcs;
+            } else if (data.smallPicSrc) {
+                pics = [data.smallPicSrc];
+            }
+
+            if (pics.length > 1) {
+                $(".wz_ab").show();
+            }
+
+            var html = "";
+            for (var i = 0; i < pics.length; i++) {
+                var src = pics[i];
+                html += "<li><a href='" + src + "' target='_blank'><p><img src='" + src + "' alt='作品图片' /></p></a></li>";
+            }
+            $("#lightgallery").html(html);
+
+            // 取第一张图做放大镜效果
+            var $firstImg = $("#lightgallery img").first();
+            if ($firstImg.length) {
+                if ($firstImg[0].complete) {
+                    initMagnifier($firstImg);
+                } else {
+                    $firstImg.on("load", function () {
+                        initMagnifier($firstImg);
+                    });
+                }
+            }
+        }
+    });
+});
+</script>
+
+<!-- 放大镜（支持滚轮缩放） -->
+<script type="text/javascript">
+function initMagnifier($img) {
+    var img = $img[0];
+
+    // 包一层容器，方便定位
+    if (!$img.parent().hasClass("magnifier-container")) {
+        $img.wrap("<div class='magnifier-container'></div>");
+    }
+    var $container = $img.parent(".magnifier-container");
+
+    var $lens = $("<div class='magnifier-lens'></div>");
+    var $result = $("<div class='magnifier-result'></div>");
+    $container.append($lens);
+    // 放大区域放在左侧大图容器内，靠右侧显示
+    $(".main_w_left").append($result);
+
+    var lens = $lens[0];
+    var result = $result[0];
+
+    function updateZoom() {
+        // 根据当前镜片尺寸更新放大倍数和背景尺寸
+        var imgRect = img.getBoundingClientRect();
+        var displayWidth = imgRect.width;
+        var displayHeight = imgRect.height;
+        var cx = result.offsetWidth / lens.offsetWidth;
+        var cy = result.offsetHeight / lens.offsetHeight;
+        result.style.backgroundSize = (displayWidth * cx) + "px " + (displayHeight * cy) + "px";
+        return { cx: cx, cy: cy, imgRect: imgRect };
+    }
+
+    result.style.backgroundImage = "url('" + img.src + "')";
+    result.style.backgroundRepeat = "no-repeat";
+
+    function moveLens(e) {
+        e.preventDefault();
+
+        var zoomInfo = updateZoom();
+        var cx = zoomInfo.cx;
+        var cy = zoomInfo.cy;
+        var imgRect = zoomInfo.imgRect;
+        var containerRect = $container[0].getBoundingClientRect();
+
+        // 鼠标相对于图片显示区域的坐标（用实际渲染尺寸）
+        var relX = e.clientX - imgRect.left;
+        var relY = e.clientY - imgRect.top;
+        var displayWidth = imgRect.width;
+        var displayHeight = imgRect.height;
+
+        // 鼠标不在图片区域：隐藏放大镜
+        if (relX < 0 || relY < 0 || relX > displayWidth || relY > displayHeight) {
+            $lens.hide();
+            $result.hide();
+            return;
+        }
+
+        // 鼠标在图片内：确保放大镜可见
+        $lens.show();
+        $result.show();
+
+        // 让镜片中心跟随鼠标
+        var x = relX - lens.offsetWidth / 2;
+        var y = relY - lens.offsetHeight / 2;
+
+        // 约束在图片范围内（基于显示尺寸）
+        if (x < 0) x = 0;
+        if (y < 0) y = 0;
+        if (x > displayWidth - lens.offsetWidth) x = displayWidth - lens.offsetWidth;
+        if (y > displayHeight - lens.offsetHeight) y = displayHeight - lens.offsetHeight;
+
+        // 图片相对容器的偏移
+        var imgOffsetX = imgRect.left - containerRect.left;
+        var imgOffsetY = imgRect.top - containerRect.top;
+
+        // 镜片在容器中的实际位置 = 图片偏移 + 镜片在图片内的位置
+        lens.style.left = (imgOffsetX + x) + "px";
+        lens.style.top = (imgOffsetY + y) + "px";
+
+        // 背景偏移按镜片在图片内的位置计算
+        result.style.backgroundPosition = "-" + (x * cx) + "px -" + (y * cy) + "px";
+    }
+
+    // 只在整个展示区内跟踪鼠标，从任意方向进入图片都能触发
+    $container.on("mousemove", moveLens);
+
+    // 鼠标滚轮缩放：调整镜片大小和放大倍数（每次缩放约 20%）
+    $container.on("wheel", function (e) {
+        e.preventDefault();
+        var evt = e.originalEvent || e;
+        var deltaY = evt.deltaY || evt.wheelDelta || 0;
+        var zoomIn = deltaY < 0; // 向上滚动放大，向下缩小
+
+        var imgRect = img.getBoundingClientRect();
+        var displayWidth = imgRect.width;
+        var displayHeight = imgRect.height;
+
+        var currentSize = lens.offsetWidth; // 镜片为正方形
+        var factor = zoomIn ? 0.8 : 1.2;    // 每次缩放约 20%
+        var newSize = currentSize * factor;
+
+        var minSize = 50;
+        var maxSize = Math.min(displayWidth, displayHeight);
+        if (newSize < minSize) newSize = minSize;
+        if (newSize > maxSize) newSize = maxSize;
+
+        lens.style.width = newSize + "px";
+        lens.style.height = newSize + "px";
+
+        // 用当前鼠标位置重新计算镜片和放大视图
+        moveLens(e);
+    });
+
+    // 离开展示区整体就关闭放大
+    $container.on("mouseleave", function () {
+        $lens.hide();
+        $result.hide();
+    });
+}
+</script>
+
+<script>
+   document.oncontextmenu = function(){return false;};
+</script>
+
+</body>
+</html>

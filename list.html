@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<title>黄宾虹书画艺术专题--作品展示</title>
+
+<!-- 瀑布流 -->
+    <!-- Salvattore -->
+    <link rel="stylesheet" href="css/salvattore.css">
+    <!-- Theme Style -->
+    <link rel="stylesheet" href="css/style.css">
+
+
+<link href="css/z_style.css" rel="stylesheet">
+<!-- 显式 https，避免 file:// 协议下协议继承导致的 404 -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-migrate@3.4.1/dist/jquery-migrate.min.js"></script>
+<!-- 背景全屏 -->
+<script type="text/javascript" src="js/jquery.bcat.bgswitcher.js"></script>
+
+<!-- layer（占位，稍后补齐真实文件） -->
+<script type="text/javascript" src="layer/layer.js"></script>
+
+
+<!-- 禁止右键 -->
+<script>
+if (window.Event){
+   document.captureEvents(Event.MOUSEUP);
+}
+
+function nocontextmenu(){
+   event.cancelBubble = true
+   event.returnValue = false;
+   return false;
+}
+
+function norightclick(e) {
+   if (window.Event) {
+       if (e.which == 2 || e.which == 3)
+           return false;
+   } else if (event.button == 2 || event.button == 3){
+       event.cancelBubble = true
+       event.returnValue = false;
+       return false;
+   }
+}
+document.oncontextmenu = nocontextmenu; // for IE5+
+document.onmousedown = norightclick; // for all others
+</script>
+
+</head>
+
+<body onload="initializeData(1, false);">
+<div class="main">
+    <div class="nav_logo" data-scroll-reveal="enter right after 0.5s"><img src="images/list_logo.png" alt=""></div>
+    <div class="nav_logo2" data-scroll-reveal="enter left after 0.5s"><img src="images/list_logo2.png" alt=""></div>
+    <div class="nav_logo3"  data-scroll-reveal="enter left after 1s"><img src="images/list_logo3.png" alt=""></div>
+    
+    <div class="list_nav_bg" data-scroll-reveal="enter left after 0.5s"><img src="images/list_nav_bg.png" alt=""></div>
+    
+    <div class="l_gk2" data-scroll-reveal="enter bottom after 1s"><a href="#"><img src="images/l_gk.png" alt=""></a><div id="nav_1" class="l_list" style="display: none;"><a href="list.html" class="a_guangkan_zpql"></a></div></div>
+    <div class="l_ts2"  data-scroll-reveal="enter bottom after 1.5s"><a href="#"><img src="images/l_ts.png" alt=""></a><div id="nav_2" class="l_list" style="display: none;"><a href="sp_help.html" target="_blank" class="a_tangsuo_rs"></a><a href="shc_help.html" target="_blank" class="a_tangsuo_bf"></a><a href="jy_help.html" target="_blank" class="a_tangsuo_sh"></a></div></div>
+    <div class="l_cz2"   data-scroll-reveal="enter bottom after 2s"><a href="#"><img src="images/l_cz.png" alt=""></a><div id="nav_3" class="l_list" style="display: none;"><a href="sm.html" target="_blank" class="a_chuanz"></a><a href="vr.html" target="_blank" class="a_vr"></a><a href="vf.html" target="_blank" class="a_vf"></a></div></div>
+    
+    <div class="a_home" data-scroll-reveal="enter right after 1s"><a href="index.html"><img src="images/a_home.png" alt=""></a></div>
+    
+    <div class="list_main">
+        <div class="padding_50">
+            <div class="list_title"><img src="images/ql.png" alt=""></div>
+            <div style="margin-top: 20px;"><img src="images/button_dqc.png" border="0" usemap="#Map" id="change_one" alt="">
+<map name="Map"><area shape="rect" coords="15,6,523,58" href="javascript:void(0);" onClick="changimg('images/button_dqc.png')" id="button_dqc" style="outline:none;"><area shape="rect" coords="579,6,1086,57" href="javascript:void(0);" onClick="changimg('images/button_qt.png')" id="button_qt"  style="outline:none;"></map></div>
+
+            <div id="dqc" style="display: none; margin-top: 10px;">
+                <div><img src="images/button_dqc_1.png" border="0" usemap="#Map2" id="change_two" alt="">
+<map name="Map2"><area shape="rect" coords="14,5,495,46" href="javascript:void(0);" onClick="changimg2('images/button_dqc_1_left.png')" id="button_dqc_1_left" style="outline:none;"><area shape="rect" coords="582,6,1085,45" href="javascript:void(0);" onClick="changimg2('images/button_dqc_1_right.png')" id="button_dqc_1_right" style="outline:none;"></map></div>
+
+            <!-- 书法时代 -->
+            <div style="display: none;" id="dqc_sfsd_sf">
+                <ul class="sd_nav">
+                    <li><a href="javascript:void(0);" class="a_sd_1" data-category="010101">&nbsp;</a></li>
+                    <li><a href="javascript:void(0);" class="a_sd_2" data-category="010102">&nbsp;</a></li>
+                    <li><a href="javascript:void(0);" class="a_sd_3" data-category="010103">&nbsp;</a></li>
+                    <li><a href="javascript:void(0);" class="a_sd_4" data-category="010104">&nbsp;</a></li>
+                </ul>
+            </div>
+            <!-- 绘画时代 -->
+            <div style="display: none;" id="dqc_sfsd_hh">
+                <ul class="sd_nav">
+                    <li><a href="javascript:void(0);" class="a_sd_1" data-category="010201">&nbsp;</a></li>
+                    <li><a href="javascript:void(0);" class="a_sd_2" data-category="010202">&nbsp;</a></li>
+                    <li><a href="javascript:void(0);" class="a_sd_3" data-category="010203">&nbsp;</a></li>
+                    <li><a href="javascript:void(0);" class="a_sd_4" data-category="010204">&nbsp;</a></li>
+                </ul>
+            </div>
+          </div>
+            
+            
+            
+            <div id="qt" style="display: none;margin-top: 10px;">
+                <div><img src="images/button_dqc_1.png" border="0" usemap="#Map3" id="change_three" alt="">
+                <map name="Map3"><area shape="rect" coords="14,5,495,46" href="javascript:void(0);" onClick="changimg3('images/button_dqc_1_left.png')" id="button_qt_1_left" style="outline:none;"><area shape="rect" coords="582,6,1085,45" href="javascript:void(0);" onClick="changimg3('images/button_dqc_1_right.png')" id="button_qt_1_right" style="outline:none;"></map></div>
+                
+                <!-- 其他书法时代 -->
+                <div style="display: none;" id="qt_qtsd_sf">
+                    <ul class="sd_nav">
+                        <li><a href="javascript:void(0);" class="a_jc_1" data-category="020101">&nbsp;</a></li>
+                        <li><a href="javascript:void(0);" class="a_jc_2" data-category="020102">&nbsp;</a></li>
+                        <li><a href="javascript:void(0);" class="a_jc_3" data-category="020103">&nbsp;</a></li>
+                    </ul>
+                </div>
+                <!-- 其他绘画时代 -->
+                <div style="display: none;" id="qt_qtsd_hh">
+                    <ul class="sd_nav">
+                        <li><a href="javascript:void(0);" class="a_jc_1" data-category="020201">&nbsp;</a></li>
+                        <li><a href="javascript:void(0);" class="a_jc_2" data-category="020202">&nbsp;</a></li>
+                        <li><a href="javascript:void(0);" class="a_jc_3" data-category="020203">&nbsp;</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!--只有在 “其他作品”分类下，影响下还分“后学”、“作伪” -->
+            <div class="container other-dong-container" style="text-align: center; padding-top: 40px; display: none;">
+                <img src="images/fl_hx.png" alt="">
+            </div>
+            
+            <div class="container other-dong-container" style="width: 1100px; padding-top: 40px; display: none;">
+                
+                <div id="dong-list-1" class="row">
+                    
+                </div>
+                
+            </div>
+            
+            <div class="container other-dong-container" style="text-align: center; padding-top: 40px; display: none;">
+                <img src="images/fl_zw.png" alt="">
+            </div>
+            
+            <div class="container other-dong-container" style="width: 1100px; padding-top: 40px; display: none;">
+                
+                <div id="dong-list-2" class="row">
+                    
+                </div>
+                
+            </div>
+            
+            
+            
+            <!-- 图片列表 -->
+            <div class="main-dong-container" style="padding-top: 40px; display: none;">
+                <div id="fh5co-board" class="fh5co-board" data-columns>
+                    <!-- 项目将通过JS动态添加 -->
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+    <div style="width: 1000px; margin: 10px auto; color: #000000; text-align: center;"></div>
+    <div style="width: 1000px; margin: 10px auto; color: #000000;text-align: center;"></div>
+    
+</div>
+
+<div id="bg-body">
+</div>
+
+<!--全屏背景切换-->
+<script type="text/javascript">
+var srcBgArray = ["images/list_bg1.jpg","images/list_bg2.jpg"];
+
+$(document).ready(function() {
+  $('#bg-body').bcatBGSwitcher({
+    urls: srcBgArray,
+    alt: ''
+  });
+});
+</script><!--end of bg-body script-->
+
+<!-- 鼠标移入 -->
+<script type="text/javascript">  
+$(function (){   
+    //鼠标的移入移出  
+    $(".l_gk2").mouseover(function (){  
+            $("#nav_1").show();  
+    }).mouseout(function (){  
+            $("#nav_1").hide();  
+    }); 
+    
+    $(".l_ts2").mouseover(function (){  
+            $("#nav_2").show();  
+    }).mouseout(function (){  
+            $("#nav_2").hide();  
+    });  
+    
+    $(".l_cz2").mouseover(function (){  
+            $("#nav_3").show();  
+    }).mouseout(function (){  
+            $("#nav_3").hide();  
+    }); 
+        
+});  
+</script>  
+
+
+<!-- 一级切换 -->
+<script type="text/javascript">  
+  
+    function changimg(imgName){
+document.getElementById('change_one').src=imgName;
+}
+
+$(function (){   
+    $("#button_dqc").click(function (){ 
+                document.getElementById('change_two').src='images/button_dqc_1.png';
+                
+                $("#dqc_sfsd_sf").hide();  
+                $("#dqc_sfsd_hh").hide(); 
+                
+                $("#dqc").show();  
+                $("#qt").hide(); 
+                GLOBE_CATEGORY = "01";
+                initializeData(1, false);
+        });
+    $("#button_qt").click(function (){ 
+                document.getElementById('change_three').src='images/button_dqc_1.png';
+                
+                $("#qt_qtsd_sf").hide();  
+                $("#qt_qtsd_hh").hide(); 
+                
+                $("#dqc").hide();  
+                $("#qt").show(); 
+                GLOBE_CATEGORY = "02";
+                initializeData(1, false);
+        });
+});  
+</script> 
+
+<!-- 二级切换 -->
+<script type="text/javascript">  
+ 
+ // 董 时代
+    function changimg2(imgName){
+document.getElementById('change_two').src=imgName;
+}
+
+ // 其他 时代
+    function changimg3(imgName){
+document.getElementById('change_three').src=imgName;
+}
+
+// 董
+$(function (){   
+    $("#button_dqc_1_left").click(function (){ 
+                $(".a_sd_on").removeClass("a_sd_on");
+                $("#dqc_sfsd_sf").show();  
+                $("#dqc_sfsd_hh").hide(); 
+                
+                GLOBE_CATEGORY = "0101";
+                initializeData(1, false);
+        });
+    $("#button_dqc_1_right").click(function (){ 
+                $(".a_sd_on").removeClass("a_sd_on");
+                $("#dqc_sfsd_sf").hide();  
+                $("#dqc_sfsd_hh").show(); 
+                
+                GLOBE_CATEGORY = "0102";
+                initializeData(1, false);
+        });
+});  
+
+// 其他
+$(function (){   
+    $("#button_qt_1_left").click(function (){ 
+                $(".a_jc_on").removeClass("a_jc_on");      
+                $("#qt_qtsd_sf").show();  
+                $("#qt_qtsd_hh").hide(); 
+                
+                GLOBE_CATEGORY = "0201";
+                initializeData(1, false);
+        });
+    $("#button_qt_1_right").click(function (){ 
+                $(".a_jc_on").removeClass("a_jc_on");      
+                $("#qt_qtsd_sf").hide();  
+                $("#qt_qtsd_hh").show(); 
+                
+                GLOBE_CATEGORY = "0202";
+                initializeData(1, false);
+        });
+});
+
+// 三级点击
+$(function() {
+    $("#dqc .sd_nav").on("click", "a", function() {
+        $(".a_sd_on").removeClass("a_sd_on");
+        $(this).addClass("a_sd_on");
+        
+        GLOBE_CATEGORY = $(this).data("category");
+        initializeData(1, false);
+    });
+    
+    $("#qt .sd_nav").on("click", "a", function() {
+        $(".a_jc_on").removeClass("a_jc_on");
+        $(this).addClass("a_jc_on");
+        
+        GLOBE_CATEGORY = $(this).data("category");
+        if (GLOBE_CATEGORY == "020103" || GLOBE_CATEGORY == "020203") {
+            loadImpactData();
+        } else {
+            initializeData(1, false);
+        }
+    });
+});
+
+</script> 
+
+<!-- 瀑布流（稍后补齐真实文件） -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/salvattore/1.0.7/salvattore.min.js"></script>
+
+
+
+<!-- 过渡动画 -->
+    <script src="js/scrollReveal.js"></script>
+    <script type="text/javascript">
+      (function($) {
+        window.scrollReveal = new scrollReveal({ reset: true, move: '30px' });
+      })(jQuery);
+    </script>
+    
+    
+<script type="text/javascript">
+var PAGE_SIZE = 12;
+var MAXIMUM_PAGE_SIZE = 10000;
+var GLOBE_CATEGORY = "";
+var GLOBE_TOTAL_PAGE = null;
+var GLOBE_CURRENT_PAGE = null;
+
+function initializeData(pageNo, appendFlag) {
+    $(window).off("scroll");
+    
+    if (!appendFlag) {
+        $(".other-dong-container").hide();
+        $("#fh5co-board").html("");
+        $(".main-dong-container").show();
+    }
+    
+    var ii = null;
+    if (!appendFlag)
+        ii = layer.load(1, {shade: [0.1,'#fff']});
+
+    // 占位：等待后端/数据补齐。如需演示，可在此构造示例数据。
+    $.ajax({
+        url: "frontend/pg/huang/huang-collection",
+        type: "post",
+        data: {
+            category: GLOBE_CATEGORY,
+            pageNo: pageNo,
+            pageSize: PAGE_SIZE,
+        },
+        dataType: "json",
+        error: function() {
+            if (ii) layer.close(ii);
+            // 未接好接口时静默失败即可；也可提示：
+            // alert("服务器通讯失败，请稍后再刷新页面。 ^_^");
+        },
+        success: function(data) {
+            GLOBE_TOTAL_PAGE = data.pageN;
+            GLOBE_CURRENT_PAGE = data.pageNo;
+            
+            if (appendFlag) {
+                var grid = $("#fh5co-board")[0];
+                var items = [];
+                for (var i = 0; i < data.infomationList.length; i++) {
+                    var rec = data.infomationList[i];
+                    var content = getItemHtmlContent(rec, data);
+                    items.push($(content)[0]);
+                }
+                salvattore.append_elements(grid, items);
+            } else {
+                var html = ""; 
+                for (var i = 0; i < data.infomationList.length; i++) {
+                    var rec = data.infomationList[i];
+                    html += getItemHtmlContent(rec, data);
+                }
+                $("#fh5co-board").html(html);
+                
+                var grid = $("#fh5co-board")[0];
+                salvattore.register_grid(grid);
+            }
+            
+            if (ii) layer.close(ii);
+            
+            $(window).on("scroll", fetchMore);
+            $(window).trigger("scroll");
+        }
+    });
+}
+
+function getItemHtmlContent(rec, data) {
+    var smallPicSrc = "images/bg1.jpg"; // 占位缩略图
+    if (rec && rec.smallPic) {
+        smallPicSrc = data.realPath + "/" + rec.smallPic.directoryName + "/" + rec.smallPic.resourceName;
+    }
+    var content =  "" + 
+    "<div class='item'>" + 
+        "<div class='fh5co-board-img'>" + 
+            "<a href='detail_2.html?id=" + (rec ? rec.id : '') + "' target='_blank' class='image-popup'><img src='" + smallPicSrc + "' style='width: 100%; height: auto;'></a>" + 
+        "</div>" + 
+        "<div class='fh5co-desc' style='font-size: 14px;'><b>品名：</b>" + (rec ? rec.collectionName : '—') + " <br> <b>作者：</b>" + (rec ? rec.author : '黄宾虹') + " <br> <b>时代：</b>" + (rec ? rec.age : '—') + "</div>" + 
+    "</div>";
+    return content;
+}
+
+function fetchMore() {
+    if ($(window).scrollTop() >= $(document).height() - $(window).height()) {
+        if (GLOBE_CURRENT_PAGE < GLOBE_TOTAL_PAGE) {
+            initializeData(GLOBE_CURRENT_PAGE + 1, true);
+        }
+    }
+}
+
+</script>
+
+<script type="text/javascript">
+function loadImpactData() {
+    $(window).off("scroll");
+    
+    $(".main-dong-container").hide();
+    $("#dong-list-1").html("");
+    $("#dong-list-2").html("");
+    $(".other-dong-container").show();
+    
+    var ii = layer.load(1, {shade: [0.1,'#fff']});
+    var count = 0;
+    $.ajax({
+        url: "frontend/pg/huang/huang-collection",
+        type: "post",
+        data: {
+            category: GLOBE_CATEGORY + "01",
+            pageNo: 1,
+            pageSize: MAXIMUM_PAGE_SIZE,
+        },
+        dataType: "json",
+        error: function() {
+            // alert("服务器通讯失败，请稍后再刷新页面。 ^_^");
+        },
+        success: function(data) {
+            var html = "<div id='fh5co-board-1' class='fh5co-board' data-columns>"; 
+            for (var i = 0; i < data.infomationList.length; i++) {
+                var rec = data.infomationList[i];
+                html += getItemHtmlContent(rec, data);
+            }
+            html += "</div>";
+            $("#dong-list-1").html(html);
+            var grid = $("#fh5co-board-1")[0];
+            salvattore.register_grid(grid);
+        },
+        complete: function() {
+            count++;
+            if (count == 2)
+                layer.close(ii);
+        }
+    });
+    
+    $.ajax({
+        url: "frontend/pg/huang/huang-collection",
+        type: "post",
+        data: {
+            category: GLOBE_CATEGORY + "02",
+            pageNo: 1,
+            pageSize: MAXIMUM_PAGE_SIZE,
+        },
+        dataType: "json",
+        error: function() {
+            // alert("服务器通讯失败，请稍后再刷新页面。 ^_^");
+        },
+        success: function(data) {
+            var html = "<div id='fh5co-board-2' class='fh5co-board' data-columns>"; 
+            for (var i = 0; i < data.infomationList.length; i++) {
+                var rec = data.infomationList[i];
+                html += getItemHtmlContent(rec, data);
+            }
+            html += "</div>";
+            $("#dong-list-2").html(html);
+            var grid = $("#fh5co-board-2")[0];
+            salvattore.register_grid(grid);
+        },
+        complete: function() {
+            count++;
+            if (count == 2)
+                layer.close(ii);
+        }
+    });
+}
+</script>
+
+<script>
+   document.oncontextmenu = function(){return false;};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="数字黄宾虹">
+<title>黄宾虹书画艺术专题</title>
+
+<link href="css/z_style.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-migrate@3.4.1/dist/jquery-migrate.min.js"></script>
+<!-- 背景全屏 -->
+<script type="text/javascript" src="js/jquery.bcat.bgswitcher.js"></script>
+
+<!-- 禁止右键（沿用原站实现） -->
+<script>
+if (window.Event){
+   document.captureEvents(Event.MOUSEUP);
+}
+
+function nocontextmenu(){
+   event.cancelBubble = true
+   event.returnValue = false;
+   return false;
+}
+
+function norightclick(e) {
+   if (window.Event) {
+       if (e.which == 2 || e.which == 3)
+           return false;
+   } else if (event.button == 2 || event.button == 3){
+       event.cancelBubble = true
+       event.returnValue = false;
+       return false;
+   }
+}
+document.oncontextmenu = nocontextmenu; // for IE5+
+document.onmousedown = norightclick; // for all others
+</script>
+
+</head>
+
+<body style="overflow:hidden">
+
+	<div class="header" >
+		<div class="in_main">
+
+			<div class="right_bg"><img src="images/right_bg.png" alt=""></div>
+			<div class="logo" data-scroll-reveal="enter right after 0.5s"><img src="images/logo.png" alt=""></div>
+			<div class="logo2"  data-scroll-reveal="enter left after 0.5s"><img src="images/logo_2.png" alt=""></div>
+			<div class="logo3"  data-scroll-reveal="enter left after 1s"><img src="images/logo3.png" alt=""></div>
+			
+			<div class="l_gk" data-scroll-reveal="enter bottom after 1s"><a href="#"><img src="images/l_gk.png" alt=""></a><div id="nav_1" class="l_list" style="display: none;"><a href="list.html" class="a_guangkan_zpql" title="观看"></a></div></div>
+			<div class="l_ts"  data-scroll-reveal="enter bottom after 1.5s"><a href="#"><img src="images/l_ts.png" alt=""></a><div id="nav_2" class="l_list" style="display: none;"><a href="sp_help.html" target="_blank" class="a_tangsuo_rs" title="探索·人物"></a><a href="shc_help.html" target="_blank" class="a_tangsuo_bf" title="探索·笔法"></a><a href="jy_help.html" target="_blank" class="a_tangsuo_sh" title="探索·山河"></a></div></div>
+			<div class="l_cz"   data-scroll-reveal="enter bottom after 2s"><a href="#"><img src="images/l_cz.png" alt=""></a><div id="nav_3" class="l_list" style="display: none;"><a href="sm.html" target="_blank" class="a_chuanz" style="display: none;"></a><a href="vr.html" target="_blank" class="a_vr" title="VR"></a><a href="vf.html" target="_blank" class="a_vf" title="VF"></a></div></div>
+			
+		</div>
+		<div style="width: 1000px; margin: 10px auto; color: #000000; text-align: center;"></div>
+		<div style="width: 1000px; margin: 10px auto; color: #000000;text-align: center;"></div>
+						</div>
+
+
+
+
+
+<div id="bg-body">
+</div>
+
+<!-- 全屏背景切换（按需替换 images/bg1.jpg、images/bg2.jpg 为黄宾虹图像） -->
+<script type="text/javascript">
+var srcBgArray = ["images/bg1.jpg","images/bg2.jpg"];
+
+$(document).ready(function() {
+  $('#bg-body').bcatBGSwitcher({
+    urls: srcBgArray,
+    alt: ''
+  });
+});
+</script><!--end of bg-body script-->
+
+<!-- 鼠标移入：展示下拉菜单 -->
+<script type="text/javascript">  
+$(function (){   
+	// 鼠标移入移出显示子菜单
+	$(".l_gk").mouseover(function (){  
+			$("#nav_1").show();  
+	}).mouseout(function (){  
+			$("#nav_1").hide();  
+	}); 
+	
+	$(".l_ts").mouseover(function (){  
+			$("#nav_2").show();  
+	}).mouseout(function (){  
+			$("#nav_2").hide();  
+	});  
+	
+	$(".l_cz").mouseover(function (){  
+			$("#nav_3").show();  
+	}).mouseout(function (){  
+			$("#nav_3").hide();  
+	}); 
+		
+});  
+</script>  
+
+
+<!-- 过渡动画 -->
+<script src="js/scrollReveal.js"></script>
+<script type="text/javascript">
+  (function($) {
+    window.scrollReveal = new scrollReveal({ reset: true, move: '30px' });
+  })(jQuery);
+</script>
+    
+<script>
+   document.oncontextmenu = function(){return false;};
+// 再次兜底关闭右键菜单
+</script>
+
+</body>
+</html>

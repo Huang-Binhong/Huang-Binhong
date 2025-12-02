@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="模板风格示例">
+    <title>黄宾虹书画艺术大观 — 模板示例</title>
+
+    <!-- 使用本示例目录下样式 -->
+    <link href="ccs/z_style.css" rel="stylesheet">
+    <link href="ccs/style.css" rel="stylesheet">
+
+    <!-- 显式 https，避免 file:// 协议继承导致的资源问题 -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-migrate@3.4.1/dist/jquery-migrate.min.js"></script>
+
+    <!-- 背景全屏 -->
+    <script type="text/javascript" src="js/jquery.bcat.bgswitcher.js"></script>
+
+    <!-- 禁止右键（示例） -->
+    <script>
+    if (window.Event) { document.captureEvents(Event.MOUSEUP); }
+    function nocontextmenu(){ event.cancelBubble = true; event.returnValue = false; return false; }
+    function norightclick(e){ if (window.Event){ if (e.which===2||e.which===3) return false; } else if (event.button===2||event.button===3){ event.cancelBubble=true; event.returnValue=false; return false; } }
+    document.oncontextmenu = nocontextmenu; document.onmousedown = norightclick;
+    </script>
+</head>
+
+<body>
+<div class="main">
+    <div class="nav_logo" data-scroll-reveal="enter right after 0.5s"><img src="images/list_logo.png" alt=""></div>
+    <div class="nav_logo2" data-scroll-reveal="enter left after 0.5s"><img src="images/list_logo2.png" alt=""></div>
+    <div class="nav_logo3" data-scroll-reveal="enter left after 1s"><img src="images/list_logo3.png" alt=""></div>
+
+    <div class="list_nav_bg" data-scroll-reveal="enter left after 0.5s"><img src="images/list_nav_bg.png" alt=""></div>
+
+    <div class="l_gk2" data-scroll-reveal="enter bottom after 1s">
+        <a href="#"><img src="images/l_gk.png" alt=""></a>
+        <div id="nav_1" class="l_list" style="display: none;">
+            <a href="#" class="a_guangkan_zpql" title="示例入口"></a>
+        </div>
+    </div>
+    <div class="l_ts2" data-scroll-reveal="enter bottom after 1.5s">
+        <a href="#"><img src="images/l_ts.png" alt=""></a>
+        <div id="nav_2" class="l_list" style="display: none;">
+            <a href="#" class="a_tangsuo_rs" title="示例入口"></a>
+            <a href="#" class="a_tangsuo_bf" title="示例入口"></a>
+            <a href="#" class="a_tangsuo_sh" title="示例入口"></a>
+        </div>
+    </div>
+    <div class="l_cz2" data-scroll-reveal="enter bottom after 2s">
+        <a href="#"><img src="images/l_cz.png" alt=""></a>
+        <div id="nav_3" class="l_list" style="display: none;">
+            <a href="#" class="a_chuanz" title="示例入口"></a>
+            <a href="#" class="a_vr" title="示例入口"></a>
+            <a href="#" class="a_vf" title="示例入口"></a>
+        </div>
+    </div>
+
+    <div class="a_home" data-scroll-reveal="enter right after 1s">
+        <a href="#"><img src="images/a_home.png" alt=""></a>
+    </div>
+
+    <div class="list_main">
+        <div class="padding_50">
+            <div class="lujin">首页 / 模板示例</div>
+
+            <div class="main_w clearfix">
+                <div class="fl main_w_left" style="display: table-cell; vertical-align: middle; text-align: center;">
+                    
+                </div>
+
+                <div class="fr main_w_right">
+                    <h2>右侧说明区示例</h2>
+                    
+                </div>
+                <div class="cb"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div style="width: 1000px; margin: 10px auto; color: #000000; text-align: center;"></div>
+    <div style="width: 1000px; margin: 10px auto; color: #000000;text-align: center;"></div>
+</div>
+
+<div id="bg-body"></div>
+
+<!-- 全屏背景切换 -->
+<script type="text/javascript">
+    var srcBgArray = ["images/list_bg1.jpg", "images/list_bg2.jpg"];
+    $(document).ready(function () {
+        $('#bg-body').bcatBGSwitcher({ urls: srcBgArray, alt: '' });
+    });
+    // 导航鼠标移入
+    $(function(){
+        $(".l_ts2").hover(function(){ $("#nav_2").show(); }, function(){ $("#nav_2").hide(); });
+        $(".l_gk2").hover(function(){ $("#nav_1").show(); }, function(){ $("#nav_1").hide(); });
+        $(".l_cz2").hover(function(){ $("#nav_3").show(); }, function(){ $("#nav_3").hide(); });
+    });
+    document.oncontextmenu = function(){return false;};
+    </script>
+
+<!-- 过渡动画（本地） -->
+<script src="js/scrollReveal.js"></script>
+<script>
+  (function($) { window.scrollReveal = new scrollReveal({ reset: true, move: '30px' }); })(jQuery);
+  </script>
+
+</body>
+</html>

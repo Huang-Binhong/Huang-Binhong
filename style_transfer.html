@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <title>黄宾虹书画艺术 — 风格生成</title>
+
+  <!-- 主题样式与页面样式 -->
+  <link rel="stylesheet" href="css/z_style.css">
+  <link rel="stylesheet" href="css/style-transfer.css">
+
+  <!-- 显式 https，避免 file:// 继承导致 404 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-migrate@3.4.1/dist/jquery-migrate.min.js"></script>
+  <!-- 背景全屏 -->
+  <script type="text/javascript" src="js/jquery.bcat.bgswitcher.js"></script>
+
+  <!-- 禁止右键 -->
+  <script>
+  if (window.Event){ document.captureEvents(Event.MOUSEUP); }
+  function nocontextmenu(){ event.cancelBubble = true; event.returnValue = false; return false; }
+  function norightclick(e){ if (window.Event){ if (e.which==2||e.which==3) return false; } else if (event.button==2||event.button==3){ event.cancelBubble=true; event.returnValue=false; return false; } }
+  document.oncontextmenu = nocontextmenu; document.onmousedown = norightclick;
+  </script>
+</head>
+
+<body>
+<div class="main">
+  <div class="nav_logo" data-scroll-reveal="enter right after 0.5s"><img src="images/list_logo.png" alt=""></div>
+  <div class="nav_logo2" data-scroll-reveal="enter left after 0.5s"><img src="images/list_logo2.png" alt=""></div>
+  <div class="nav_logo3"  data-scroll-reveal="enter left after 1s"><img src="images/list_logo3.png" alt=""></div>
+
+  <div class="list_nav_bg" data-scroll-reveal="enter left after 0.5s"><img src="images/list_nav_bg.png" alt=""></div>
+
+  <div class="l_gk2" data-scroll-reveal="enter bottom after 1s"><a href="#"><img src="images/l_gk.png" alt=""></a><div id="nav_1" class="l_list" style="display:none;"><a href="list.html" class="a_guangkan_zpql"></a></div></div>
+  <div class="l_ts2"  data-scroll-reveal="enter bottom after 1.5s"><a href="#"><img src="images/l_ts.png" alt=""></a><div id="nav_2" class="l_list" style="display:none;"><a href="sp_help.html" target="_blank" class="a_tangsuo_rs"></a><a href="shc_help.html" target="_blank" class="a_tangsuo_bf"></a><a href="jy_help.html" target="_blank" class="a_tangsuo_sh"></a></div></div>
+  <div class="l_cz2"   data-scroll-reveal="enter bottom after 2s"><a href="#"><img src="images/l_cz.png" alt=""></a><div id="nav_3" class="l_list" style="display:none;"><a href="sm.html" target="_blank" class="a_chuanz"></a><a href="vr.html" target="_blank" class="a_vr"></a><a href="vf.html" target="_blank" class="a_vf"></a></div></div>
+
+  <div class="a_home" data-scroll-reveal="enter right after 1s"><a href="index.html"><img src="images/a_home.png" alt=""></a></div>
+
+  <div class="list_main">
+    <div class="padding_50">
+      <div class="lujin">首页 / 创作 / AI 风格生成</div>
+
+      <div class="main_w clearfix">
+        <!-- 左侧：上传与预览 -->
+        <div class="fl main_w_left">
+          <section class="panel-card">
+            <div class="panel-title">上传与预览</div>
+            <div class="panel-body">
+              <div id="dropzone" class="dropzone">
+                <input id="fileInput" type="file" accept="image/*" hidden />
+                <div class="preview" id="preview">
+                  <div class="hint">将图片拖入此处，或点击下方按钮选择文件</div>
+                </div>
+                <div class="btns">
+                  <a href="javascript:void(0);" id="chooseBtn" class="btn secondary">选择图片</a>
+                  <a href="javascript:void(0);" id="genBtn" class="btn" aria-disabled="true">生成风格图像</a>
+                  <span class="loader" id="loader">正在生成，请稍候…</span>
+                </div>
+                <div class="inline-hint">提示：首次使用前请在后端配置豆包 API 地址与密钥</div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- 右侧：结果展示 -->
+        <div class="fr main_w_right">
+          <section class="panel-card">
+            <div class="panel-title">生成结果</div>
+            <div class="panel-body">
+              <div class="out" id="output">
+                <div class="hint">生成的图像将显示在这里</div>
+              </div>
+              <div class="actions">
+                <a id="downloadLink" class="btn" style="display:none" download="hbh_stylized.png">下载图片</a>
+                <a id="resetBtn" class="btn secondary">清空</a>
+              </div>
+              <div id="error" class="error" style="display:none"></div>
+            </div>
+          </section>
+        </div>
+        <div class="cb"></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="width: 1000px; margin: 10px auto; color: #000000; text-align: center;"></div>
+  <div style="width: 1000px; margin: 10px auto; color: #000000;text-align: center;"></div>
+  
+</div>
+
+<div id="bg-body"></div>
+
+<!-- 全屏背景切换 -->
+<script type="text/javascript">
+  var srcBgArray = ["images/list_bg1.jpg","images/list_bg2.jpg"];
+  $(document).ready(function(){ $('#bg-body').bcatBGSwitcher({ urls: srcBgArray, alt: '' }); });
+</script>
+
+<!-- 导航鼠标移入 -->
+<script type="text/javascript">
+$(function (){   
+  $(".l_gk2").mouseover(function (){  $("#nav_1").show();  }).mouseout(function (){  $("#nav_1").hide();  }); 
+  $(".l_ts2").mouseover(function (){  $("#nav_2").show();  }).mouseout(function (){  $("#nav_2").hide();  });  
+  $(".l_cz2").mouseover(function (){  $("#nav_3").show();  }).mouseout(function (){  $("#nav_3").hide();  });
+});
+document.oncontextmenu=function(){return false;};
+</script>
+
+<!-- 过渡动画 -->
+<script src="js/scrollReveal.js"></script>
+<script>(function($){ window.scrollReveal = new scrollReveal({ reset: true, move: '30px' }); })(jQuery);</script>
+
+<!-- 页面逻辑 -->
+<script src="js/style-transfer.js"></script>
+</body>
+</html>
