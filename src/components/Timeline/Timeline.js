@@ -151,6 +151,7 @@ const Timeline = ({ events, loading }) => {
                                         className="ruler-year-top"
                                         style={{ left: `${(i / totalYears) * 100}%` }}
                                     >
+                                        .
                                         {/* 上方年份标签 */}
                                         <div
                                             className="year-label-top"
