@@ -1,0 +1,258 @@
+/* AI讲解系统样式 */
+.ai-explanation-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+/* AI讲解按钮 */
+.ai-explanation-button {
+  background-color: #3B4F3A; /* 墨绿色 */
+  color: #F7F5F0; /* 米白色 */
+  border: none;
+  border-radius: 4px; /* 圆角4px */
+  padding: 12px 24px;
+  font-family: "Source Han Sans", "思源黑体", sans-serif; /* 思源黑体 */
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.ai-explanation-button:hover {
+  background-color: #2E2E2E; /* 悬停时变为墨黑色 */
+}
+
+/* AI讲解面板 */
+.ai-explanation-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 700px;
+  max-height: 80vh;
+  background-color: #F7F5F0; /* 米白色背景 */
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 面板头部 */
+.ai-explanation-header {
+  background-color: #3B4F3A; /* 墨绿色 */
+  color: #F7F5F0; /* 米白色 */
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-explanation-header h2 {
+  margin: 0;
+  font-family: "Source Han Sans", "思源黑体", sans-serif;
+  font-weight: normal;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #F7F5F0; /* 米白色 */
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 讲解内容区域 */
+.ai-explanation-content {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+  font-family: "PingFang SC", "苹方", sans-serif; /* 苹方 */
+  color: #2E2E2E; /* 墨黑色 */
+  line-height: 1.6;
+}
+
+.ai-explanation-content h3 {
+  color: #3B4F3A; /* 墨绿色 */
+  font-family: "Source Han Sans", "思源黑体", sans-serif; /* 思源黑体 */
+  border-bottom: 1px solid #D4A451; /* 金黄色下划线 */
+  padding-bottom: 8px;
+  margin-top: 0;
+}
+
+.ai-explanation-content h4 {
+  color: #3B4F3A; /* 墨绿色 */
+  font-family: "Source Han Sans", "思源黑体", sans-serif; /* 思源黑体 */
+  margin-top: 24px;
+}
+
+.ai-explanation-content p {
+  margin: 16px 0;
+}
+
+.ai-explanation-content ul {
+  padding-left: 20px;
+}
+
+.ai-explanation-content li {
+  margin: 8px 0;
+}
+
+/* AI响应内容 */
+.ai-response-content {
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+/* Markdown样式 */
+.ai-response-content h1,
+.ai-response-content h2,
+.ai-response-content h3,
+.ai-response-content h4,
+.ai-response-content h5,
+.ai-response-content h6 {
+  color: #3B4F3A;
+  font-family: "Source Han Sans", "思源黑体", sans-serif;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+.ai-response-content h1 {
+  font-size: 2em;
+  border-bottom: 1px solid #D4A451;
+  padding-bottom: 8px;
+}
+
+.ai-response-content h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid #D4A451;
+  padding-bottom: 8px;
+}
+
+.ai-response-content h3 {
+  font-size: 1.25em;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.ai-response-content p {
+  margin: 12px 0;
+}
+
+.ai-response-content ul,
+.ai-response-content ol {
+  padding-left: 24px;
+  margin: 16px 0;
+}
+
+.ai-response-content li {
+  margin: 8px 0;
+}
+
+.ai-response-content code {
+  background-color: #E8E6E1;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.ai-response-content pre {
+  background-color: #2E2E2E;
+  color: #F7F5F0;
+  padding: 16px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 24px 0;
+}
+
+.ai-response-content pre code {
+  background: none;
+  padding: 0;
+}
+
+.ai-response-content blockquote {
+  border-left: 4px solid #D4A451;
+  padding: 0 16px;
+  margin: 24px 0;
+  color: #555;
+}
+
+.ai-response-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+}
+
+.ai-response-content th,
+.ai-response-content td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.ai-response-content th {
+  background-color: #3B4F3A;
+  color: #F7F5F0;
+}
+
+/* 原始数据区域 */
+.raw-data-section {
+  background-color: #E8E6E1;
+  border-radius: 4px;
+  padding: 16px;
+  margin-top: 24px;
+  max-height: 200px;
+  overflow: auto;
+}
+
+.raw-data-section pre {
+  font-size: 12px;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* 错误消息 */
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 12px;
+  margin-top: 20px;
+}
+
+/* 强调文本 */
+.ai-explanation-content strong {
+  color: #D4A451; /* 金黄色 */
+}
+
+/* 背景遮罩 */
+.ai-explanation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .ai-explanation-panel {
+    width: 95%;
+    max-height: 90vh;
+  }
+}
