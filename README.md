@@ -2,9 +2,6 @@
 
 一个基于 Go 语言开发的数字人文后端 API 服务，专注于艺术家生平、作品、事件及人际关系的数据管理与展示。
 
-[![Go Version](https://img.shields.io/badge/Go-1.21-blue.svg)](https://golang.org/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-
 ## 📋 目录
 
 - [功能特性](#功能特性)
