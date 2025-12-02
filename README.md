@@ -1,118 +1,104 @@
-# AI艺术讲解系统
+﻿# 黄宾虹艺术 AI 讲解系统
 
-本项目是一个基于React的AI艺术作品分析和讲解系统，能够通过AI技术对上传的艺术作品进行智能分析，并提供多维度、多语言风格的讲解。
+本项目是一个基于 React 的 AI 艺术作品分析和讲解系统，专为黄宾虹艺术风格打造。系统能够通过 AI 技术对上传的艺术作品进行深度智能分析，并以极具传统文化韵味的界面呈现分析结果。
 
-## 功能特性
+## ✨ 功能特性
 
-- 图片上传功能
-- AI智能分析艺术作品
-- 三种讲解模式切换（专业版、通俗版、学术版）
-- 响应式设计，适配不同设备
+- **智能图像分析**：集成火山引擎 AI 视觉大模型，深度解读画作内容、构图与意境。
+- **沉浸式国风 UI**：
+  - **黄宾虹风格设计**：采用“黑、密、厚、重”的美学理念，结合米白宣纸纹理背景。
+  - **传统书卷气**：运用宋体、楷体等衬线字体，营造典雅的阅读体验。
+  - **拟物化元素**：匾额式标题栏、装裱式画框、印章风格按钮。
+- **实时交互反馈**：
+  - 带有金石韵味的加载动画。
+  - Markdown 格式渲染分析结果，支持富文本排版。
+- **响应式布局**：完美适配桌面端与移动端设备。
 
-## 技术栈
+## 🛠 技术栈
 
-- React
-- React Router
-- CSS Modules
-- 火山引擎AI API
+- **前端框架**：React 18
+- **路由管理**：React Router v6
+- **样式处理**：CSS3 (Flexbox/Grid), CSS Modules 思想
+- **Markdown 渲染**：react-markdown, remark-gfm
+- **AI 服务**：火山引擎 (Volcengine) Ark Runtime API
 
-## 快速开始
+## 🚀 快速开始
 
-1. 克隆项目：
-   ```
+1. **克隆项目**：
+   ```bash
    git clone <项目地址>
+   cd hbhai
    ```
 
-2. 安装依赖：
-   ```
+2. **安装依赖**：
+   ```bash
    npm install
    ```
 
-3. 配置环境变量：
+3. **配置环境变量**：
    - 复制 `.env.example` 文件为 `.env`
-   - 在 `.env` 文件中设置您的火山引擎AI API密钥：
-     ```
+   - 在 `.env` 文件中设置您的火山引擎 AI API 密钥：
+     ```env
      REACT_APP_ARK_API_KEY=your_actual_api_key_here
      ```
 
-4. 启动开发服务器：
-   ```
+4. **启动开发服务器**：
+   ```bash
    npm start
    ```
 
-5. 在浏览器中访问 `http://localhost:3000`
+5. **访问应用**：
+   打开浏览器访问 `http://localhost:3000`
 
-## API集成
+## 📖 使用说明
 
-本项目集成了火山引擎的AI API，用于分析艺术作品图像。API调用示例：
+1. **进入系统**：点击首页的“进入 AI 艺术讲解系统”链接。
+2. **上传作品**：点击“选择图片”按钮（印章风格），上传您想要分析的黄宾虹画作或其他艺术品。
+3. **开始分析**：图片预览加载后，点击金黄色的“AI 智能分析”按钮。
+4. **等待解析**：系统会显示“正在分析中...”及旋转加载动画，AI 正在深度解读画作。
+5. **查看结果**：分析完成后，右侧卷轴区域将自动呈现详细的艺术鉴赏报告。
 
-```bash
-curl https://ark.cn-beijing.volces.com/api/v3/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $ARK_API_KEY" \
-  -d '{
-    "model": "doubao-seed-1-6-flash-250828",
-    "messages": [
-        {
-            "content": [
-                {
-                    "image_url": {
-                        "url": "https://ark-project.tos-cn-beijing.ivolces.com/images/view.jpeg"
-                    },
-                    "type": "image_url"
-                },
-                {
-                    "text": "图片主要讲了什么?",
-                    "type": "text"
-                }
-            ],
-            "role": "user"
-        }
-    ]
-}'
-```
+## 🎨 设计规范
 
-## 使用说明
+本项目严格遵循黄宾虹艺术风格的视觉规范：
 
-1. 访问首页或[/ai](file:///f:/school/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/hbhAI/hbhai/src/artwork-info%5Bartwork-info)页面
-2. 点击"选择图片"按钮上传艺术作品图片
-3. 点击"AI智能分析"按钮开始分析
-4. 分析完成后，点击右下角"AI讲解"按钮查看详细分析结果
-5. 可在专业版、通俗版、学术版之间切换查看不同深度的分析内容
+- **配色方案**：
+  - **背景**：米白 (#F7F5F0) —— 模拟陈旧宣纸色泽。
+  - **主色**：墨绿 (#3B4F3A) —— 取自山水画中的黛色，用于标题和强调。
+  - **文字**：墨黑 (#2E2E2E) —— 模拟焦墨、浓墨效果。
+  - **点缀**：金黄 (#D4A451) —— 用于按钮、边框修饰，增添金石气。
 
-## 设计规范
+- **排版字体**：
+  - **标题**：楷体 (Kaiti SC, STKaiti) —— 端庄典雅。
+  - **正文**：宋体 (Songti SC, SimSun) —— 易读且具书卷气。
+  - **代码/引用**：Consolas / 仿宋。
 
-- 主色调：墨黑 (#2E2E2E)、墨绿色 (#3B4F3A)、米白 (#F7F5F0)
-- 辅助色：金黄 (#D4A451)（用于强调、提示）
-- 字体：标题使用"思源黑体"／"Source Han Sans"，正文使用"苹方"／"PingFang SC"
-- 按钮样式：圆角 4px，悬停状态颜色稍微变深
-- 间距：统一 8px 为基础单位，布局采用其倍数
+- **视觉元素**：
+  - **纹理**：背景带有淡淡的网格纹理，模拟织物或纸张质感。
+  - **边框**：双重边框设计，模拟画作装裱和匾额结构。
 
-## 项目结构
+## 📂 项目结构
 
 ```
 src/
-├── components/
-│   ├── AIExplanation.js          # AI讲解组件
-│   └── AIExplanationPage.js      # AI讲解页面
-├── services/
-│   └── aiService.js              # AI服务模块
-├── App.js                        # 主应用组件
-├── AppWithRouter.js              # 路由组件
-└── index.js                      # 应用入口
+├── components/           # 通用组件
+├── pages/
+│   └── AIExplanationPage.js  # AI 讲解核心页面
+├── styles/
+│   └── AIExplanationPage.css # 页面特定样式（国风定制）
+├── utils/
+│   └── aiService.js      # AI API 调用封装
+├── App.js                # 首页入口
+├── AppWithRouter.js      # 路由配置
+└── index.js              # 应用入口
 ```
 
-## 开发指南
+## 🔗 API 集成
 
-1. 所有组件使用函数式组件和Hooks
-2. 样式遵循设计规范
-3. 服务层封装了API调用逻辑
-4. 组件间通过props传递数据
+本项目调用火山引擎视觉大模型接口：
+- 模型：`doubao-seed-1-6-flash-250828` (示例)
+- 接口：`/api/v3/chat/completions`
+- 能力：图文多模态理解与生成
 
-## 部署
-
-```
-npm run build
-```
-
-构建完成后，将生成的`build`目录部署到您的服务器即可。
+---
+*“浑厚华滋我民族，黑密厚重黄宾虹。”*
