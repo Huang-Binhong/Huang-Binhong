@@ -1,0 +1,414 @@
+/* 竖版卷轴样式 */
+.timeline-item {
+    position: relative;
+    max-width: 320px;
+    margin-left: 80px;
+    padding: 60px 30px 40px 30px;
+    background: linear-gradient(135deg,
+            rgba(250, 245, 235, 0.98) 0%,
+            rgba(245, 240, 230, 0.95) 50%,
+            rgba(250, 245, 235, 0.98) 100%);
+    border-left: 12px solid #8B5A2B;
+    border-right: 12px solid #8B5A2B;
+    border-radius: 0;
+    box-shadow:
+        0 8px 30px rgba(46, 46, 46, 0.3),
+        inset 0 0 20px rgba(139, 90, 43, 0.1);
+    transition: all 0.5s ease;
+}
+
+/* 顶部木质横条 */
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    right: -12px;
+    top: 0;
+    height: 20px;
+    background: linear-gradient(180deg,
+            #6B4423 0%,
+            #8B5A2B 50%,
+            #A0522D 100%);
+    box-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.4),
+        inset 0 1px 2px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* 底部木质横条 */
+.timeline-item::after {
+    content: '';
+    position: absolute;
+    left: -12px;
+    right: -12px;
+    bottom: 0;
+    height: 20px;
+    background: linear-gradient(180deg,
+            #A0522D 0%,
+            #8B5A2B 50%,
+            #6B4423 100%);
+    box-shadow:
+        0 -3px 8px rgba(0, 0, 0, 0.4),
+        inset 0 1px 2px rgba(0, 0, 0, 0.3),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.2);
+}
+
+.timeline-item.active {
+    box-shadow:
+        0 12px 40px rgba(212, 164, 81, 0.4),
+        inset 0 0 25px rgba(212, 164, 81, 0.15);
+    transform: translateX(8px) scale(1.02);
+    background: linear-gradient(135deg,
+            rgba(255, 252, 245, 0.98) 0%,
+            rgba(252, 248, 240, 0.95) 50%,
+            rgba(255, 252, 245, 0.98) 100%);
+    border-left-color: #D4A451;
+    border-right-color: #D4A451;
+}
+
+.timeline-item.active::before,
+.timeline-item.active::after {
+    background: linear-gradient(180deg,
+            #D4A451 0%,
+            #C49641 50%,
+            #B8863B 100%);
+}
+
+/* 卷轴夹子装饰 */
+.scroll-clip {
+    position: absolute;
+    left: -12px;
+    right: -12px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.scroll-clip.top-clip {
+    top: -8px;
+}
+
+.scroll-clip.bottom-clip {
+    bottom: -8px;
+}
+
+.clip-left {
+    position: absolute;
+    left: 15px;
+    width: 40px;
+    height: 16px;
+    background: linear-gradient(180deg,
+            #2E2E2E 0%,
+            #3A3A3A 50%,
+            #2E2E2E 100%);
+    border-radius: 3px;
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.5),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+.clip-right {
+    position: absolute;
+    right: 15px;
+    width: 40px;
+    height: 16px;
+    background: linear-gradient(180deg,
+            #2E2E2E 0%,
+            #3A3A3A 50%,
+            #2E2E2E 100%);
+    border-radius: 3px;
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.5),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+.clip-left::after,
+.clip-right::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 4px;
+    background: #666;
+    border-radius: 50%;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -50px;
+    top: 40px;
+}
+
+.marker-dot {
+    width: 24px;
+    height: 24px;
+    background: #F7F5F0;
+    border: 3px solid #3B4F3A;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(46, 46, 46, 0.2);
+    transition: all 0.3s ease;
+}
+
+.timeline-item.active .marker-dot {
+    background: #D4A451;
+    border-color: #D4A451;
+    box-shadow: 0 3px 12px rgba(212, 164, 81, 0.5);
+    transform: scale(1.2);
+}
+
+.marker-line {
+    position: absolute;
+    left: 50%;
+    top: 30px;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 120px;
+    background: linear-gradient(180deg, #3B4F3A 0%, transparent 100%);
+}
+
+.timeline-content {
+    position: relative;
+}
+
+.timeline-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    background: #3B4F3A;
+    color: #F7F5F0;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.timeline-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2E2E2E;
+    margin: 0 0 12px 0;
+    letter-spacing: 1px;
+}
+
+.timeline-meta {
+    margin-bottom: 16px;
+}
+
+.timeline-year {
+    display: block;
+    font-size: 14px;
+    color: #3B4F3A;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.timeline-location {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: #2E2E2E;
+}
+
+.location-icon {
+    font-size: 12px;
+}
+
+.location-text {
+    font-weight: 500;
+}
+
+.timeline-description {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #2E2E2E;
+    margin: 0 0 18px 0;
+}
+
+.timeline-people,
+.timeline-artworks {
+    margin-top: 16px;
+}
+
+.section-title {
+    font-size: 13px;
+    color: #3B4F3A;
+    margin: 0 0 10px 0;
+    font-weight: 600;
+}
+
+.people-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.person-tag {
+    display: inline-block;
+    padding: 5px 12px;
+    background: rgba(59, 79, 58, 0.1);
+    border: 1px solid #3B4F3A;
+    border-radius: 14px;
+    font-size: 12px;
+    color: #2E2E2E;
+    font-weight: 500;
+}
+
+.artwork-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.artwork-item {
+    padding: 10px 14px;
+    background: rgba(247, 245, 240, 0.5);
+    border-left: 3px solid #3B4F3A;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.artwork-item:hover {
+    background: rgba(212, 164, 81, 0.15);
+    border-left-color: #D4A451;
+    transform: translateX(3px);
+}
+
+.artwork-title {
+    font-size: 13px;
+    color: #2E2E2E;
+    font-weight: 500;
+}
+
+/* 作品预览面板 - 墨绿主题 */
+.artwork-preview-panel {
+    position: fixed;
+    right: 30px;
+    top: 35%;
+    transform: translateY(-50%);
+    width: 340px;
+    max-height: 70vh;
+    background: linear-gradient(135deg, #F7F5F0 0%, rgba(247, 245, 240, 0.98) 100%);
+    border: 3px solid #3B4F3A;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(46, 46, 46, 0.25);
+    z-index: 2000;
+}
+
+.preview-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    background: rgba(212, 164, 81, 0.95);
+    border: none;
+    border-radius: 50%;
+    color: #2E2E2E;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.preview-close:hover {
+    background: #D4A451;
+    transform: scale(1.1);
+}
+
+.preview-image-container {
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
+    background: rgba(59, 79, 58, 0.1);
+}
+
+.preview-artwork-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-artwork-info {
+    padding: 20px;
+}
+
+.preview-artwork-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2E2E2E;
+    margin: 0 0 10px 0;
+    letter-spacing: 1px;
+}
+
+.preview-artwork-desc {
+    font-size: 13px;
+    color: #3B4F3A;
+    margin: 0;
+    line-height: 1.7;
+}
+
+.ornament {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    z-index: 5;
+}
+
+.corner-tl {
+    top: 5px;
+    left: 5px;
+}
+
+.corner-tr {
+    top: 5px;
+    right: 5px;
+}
+
+.corner-bl {
+    bottom: 5px;
+    left: 5px;
+}
+
+.corner-br {
+    bottom: 5px;
+    right: 5px;
+}
+
+
+@media (max-width: 1024px) {
+    .artwork-preview {
+        right: 20px;
+        width: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+    .timeline-card {
+        margin-left: 60px;
+        padding: 20px;
+    }
+
+    .timeline-marker {
+        left: -50px;
+    }
+
+    .timeline-title {
+        font-size: 22px;
+    }
+
+    .artwork-preview {
+        position: fixed;
+        right: 50%;
+        transform: translate(50%, -50%);
+        width: 90%;
+        max-width: 300px;
+    }
+}

@@ -1,0 +1,44 @@
+/* FlyingBird.css */
+
+.bird-container {
+    position: fixed; /* Use fixed positioning to stay on screen */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Allow clicks to pass through */
+    z-index: 11; /* Set z-index to fly above the timeline header (z-index: 10) */
+}
+
+.bird {
+    position: absolute;
+    width: 100px; /* Final width for the precise SVG */
+    height: 30px; /* Final height for the precise SVG */
+    background-size: contain;
+    background-repeat: no-repeat;
+    /* The animation will control the position */
+    animation: fly-parabola 15s linear infinite;
+}
+
+@keyframes fly-parabola {
+    0% {
+        /* Start from the left, off-screen */
+        transform: translate(-10vw, 20vh) scale(0.9) rotate(-5deg);
+    }
+    25% {
+        /* Parabola peak */
+        transform: translate(25vw, 15vh) scale(1) rotate(10deg);
+    }
+    50% {
+        /* Mid-point of the flight */
+        transform: translate(50vw, 12vh) scale(1.1) rotate(0deg);
+    }
+    75% {
+        /* Descending part of the parabola */
+        transform: translate(75vw, 18vh) scale(1) rotate(-10deg);
+    }
+    100% {
+        /* End on the right, off-screen */
+        transform: translate(110vw, 30vh) scale(0.9) rotate(5deg);
+    }
+}

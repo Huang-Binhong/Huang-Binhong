@@ -1,0 +1,183 @@
+.relationship-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav_logo,
+.nav_logo2 {
+  position: fixed;
+  z-index: 100;
+}
+
+.nav_logo {
+  top: 20px;
+  right: 20px;
+}
+
+.nav_logo2 {
+  top: 20px;
+  left: 20px;
+}
+
+.nav_logo img,
+.nav_logo2 img {
+  max-width: 150px;
+  height: auto;
+}
+
+.a_home {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
+
+.a_home:hover {
+  transform: scale(1.1);
+}
+
+.a_home img {
+  width: 80px;
+  height: auto;
+}
+
+.relationship_content {
+  position: relative;
+  z-index: 1;
+  padding: 50px 20px;
+}
+
+.relationship_header {
+  text-align: center;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.relationship_header h1 {
+  font-size: 42px;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, #fff 0%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.relationship_header p {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.legend_item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-size: 16px;
+}
+
+.legend_dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.relationship_canvas {
+  display: block;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.person_info {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 25px 35px;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  z-index: 50;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.person_info h3 {
+  font-size: 24px;
+  color: #8B4513;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.relation_type {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.person_desc {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.6;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .relationship_header h1 {
+    font-size: 28px;
+  }
+
+  .relationship_header p {
+    font-size: 14px;
+  }
+
+  .legend {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .person_info {
+    bottom: 80px;
+    left: 20px;
+    right: 20px;
+    transform: none;
+    padding: 20px;
+  }
+
+  .nav_logo img,
+  .nav_logo2 img {
+    max-width: 100px;
+  }
+
+  .a_home img {
+    width: 60px;
+  }
+}
