@@ -7,6 +7,7 @@ import StyleTransferPage from './pages/StyleTransferPage';
 import AIExplanationPage from './pages/AIExplanationPage';
 import JourneyMapPage from './pages/JourneyMapPage';
 import RelationshipPage from './pages/RelationshipPage';
+import TimelinePage from './pages/TimelinePage'
 import './App.css';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/ai-explanation" element={<AIExplanationPage />} />
         <Route path="/journey-map" element={<JourneyMapPage />} />
         <Route path="/relationships" element={<RelationshipPage />} />
+        <Route path="/timeline" element={<TimelinePage/>}></Route>
       </Routes>
     </Router>
   );

@@ -1,0 +1,709 @@
+/* src/components/Timeline2/Timeline2.css */
+.timeline-container {
+    position: relative;
+    padding: 32px 0;
+    background: var(--rice-white, #F7F5F0);
+    border-radius: 8px;
+    margin: 16px 0;
+    min-height: 700px;
+    border: 1px solid var(--light-green, #5A6D59);
+    box-shadow: 0 2px 8px rgba(46, 46, 46, 0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+/* 修改时间轴内容区域 - 确保滚动条可点击 */
+.timeline-content {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 30px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    height: 620px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    position: relative; /* 确保z-index生效 */
+    z-index: 5; /* 提高层级 */
+}
+
+/* 增强滚动条样式，确保可点击 */
+.timeline-content::-webkit-scrollbar {
+    height: 12px; /* 增加高度到12px */
+    position: relative;
+    z-index: 100; /* 确保滚动条在最上层 */
+}
+
+.timeline-content::-webkit-scrollbar-track {
+    background: var(--rice-white, #F7F5F0);
+    border-radius: 6px;
+    border: 1px solid var(--light-green, #5A6D59);
+    margin: 2px 0;
+}
+
+.timeline-content::-webkit-scrollbar-thumb {
+    background: var(--ink-green, #3B4F3A);
+    border-radius: 6px;
+    border: 2px solid var(--rice-white, #F7F5F0);
+    min-height: 40px; /* 确保最小高度 */
+    cursor: pointer; /* 显示可点击光标 */
+}
+
+.timeline-content::-webkit-scrollbar-thumb:hover {
+    background: var(--gold, #D4A451);
+}
+
+/* 添加Firefox滚动条样式 */
+.timeline-content {
+    scrollbar-width: thin;
+    scrollbar-color: var(--ink-green, #3B4F3A) var(--rice-white, #F7F5F0);
+}
+
+/* 移除或修改可能遮挡滚动条的元素 */
+.timeline-track {
+    position: relative;
+    height: 500px;
+    min-width: 100%;
+    display: flex;
+    align-items: center;
+    z-index: 1; /* 降低层级，避免遮挡 */
+}
+
+/* 修改双面尺子层级 */
+.double-ruler {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    z-index: 1; /* 降低层级 */
+}
+
+/* 修改滚动指示器区域，确保不重叠 */
+.scroll-indicator {
+    position: absolute;
+    bottom: 15px;
+    left: 40px;
+    right: 40px;
+    height: 30px;
+    z-index: 10; /* 保持较高层级 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    pointer-events: none; /* 允许点击穿透到滚动条 */
+}
+
+.scroll-progress {
+    width: 100%;
+    height: 6px;
+    background: var(--light-green, #5A6D59);
+    border-radius: 3px;
+    overflow: hidden;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    pointer-events: none; /* 允许点击穿透 */
+}
+
+.scroll-hint {
+    font-size: 12px;
+    color: var(--ink-green, #3B4F3A);
+    opacity: 0.8;
+    font-family: var(--font-body, 'PingFang SC', '苹方', sans-serif);
+    text-align: center;
+    pointer-events: none; /* 允许点击穿透 */
+}
+
+/* 为容器添加padding-bottom，确保滚动条区域不被内容遮挡 */
+.timeline-container {
+    position: relative;
+    padding: 32px 0 45px; /* 增加底部padding为滚动条留出空间 */
+    background: var(--rice-white, #F7F5F0);
+    border-radius: 8px;
+    margin: 16px 0;
+    min-height: 700px;
+    border: 1px solid var(--light-green, #5A6D59);
+    box-shadow: 0 2px 8px rgba(46, 46, 46, 0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.timeline-track {
+    position: relative;
+    height: 500px;
+    min-width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* 双面尺子 */
+.double-ruler {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+/* 时间轴标尺 - 显示所有年份 */
+.timeline-ruler {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 50px;
+    transform: translateY(-50%);
+    z-index: 2;
+}
+
+.ruler-tick {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 3;
+    width: 180px;
+}
+
+.tick-line {
+    width: 2px;
+    background: var(--ink-green, #3B4F3A);
+    margin-bottom: 10px;
+    height: 15px;
+}
+
+.year-tick-label {
+    font-size: 13px;
+    color: var(--ink-green, #3B4F3A);
+    font-weight: 600;
+    white-space: nowrap;
+    font-family: var(--font-title, 'Source Han Sans', '思源黑体', sans-serif);
+    min-width: 50px;
+    text-align: center;
+    padding: 4px 6px;
+    background: var(--rice-white, #F7F5F0);
+    border-radius: 4px;
+    border: 2px solid var(--light-green, #5A6D59);
+    transition: all 0.3s ease;
+}
+
+.year-tick-label:hover {
+    background: var(--gold, #D4A451);
+    color: var(--rice-white, #F7F5F0);
+    border-color: var(--gold, #D4A451);
+    transform: scale(1.1);
+}
+
+/* 尺子中心线 */
+.ruler-center-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg,
+    transparent 0%,
+    var(--ink-green, #3B4F3A) 20%,
+    var(--ink-green, #3B4F3A) 80%,
+    transparent 100%);
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+/* 上方尺子区域 */
+.ruler-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: calc(50% - 30px);
+    overflow: visible;
+}
+
+/* 下方尺子区域 */
+.ruler-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(50% - 30px);
+    overflow: visible;
+}
+
+/* 事件年份容器 */
+.event-year-container {
+    position: absolute;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 4;
+    width: 180px;
+}
+
+.event-year-top {
+    top: 0;
+}
+
+.event-year-bottom {
+    bottom: 0;
+}
+
+/* 年份指示器 */
+.year-indicator {
+    position: relative;
+    width: 100%;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.year-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--ink-green, #3B4F3A);
+    border: 3px solid var(--rice-white, #F7F5F0);
+    box-shadow: 0 3px 6px rgba(46, 46, 46, 0.3);
+    transition: all 0.3s ease;
+}
+
+.event-year-top .year-dot {
+    background: var(--ink-green, #3B4F3A);
+}
+
+.event-year-bottom .year-dot {
+    background: var(--historical-red, #8B0000);
+}
+
+/* 事件卡片样式 */
+.event-card-top,
+.event-card-bottom {
+    margin: 12px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 160px;
+}
+
+.event-card-content {
+    background: var(--rice-white, #F7F5F0);
+    border: 2px solid var(--light-green, #5A6D59);
+    border-radius: 10px;
+    padding: 12px 14px;
+    box-shadow: 0 4px 12px rgba(46, 46, 46, 0.15);
+    transition: all 0.3s ease;
+    position: relative;
+    min-height: 100px;
+}
+
+.event-card-top .event-card-content {
+    border-top: 4px solid var(--ink-green, #3B4F3A);
+}
+
+.event-card-bottom .event-card-content {
+    border-bottom: 4px solid var(--historical-red, #8B0000);
+}
+
+.event-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-black, #2E2E2E);
+    line-height: 1.6;
+    margin-bottom: 10px;
+    text-align: center;
+    font-family: var(--font-body, 'PingFang SC', '苹方', sans-serif);
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 70px;
+}
+
+.event-type {
+    display: flex;
+    justify-content: center;
+}
+
+/* 连接线 */
+.event-year-top::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 12px;
+    background: var(--ink-green, #3B4F3A);
+}
+
+.event-year-bottom::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 12px;
+    background: var(--historical-red, #8B0000);
+}
+
+/* 悬停效果 */
+.event-year-top:hover .year-dot,
+.event-year-bottom:hover .year-dot {
+    transform: scale(1.5);
+    box-shadow: 0 6px 12px rgba(212, 164, 81, 0.4);
+}
+
+.event-year-top:hover .year-dot {
+    background: var(--gold, #D4A451);
+}
+
+.event-year-bottom:hover .year-dot {
+    background: var(--gold, #D4A451);
+}
+
+.event-card-top:hover,
+.event-card-bottom:hover {
+    transform: translateY(-4px);
+}
+
+.event-card-top:hover .event-card-content {
+    background: var(--rice-white, #F7F5F0);
+    box-shadow: 0 8px 24px rgba(59, 79, 58, 0.3);
+    border-color: var(--gold, #D4A451);
+    border-top-color: var(--gold, #D4A451);
+    transform: translateY(-3px);
+}
+
+.event-card-bottom:hover .event-card-content {
+    background: var(--rice-white, #F7F5F0);
+    box-shadow: 0 8px 24px rgba(139, 0, 0, 0.3);
+    border-color: var(--gold, #D4A451);
+    border-bottom-color: var(--gold, #D4A451);
+    transform: translateY(-3px);
+}
+
+.event-card-top:hover .event-title,
+.event-card-bottom:hover .event-title {
+    color: var(--gold, #D4A451);
+    font-weight: 600;
+}
+
+/* 导航按钮样式 */
+.timeline-nav {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    z-index: 10;
+    background: rgba(247, 245, 240, 0.95);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 2px solid var(--light-green, #5A6D59);
+}
+
+.nav-info {
+    font-size: 14px;
+    color: var(--ink-green, #3B4F3A);
+    font-weight: 700;
+    min-width: 120px;
+    text-align: center;
+    padding: 0 12px;
+    font-family: var(--font-title, 'Source Han Sans', '思源黑体', sans-serif);
+}
+
+.nav-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 2px solid var(--ink-green, #3B4F3A);
+    background: var(--rice-white, #F7F5F0);
+    color: var(--ink-green, #3B4F3A);
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.nav-btn:hover {
+    background: var(--gold, #D4A451);
+    border-color: var(--gold, #D4A451);
+    color: var(--rice-white, #F7F5F0);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(212, 164, 81, 0.4);
+}
+
+.nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.nav-btn:disabled:hover {
+    background: var(--rice-white, #F7F5F0);
+    border-color: var(--ink-green, #3B4F3A);
+    color: var(--ink-green, #3B4F3A);
+    box-shadow: none;
+}
+
+/* 滚动指示器 */
+.scroll-indicator {
+    position: absolute;
+    bottom: 15px;
+    left: 40px;
+    right: 40px;
+    height: 30px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.scroll-progress {
+    width: 100%;
+    height: 6px;
+    background: var(--light-green, #5A6D59);
+    border-radius: 3px;
+    overflow: hidden;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.scroll-indicator:hover .scroll-progress {
+    opacity: 1;
+}
+
+.scroll-bar {
+    height: 100%;
+    background: var(--gold, #D4A451);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.scroll-hint {
+    font-size: 12px;
+    color: var(--ink-green, #3B4F3A);
+    opacity: 0.8;
+    font-family: var(--font-body, 'PingFang SC', '苹方', sans-serif);
+    text-align: center;
+}
+
+/* 事件详情模态框样式 */
+.event-detail-modal .ant-modal-content {
+    background: var(--rice-white, #F7F5F0);
+    border: 1px solid var(--ink-green, #3B4F3A);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(46, 46, 46, 0.15);
+}
+
+.event-detail-modal .ant-modal-header {
+    background: var(--rice-white, #F7F5F0);
+    border-bottom: 1px solid var(--light-green, #5A6D59);
+    border-radius: 8px 8px 0 0;
+}
+
+.event-detail-modal .ant-modal-title {
+    color: var(--ink-black, #2E2E2E);
+    font-family: var(--font-title, 'Source Han Sans', '思源黑体', sans-serif);
+    font-weight: 600;
+}
+
+.event-detail-modal .ant-modal-close {
+    color: var(--ink-green, #3B4F3A);
+}
+
+.event-detail-modal .ant-modal-close:hover {
+    color: var(--gold, #D4A451);
+}
+
+.event-detail {
+    padding: 4px;
+}
+
+.event-detail h2 {
+    color: var(--ink-black, #2E2E2E);
+    margin-bottom: 16px;
+    font-family: var(--font-title, 'Source Han Sans', '思源黑体', sans-serif);
+    font-size: 20px;
+}
+
+.event-meta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.event-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--ink-green, #3B4F3A);
+    font-size: 13px;
+}
+
+.event-description {
+    color: var(--ink-black, #2E2E2E);
+    line-height: 1.7;
+    margin-bottom: 24px;
+    font-size: 14px;
+    font-family: var(--font-body, 'PingFang SC', '苹方', sans-serif);
+}
+
+.event-content h4 {
+    color: var(--ink-black, #2E2E2E);
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.event-images {
+    margin-top: 20px;
+}
+
+.event-images h4 {
+    color: var(--ink-black, #2E2E2E);
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.event-image {
+    border-radius: 4px;
+    border: 1px solid var(--light-green, #5A6D59);
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.related-works {
+    margin-top: 20px;
+}
+
+.related-works h4 {
+    color: var(--ink-black, #2E2E2E);
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.related-works ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.related-works li {
+    color: var(--ink-black, #2E2E2E);
+    padding: 4px 0;
+    border-bottom: 1px solid var(--light-green, #5A6D59);
+    font-size: 13px;
+}
+
+/* 加载和空状态 */
+.timeline-loading,
+.timeline-empty {
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 16px;
+    color: var(--ink-green, #3B4F3A);
+    background: var(--rice-white, #F7F5F0);
+    border-radius: 8px;
+    font-family: var(--font-body, 'PingFang SC', '苹方', sans-serif);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .timeline-container {
+        padding: 15px 0;
+        min-height: 550px;
+    }
+
+    .timeline-content {
+        padding: 0 15px;
+        height: 480px;
+    }
+
+    .timeline-track {
+        height: 380px;
+    }
+
+    .event-year-container {
+        width: 140px;
+    }
+
+    .event-card-top,
+    .event-card-bottom {
+        width: 120px;
+    }
+
+    .event-card-content {
+        padding: 8px 10px;
+        min-height: 80px;
+    }
+
+    .event-title {
+        font-size: 12px;
+        min-height: 60px;
+        -webkit-line-clamp: 3;
+    }
+
+    .year-tick-label {
+        font-size: 11px;
+        min-width: 40px;
+        padding: 3px 5px;
+    }
+
+    .nav-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+
+    .nav-info {
+        font-size: 12px;
+        min-width: 100px;
+    }
+
+    .scroll-indicator {
+        left: 20px;
+        right: 20px;
+    }
+}
+
+/* 动画效果 */
+@keyframes eventAppearTop {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.event-year-top {
+    animation: eventAppearTop 0.4s ease-out;
+}
+
+@keyframes eventAppearBottom {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.event-year-bottom {
+    animation: eventAppearBottom 0.4s ease-out;
+}
