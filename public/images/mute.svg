@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24">
+  <!-- 圆形背景 -->
+  <circle cx="12" cy="12" r="10" fill="#F7F5F0" opacity="0.95"/>
+  
+  <!-- 喇叭图标 -->
+  <polygon points="11 8 11 16 7 13 7 11 11 8" fill="#3B4F3A"/>
+  
+  <!-- 禁止符号（红色叉号） -->
+  <line x1="15" y1="9" x2="19" y2="15" stroke="#C85A54" stroke-width="2" stroke-linecap="round"/>
+  <line x1="19" y1="9" x2="15" y2="15" stroke="#C85A54" stroke-width="2" stroke-linecap="round"/>
+</svg>

@@ -28,7 +28,7 @@
 .map-canvas .amap-overlays {
     opacity: 1 !important;
     visibility: visible !important;
-    z-index: 100 !important;
+    z-index: 1000 !important;
 }
 
 /* 古风地图背景层 - 在地图瓦片上方，标记下方 */

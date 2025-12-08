@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24">
+  <!-- 圆形背景 -->
+  <circle cx="12" cy="12" r="10" fill="#F7F5F0" opacity="0.95"/>
+  
+  <!-- 喇叭图标 -->
+  <polygon points="11 8 11 16 7 13 7 11 11 8" fill="#3B4F3A"/>
+  
+  <!-- 声波线条 -->
+  <path d="M 15 9 Q 17 12 15 15" stroke="#3B4F3A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M 17 7 Q 20 12 17 17" stroke="#3B4F3A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</svg>

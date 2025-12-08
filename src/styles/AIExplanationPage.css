@@ -30,6 +30,15 @@
   font-weight: normal;
 }
 
+.artwork-title-header {
+  margin-top: 10px;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-size: 1.2rem;
+  color: #D4A451;
+  letter-spacing: 0.1em;
+  font-style: italic;
+}
+
 .back-button {
   position: absolute;
   left: 30px;

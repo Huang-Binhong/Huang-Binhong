@@ -95,7 +95,11 @@ function ArtworkDetailPage() {
             </div>
 
             <div className="action_buttons">
-              <Link to="/ai-explanation" className="btn_ai">
+              <Link 
+                to={`/ai-explanation?artworkId=${id}`}
+                state={{ artwork: artwork, fromPath: `/artwork/${id}` }}
+                className="btn_ai"
+              >
                 AI艺术讲解
               </Link>
               <Link to="/style-transfer" className="btn_style">
