@@ -1,14 +1,12 @@
 // src/components/Timeline2/Timeline2.jsx
 import React, { useState, useRef, useEffect } from 'react';
-import { Card, Tag, Image, Modal, Button, Tooltip } from 'antd';
+import { Tag, Image, Modal, Button } from 'antd';
 import {
     EnvironmentOutlined,
     CalendarOutlined,
     LeftOutlined,
-    RightOutlined,
-    HistoryOutlined
+    RightOutlined
 } from '@ant-design/icons';
-import { getHistoricalEventColor, getHistoricalEventText } from '../services/TimelineDataService';
 import './Timeline2.css';
 
 const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
@@ -23,7 +21,7 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
     const totalYears = maxYear - minYear;
 
     // 每个年份的宽度（像素）
-    const yearWidth = 180;
+    const yearWidth = 160; // 稍微缩小一点
 
     // 按年份分组事件
     const getEventsByYear = (events) => {
@@ -47,26 +45,26 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
 
     const getTypeColor = (type) => {
         const colors = {
-            birth: '#2E2E2E',
-            education: '#556B2F',
-            work: '#8B4513',
-            creation: '#3B4F3A',
-            award: '#D4A451',
-            death: '#696969',
-            travel: '#2E8B57',
-            collection: '#B8860B',
-            publication: '#A52A2A',
-            exhibition: '#CD853F',
-            political: '#8B0000',
-            military: '#B22222',
-            diplomatic: '#8B4513',
-            economic: '#DAA520',
-            industrial: '#696969',
-            education_hist: '#2E8B57',
-            cultural: '#D2691E',
-            social: '#CD853F'
+            birth: '#8B0000',         // 深红
+            education: '#2E8B57',     // 海绿
+            work: '#8B4513',         // 鞍褐
+            creation: '#3B4F3A',      // 墨绿
+            award: '#D4A451',         // 金色
+            death: '#696969',         // 暗灰
+            travel: '#4682B4',        // 钢蓝
+            collection: '#B8860B',    // 暗金
+            publication: '#A52A2A',   // 棕色
+            exhibition: '#CD853F',    // 秘鲁色
+            political: '#8B0000',     // 深红
+            military: '#B22222',      // 砖红
+            diplomatic: '#8B4513',    // 鞍褐
+            economic: '#DAA520',      // 金菊
+            industrial: '#696969',    // 暗灰
+            education_hist: '#2E8B57', // 海绿
+            cultural: '#D2691E',      // 巧克力色
+            social: '#CD853F'         // 秘鲁色
         };
-        return colors[type] || '#d9d9d9';
+        return colors[type] || '#8B7355'; // 默认用赭石色
     };
 
     const getTypeText = (type) => {
@@ -92,14 +90,14 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
 
     const scrollLeft = () => {
         if (timelineRef.current) {
-            timelineRef.current.scrollLeft -= 500;
+            timelineRef.current.scrollLeft -= 400;
             setScrollPosition(timelineRef.current.scrollLeft);
         }
     };
 
     const scrollRight = () => {
         if (timelineRef.current) {
-            timelineRef.current.scrollLeft += 500;
+            timelineRef.current.scrollLeft += 400;
             setScrollPosition(timelineRef.current.scrollLeft);
         }
     };
@@ -111,16 +109,26 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
     };
 
     if (loading) {
-        return <div className="timeline-loading">加载中...</div>;
+        return <div className="timeline-loading">⏳ 画轴徐徐展开中...</div>;
     }
 
     const hasEvents = personalEvents.length > 0 || historicalEvents.length > 0;
     if (!hasEvents) {
-        return <div className="timeline-empty">暂无数据</div>;
+        return <div className="timeline-empty">📜 暂无记载</div>;
     }
 
     return (
         <div className="timeline-container">
+            {/* 卷轴标题 */}
+            <div className="timeline-header">
+                <div className="scroll-title-container">
+                    <div className="scroll-title-left"></div>
+                    <h1 className="scroll-title">黄宾虹生平与时代</h1>
+                    <div className="scroll-title-right"></div>
+                </div>
+                <div className="scroll-subtitle">年谱画卷（1865-1955）</div>
+            </div>
+
             {/* 导航按钮 */}
             <div className="timeline-nav">
                 <Button
@@ -131,7 +139,9 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                     size="small"
                 />
                 <div className="nav-info">
-                    {minYear} - {maxYear}
+                    <span className="nav-year">{minYear}</span>
+                    <span className="nav-separator">——</span>
+                    <span className="nav-year">{maxYear}</span>
                 </div>
                 <Button
                     icon={<RightOutlined />}
@@ -158,11 +168,12 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                             {Array.from({ length: totalYears + 1 }, (_, i) => {
                                 const year = minYear + i;
                                 const leftPosition = (i * yearWidth) + (yearWidth / 2);
+                                const isDecade = year % 10 === 0;
 
                                 return (
                                     <div
                                         key={`tick-${year}`}
-                                        className="ruler-tick"
+                                        className={`ruler-tick ${isDecade ? 'decade-tick' : ''}`}
                                         style={{ left: `${leftPosition}px` }}
                                     >
                                         {/* 刻度线 */}
@@ -177,8 +188,11 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                             })}
                         </div>
 
-                        {/* 尺子中心线 */}
-                        <div className="ruler-center-line"></div>
+                        {/* 尺子主体 - 古代卷尺样式 */}
+                        <div className="ruler-body">
+                            <div className="ruler-wood-grain"></div>
+                            <div className="ruler-ink-line"></div>
+                        </div>
 
                         {/* 上方：人物生平 */}
                         <div className="ruler-top">
@@ -195,10 +209,8 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                                         className="event-year-container event-year-top"
                                         style={{ left: `${leftPosition}px` }}
                                     >
-                                        {/* 年份指示器 */}
-                                        <div className="year-indicator">
-                                            <div className="year-dot"></div>
-                                        </div>
+                                        {/* 连接线 - 朱砂色 */}
+                                        <div className="year-connector personal-connector"></div>
 
                                         {/* 上方事件卡片 */}
                                         {yearEvents.map((event) => (
@@ -212,7 +224,11 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                                                         {event.title}
                                                     </div>
                                                     <div className="event-type">
-                                                        <Tag color={getTypeColor(event.type)} size="small">
+                                                        <Tag
+                                                            color={getTypeColor(event.type)}
+                                                            size="small"
+                                                            className="type-tag"
+                                                        >
                                                             {getTypeText(event.type)}
                                                         </Tag>
                                                     </div>
@@ -239,10 +255,8 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                                         className="event-year-container event-year-bottom"
                                         style={{ left: `${leftPosition}px` }}
                                     >
-                                        {/* 年份指示器 */}
-                                        <div className="year-indicator">
-                                            <div className="year-dot"></div>
-                                        </div>
+                                        {/* 连接线 - 墨色 */}
+                                        <div className="year-connector historical-connector"></div>
 
                                         {/* 下方事件卡片 */}
                                         {yearEvents.map((event) => (
@@ -256,7 +270,11 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                                                         {event.title}
                                                     </div>
                                                     <div className="event-type">
-                                                        <Tag color={getTypeColor(event.type)} size="small">
+                                                        <Tag
+                                                            color={getTypeColor(event.type)}
+                                                            size="small"
+                                                            className="type-tag"
+                                                        >
                                                             {getTypeText(event.type)}
                                                         </Tag>
                                                     </div>
@@ -271,20 +289,6 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                 </div>
             </div>
 
-            {/* 滚动指示器 */}
-            <div className="scroll-indicator">
-                <div className="scroll-progress">
-                    <div
-                        className="scroll-bar"
-                        style={{
-                            width: `${(scrollPosition / (timelineRef.current?.scrollWidth - timelineRef.current?.clientWidth || 1)) * 100}%`
-                        }}
-                    ></div>
-                </div>
-                <div className="scroll-hint">
-                    使用左右按钮或拖动滚动条浏览完整时间轴
-                </div>
-            </div>
 
             {/* 事件详情模态框 */}
             <Modal
@@ -293,55 +297,63 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                 footer={null}
                 width={800}
                 className="event-detail-modal"
+                title={selectedEvent?.title}
             >
                 {selectedEvent && (
                     <div className="event-detail">
-                        <h2>{selectedEvent.title}</h2>
                         <div className="event-meta">
-                            <Tag color={getTypeColor(selectedEvent.type)}>
+                            <Tag color={getTypeColor(selectedEvent.type)} className="detail-type-tag">
                                 {getTypeText(selectedEvent.type)}
                             </Tag>
-                            <span><CalendarOutlined /> {selectedEvent.year}年</span>
+                            <span className="meta-item"><CalendarOutlined /> {selectedEvent.year}年</span>
                             {selectedEvent.location && (
-                                <span><EnvironmentOutlined /> {selectedEvent.location}</span>
-                            )}
-                            {selectedEvent.period && (
-                                <Tag color="blue">{selectedEvent.period}</Tag>
+                                <span className="meta-item"><EnvironmentOutlined /> {selectedEvent.location}</span>
                             )}
                         </div>
 
-                        <p className="event-description">{selectedEvent.description}</p>
+                        <div className="event-description">
+                            <h4>📖 概述</h4>
+                            <p>{selectedEvent.description}</p>
+                        </div>
 
                         {selectedEvent.detailedContent && (
                             <div className="event-content">
-                                <h4>详细内容</h4>
-                                <p>{selectedEvent.detailedContent}</p>
+                                <h4>📝 详细记载</h4>
+                                <div className="content-text">{selectedEvent.detailedContent}</div>
                             </div>
                         )}
 
                         {selectedEvent.images && selectedEvent.images.length > 0 && (
                             <div className="event-images">
-                                <h4>相关图片</h4>
+                                <h4>🖼️ 相关图鉴</h4>
                                 <Image.PreviewGroup>
-                                    {selectedEvent.images.map((image, index) => (
-                                        <Image
-                                            key={index}
-                                            width={200}
-                                            src={image.url}
-                                            alt={image.alt}
-                                            className="event-image"
-                                        />
-                                    ))}
+                                    <div className="image-grid">
+                                        {selectedEvent.images.map((image, index) => (
+                                            <div key={index} className="image-item">
+                                                <Image
+                                                    src={image.url}
+                                                    alt={image.alt}
+                                                    className="event-image"
+                                                    width={180}
+                                                    height={120}
+                                                />
+                                                <div className="image-caption">{image.alt}</div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </Image.PreviewGroup>
                             </div>
                         )}
 
                         {selectedEvent.relatedWorks && selectedEvent.relatedWorks.length > 0 && (
                             <div className="related-works">
-                                <h4>相关作品</h4>
-                                <ul>
+                                <h4>📚 相关著作</h4>
+                                <ul className="works-list">
                                     {selectedEvent.relatedWorks.map((work, index) => (
-                                        <li key={index}>{work.title}</li>
+                                        <li key={index} className="work-item">
+                                            <span className="work-title">{work.title}</span>
+                                            {work.year && <span className="work-year">（{work.year}）</span>}
+                                        </li>
                                     ))}
                                 </ul>
                             </div>

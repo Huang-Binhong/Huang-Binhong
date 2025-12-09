@@ -4,7 +4,7 @@ import Timeline2 from '../components/Timeline2';
 import CustomCarousel from '../components/Carousel'; // 导入轮播图组件
 import { Card, Tabs } from 'antd';
 import { getTimelineEvents, getCarouselImages } from '../services/TimelineDataService'; // 导入carousel数据方法
-
+import { Link } from 'react-router-dom';
 const TimelinePage = () => {
     const [personalEvents, setPersonalEvents] = useState([]);
     const [historicalEvents, setHistoricalEvents] = useState([]);
@@ -47,35 +47,30 @@ const TimelinePage = () => {
     };
 
     return (
-        <div className="bio-page">
-            <Card className="bio-details-card">
-                <Tabs
-                    defaultActiveKey="timeline"
-                    items={[
-                        {
-                            key: 'timeline',
-                            label: '生平时间轴',
-                            children: (
-                                <>
-                                    <div className="timeline-page">
-                                        <Timeline2
-                                            personalEvents={personalEvents}
-                                            historicalEvents={historicalEvents}
-                                            loading={timelineLoading}
-                                        />
-                                    </div>
-
-                                    {/* 轮播图部分 */}
-                                    <CustomCarousel
-                                        images={carouselImages}
-                                        loading={carouselLoading}
-                                        title="黄宾虹生平影像"
-                                        height={400}
-                                    />
-                                </>
-                            )
-                        }
-                    ]}
+        <div className="TimelinePage">
+            <div className="nav_logo">
+                <img src="/images/list_logo.png" alt="" />
+            </div>
+            <div className="nav_logo2">
+                <img src="/images/list_logo2.png" alt="" />
+            </div>
+            <Link to="/" className="a_home">
+                <img src="/images/a_home.png" alt="返回首页" />
+            </Link>
+            <Card className="timeline-details-card">
+                <div className="timeline-page">
+                    <Timeline2
+                        personalEvents={personalEvents}
+                        historicalEvents={historicalEvents}
+                        loading={timelineLoading}
+                    />
+                </div>
+                {/* 轮播图部分 */}
+                <CustomCarousel
+                    images={carouselImages}
+                    loading={carouselLoading}
+                    title="黄宾虹生平影像"
+                    height={400}
                 />
             </Card>
         </div>

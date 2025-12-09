@@ -1,10 +1,12 @@
 /* pages/TimelinePage.css */
-.bio-page {
+.TimelinePage {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    position: relative;
+    overflow: hidden;
     max-width: 1400px;
     margin: 0 auto;
     padding: 24px;
-    background: var(--rice-white, #F7F5F0);
-    min-height: 100vh;
 }
 
 .person-basic-info {
@@ -151,7 +153,7 @@
     margin-right: 8px;
 }
 
-.bio-details-card {
+.timeline-details-card {
     border-radius: 8px;
     box-shadow: 0 2px 12px rgba(46, 46, 46, 0.08);
     border: 1px solid var(--light-green, #5A6D59);
@@ -159,25 +161,25 @@
     overflow: hidden;
 }
 
-.bio-details-card .ant-card-head {
+.timeline-details-card .ant-card-head {
     background: rgba(59, 79, 58, 0.05);
     border-bottom: 1px solid var(--light-green, #5A6D59);
     padding: 16px 24px;
 }
 
-.bio-details-card .ant-card-head-title {
+.timeline-details-card .ant-card-head-title {
     color: var(--ink-black, #2E2E2E);
     font-family: var(--font-title, 'Source Han Sans', '思源黑体', sans-serif);
     font-weight: 600;
     font-size: 18px;
 }
 
-.bio-details-card .ant-card-body {
+.timeline-details-card .ant-card-body {
     padding: 24px;
     background: var(--rice-white, #F7F5F0);
 }
 
-.bio-loading {
+.timeline-loading {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -208,13 +210,13 @@
 }
 
 /* 标签页样式优化 */
-.bio-details-card .ant-tabs-nav {
+.timeline-details-card .ant-tabs-nav {
     margin-bottom: 0;
     background: rgba(59, 79, 58, 0.05);
     padding: 0 24px;
 }
 
-.bio-details-card .ant-tabs-tab {
+.timeline-details-card .ant-tabs-tab {
     padding: 16px 24px;
     font-family: var(--font-title, 'Source Han Sans', '思源黑体', sans-serif);
     font-weight: 500;
@@ -222,26 +224,26 @@
     transition: all 0.3s ease;
 }
 
-.bio-details-card .ant-tabs-tab:hover {
+.timeline-details-card .ant-tabs-tab:hover {
     color: var(--gold, #D4A451);
 }
 
-.bio-details-card .ant-tabs-tab-active {
+.timeline-details-card .ant-tabs-tab-active {
     color: var(--gold, #D4A451) !important;
 }
 
-.bio-details-card .ant-tabs-ink-bar {
+.timeline-details-card .ant-tabs-ink-bar {
     background: var(--gold, #D4A451);
     height: 3px;
 }
 
-.bio-details-card .ant-tabs-content {
+.timeline-details-card .ant-tabs-content {
     background: var(--rice-white, #F7F5F0);
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-    .bio-page {
+    .timeline-page {
         padding: 16px;
     }
 
@@ -291,22 +293,22 @@
         font-size: 20px;
     }
 
-    .bio-details-card .ant-card-body {
+    .timeline-details-card .ant-card-body {
         padding: 16px;
     }
 
-    .bio-details-card .ant-tabs-nav {
+    .timeline-details-card .ant-tabs-nav {
         padding: 0 16px;
     }
 
-    .bio-details-card .ant-tabs-tab {
+    .timeline-details-card .ant-tabs-tab {
         padding: 12px 16px;
         font-size: 14px;
     }
 }
 
 @media (max-width: 480px) {
-    .bio-page {
+    .timeline-page {
         padding: 12px;
     }
 
@@ -343,6 +345,6 @@
     animation: fadeInUp 0.6s ease-out;
 }
 
-.bio-details-card {
+.timeline-details-card {
     animation: fadeInUp 0.8s ease-out;
 }
