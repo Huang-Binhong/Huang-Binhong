@@ -143,10 +143,10 @@ function HomePage() {
             >
               <Link
                 to="/style-transfer"
-                className="a_vr"
+                className="a_st"
                 title="创作·风格迁移"
                 style={{
-                  backgroundImage: 'url(/images/vr.png)',
+                  backgroundImage: 'url(/images/st.png)',
                   backgroundPosition: '0px 0px'
                 }}
               />

@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './RelationshipPage.css';
 
+const BG_IMAGES = ['/images/list_bg1.jpg', '/images/list_bg2.jpg'];
+
 const relationData = {
   center: {
     name: '黄宾虹',
@@ -55,6 +57,14 @@ function RelationshipPage() {
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [hoveredPerson, setHoveredPerson] = useState(null);
   const [nodes, setNodes] = useState([]);
+  const [currentBg, setCurrentBg] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentBg((prev) => (prev + 1) % BG_IMAGES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -175,7 +185,10 @@ function RelationshipPage() {
   }, []);
 
   return (
-    <div className="relationship-page">
+    <div
+      className="relationship-page"
+      style={{ backgroundImage: `url(${BG_IMAGES[currentBg]})` }}
+    >
       <div className="nav_logo">
         <img src="/images/list_logo.png" alt="" />
       </div>

@@ -1,6 +1,10 @@
 .artwork-detail-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  background: #1a1a1a;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 1s ease-in-out;
   position: relative;
   padding: 20px;
 }
@@ -12,11 +16,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  /* background-image: url('/images/list_bg2.jpg'); */
-  background: linear-gradient(135deg, rgba(45, 45, 45, 0.8) 0%, rgba(26, 26, 26, 0.9) 100%);
+  background: radial-gradient(ellipse at center, rgba(139, 69, 19, 0.15) 0%, rgba(0, 0, 0, 0.5) 100%);
   background-size: cover;
   background-position: center;
-  opacity: 0.15;
+  opacity: 0.5;
   z-index: 0;
 }
 
@@ -89,10 +92,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 50px;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(244, 239, 230, 0.95);
   border-radius: 15px;
   padding: 40px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
 }
 
 .artwork_image_section {
@@ -104,6 +107,7 @@
 .main_image {
   width: 100%;
   max-width: 600px;
+  position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   overflow: hidden;
@@ -114,6 +118,21 @@
   width: 100%;
   height: auto;
   display: block;
+}
+
+.zoom_lens {
+  position: absolute;
+  pointer-events: none;
+  border: 2px solid #c9a066;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  background-repeat: no-repeat;
+  opacity: 0.95;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.zoom_lens:hover {
+  transform: scale(1.01);
 }
 
 .artwork_info_section {
@@ -189,23 +208,23 @@
 }
 
 .btn_ai {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #b07a45 0%, #8c6235 100%);
   color: white;
 }
 
 .btn_ai:hover {
   transform: translateY(-3px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(176, 122, 69, 0.35);
 }
 
 .btn_style {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #c9a066 0%, #a67c52 100%);
   color: white;
 }
 
 .btn_style:hover {
   transform: translateY(-3px);
-  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+  box-shadow: 0 4px 15px rgba(166, 124, 82, 0.35);
 }
 
 @keyframes fadeIn {

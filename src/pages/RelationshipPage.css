@@ -1,8 +1,24 @@
 .relationship-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  background: #1a1a1a;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 1s ease-in-out;
   position: relative;
   overflow: hidden;
+}
+
+.relationship-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse at center, rgba(139, 69, 19, 0.18) 0%, rgba(0, 0, 0, 0.5) 100%);
+  opacity: 0.5;
+  z-index: 0;
 }
 
 .nav_logo,
@@ -48,6 +64,8 @@
   position: relative;
   z-index: 1;
   padding: 50px 20px;
+  max-width: 1400px;
+  margin: 0 auto 40px;
 }
 
 .relationship_header {
@@ -97,9 +115,9 @@
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(244, 239, 230, 0.95);
   border-radius: 15px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
 }
 
 .person_info {
@@ -107,7 +125,7 @@
   bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(244, 239, 230, 0.95);
   padding: 25px 35px;
   border-radius: 15px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);

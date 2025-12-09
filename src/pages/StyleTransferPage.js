@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './StyleTransferPage.css';
 
+const BG_IMAGES = ['/images/list_bg1.jpg', '/images/list_bg2.jpg'];
+const DEFAULT_STYLE_IMAGE = '/images/bg1.jpg';
+
 function StyleTransferPage() {
   const [contentImage, setContentImage] = useState(null);
-  const [styleImage, setStyleImage] = useState(null);
   const [resultImage, setResultImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [currentBg, setCurrentBg] = useState(0);
+
+  useEffect(() => {
+    // 背景轮播
+    const interval = setInterval(() => {
+      setCurrentBg((prev) => (prev + 1) % BG_IMAGES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleContentUpload = (e) => {
     const file = e.target.files[0];
@@ -19,20 +30,9 @@ function StyleTransferPage() {
     }
   };
 
-  const handleStyleUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setStyleImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleStyleTransfer = async () => {
-    if (!contentImage || !styleImage) {
-      alert('请先上传内容图片和风格图片');
+    if (!contentImage) {
+      alert('请先上传内容图片');
       return;
     }
 
@@ -48,7 +48,12 @@ function StyleTransferPage() {
   };
 
   return (
-    <div className="style-transfer-page">
+    <div
+      className="style-transfer-page"
+      style={{
+        backgroundImage: `url(${BG_IMAGES[currentBg]})`
+      }}
+    >
       <div className="nav_logo">
         <img src="/images/list_logo.png" alt="" />
       </div>
@@ -91,33 +96,6 @@ function StyleTransferPage() {
                 </div>
               </div>
 
-              <div className="upload_card">
-                <h3>风格参考</h3>
-                <div className="upload_area">
-                  {styleImage ? (
-                    <img src={styleImage} alt="风格图片" />
-                  ) : (
-                    <div className="upload_placeholder">
-                      <p>选择黄宾虹作品</p>
-                    </div>
-                  )}
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    onChange={handleStyleUpload}
-                    className="file_input"
-                  />
-                </div>
-                <div className="style_presets">
-                  <button onClick={() => setStyleImage('/images/bg1.jpg')}>
-                    山水甲
-                  </button>
-                  <button onClick={() => setStyleImage('/images/bg2.jpg')}>
-                    山水乙
-                  </button>
-                </div>
-              </div>
-
               <div className="upload_card result_card">
                 <h3>生成结果</h3>
                 <div className="upload_area">
@@ -144,10 +122,11 @@ function StyleTransferPage() {
               <button 
                 className="generate_btn"
                 onClick={handleStyleTransfer}
-                disabled={loading || !contentImage || !styleImage}
+                disabled={loading || !contentImage}
               >
                 {loading ? '生成中...' : '开始生成'}
               </button>
+              <p className="hint_text">风格参考默认使用黄宾虹作品示例（{DEFAULT_STYLE_IMAGE}）</p>
             </div>
           </div>
         </div>

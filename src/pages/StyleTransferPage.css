@@ -1,6 +1,10 @@
 .style-transfer-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  background: #1a1a1a;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 1s ease-in-out;
   position: relative;
   padding: 20px;
 }
@@ -12,11 +16,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  /* background-image: url('/images/list_bg1.jpg'); */
-  background: radial-gradient(circle at top, rgba(139, 69, 19, 0.08) 0%, rgba(0, 0, 0, 0.15) 100%);
+  background: radial-gradient(ellipse at center, rgba(139, 69, 19, 0.18) 0%, rgba(0, 0, 0, 0.5) 100%);
   background-size: cover;
   background-position: center;
-  opacity: 0.15;
+  opacity: 0.5;
   z-index: 0;
 }
 
@@ -83,10 +86,10 @@
 }
 
 .style_content {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(244, 239, 230, 0.95);
   border-radius: 15px;
   padding: 40px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
 }
 
 .page_title {
@@ -111,15 +114,15 @@
 
 .upload_section {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 30px;
 }
 
 .upload_card {
-  background: #f9f9f9;
+  background: #f5efdf;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
 }
 
 .upload_card h3 {
@@ -133,17 +136,17 @@
   position: relative;
   width: 100%;
   aspect-ratio: 3/4;
-  border: 2px dashed #ccc;
+  border: 2px dashed #c9a066;
   border-radius: 8px;
   overflow: hidden;
-  background: white;
+  background: rgba(255, 255, 255, 0.9);
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .upload_area:hover {
-  border-color: #8B4513;
-  background: #f5f5f5;
+  border-color: #a67c52;
+  background: #f0e6d8;
 }
 
 .upload_area img {
@@ -168,29 +171,6 @@
   height: 100%;
   opacity: 0;
   cursor: pointer;
-}
-
-.style_presets {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.style_presets button {
-  flex: 1;
-  padding: 8px 12px;
-  background: white;
-  border: 1px solid #8B4513;
-  border-radius: 6px;
-  color: #8B4513;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-}
-
-.style_presets button:hover {
-  background: #8B4513;
-  color: white;
 }
 
 .loading_animation {
@@ -220,7 +200,7 @@
   width: 100%;
   margin-top: 15px;
   padding: 10px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #b07a45 0%, #8c6235 100%);
   color: white;
   border: none;
   border-radius: 6px;
@@ -231,16 +211,20 @@
 
 .download_btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(176, 122, 69, 0.35);
 }
 
 .action_section {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
 }
 
 .generate_btn {
   padding: 15px 60px;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #c9a066 0%, #a67c52 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -248,17 +232,22 @@
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+  box-shadow: 0 4px 15px rgba(166, 124, 82, 0.3);
 }
 
 .generate_btn:hover:not(:disabled) {
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+  box-shadow: 0 6px 20px rgba(166, 124, 82, 0.35);
 }
 
 .generate_btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.hint_text {
+  color: #7a5b36;
+  font-size: 14px;
 }
 
 @media (max-width: 1024px) {

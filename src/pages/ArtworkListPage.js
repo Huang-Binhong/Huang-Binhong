@@ -2,10 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './ArtworkListPage.css';
 
+const BG_IMAGES = ['/images/list_bg1.jpg', '/images/list_bg2.jpg'];
+
 function ArtworkListPage() {
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [category, setCategory] = useState('');
+  const [currentBg, setCurrentBg] = useState(0);
+
+  useEffect(() => {
+    // 背景轮播
+    const interval = setInterval(() => {
+      setCurrentBg((prev) => (prev + 1) % BG_IMAGES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     // 模拟数据加载
@@ -68,14 +78,19 @@ function ArtworkListPage() {
       setArtworks(mockData);
       setLoading(false);
     }, 500);
-  }, [category]);
+  }, []);
 
   if (loading) {
     return <div className="loading">加载中...</div>;
   }
 
   return (
-    <div className="artwork-list-page">
+    <div
+      className="artwork-list-page"
+      style={{
+        backgroundImage: `url(${BG_IMAGES[currentBg]})`
+      }}
+    >
       <div className="nav_logo">
         <img src="/images/list_logo.png" alt="" />
       </div>
