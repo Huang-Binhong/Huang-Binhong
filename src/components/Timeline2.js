@@ -129,27 +129,7 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                 <div className="scroll-subtitle">年谱画卷（1865-1955）</div>
             </div>
 
-            {/* 导航按钮 */}
-            <div className="timeline-nav">
-                <Button
-                    icon={<LeftOutlined />}
-                    onClick={scrollLeft}
-                    className="nav-btn"
-                    disabled={scrollPosition <= 0}
-                    size="small"
-                />
-                <div className="nav-info">
-                    <span className="nav-year">{minYear}</span>
-                    <span className="nav-separator">——</span>
-                    <span className="nav-year">{maxYear}</span>
-                </div>
-                <Button
-                    icon={<RightOutlined />}
-                    onClick={scrollRight}
-                    className="nav-btn"
-                    size="small"
-                />
-            </div>
+
 
             {/* 时间轴主体 */}
             <div
