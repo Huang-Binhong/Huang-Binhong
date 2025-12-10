@@ -1,20 +1,47 @@
-﻿from fastapi import FastAPI, Form, UploadFile, File, HTTPException
+from fastapi import FastAPI, Form, UploadFile, File, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-import base64
-import json
+from pathlib import Path
 import os
-from typing import Optional, List, Dict
+from typing import List, Dict
 
-try:
-    import httpx
-except Exception:
-    httpx = None
+# Load environment variables from .env if present
+def _load_env():
+    env_path = Path(__file__).resolve().parent.parent / ".env"
+    if env_path.exists():
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(dotenv_path=env_path, override=False)
+            return
+        except Exception:
+            pass
+        try:
+            for line in env_path.read_text(encoding="utf-8").splitlines():
+                if not line or line.strip().startswith("#") or "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                os.environ.setdefault(k.strip(), v.strip())
+        except Exception:
+            pass
 
-from config import load_config
+
+_load_env()
+
+from services.ai_service import (  # noqa: E402
+    DoubaoSettings,
+    build_prompt,
+    generate_image,
+    create_video_task,
+    query_video_task,
+    to_data_url,
+)
 
 app = FastAPI()
-CONFIG = load_config()
+SETTINGS = DoubaoSettings()
+BASE_PROMPT = os.getenv(
+    "DOUBAO_BASE_PROMPT",
+    "将输入图片迁移为黄宾虹风格，保留主体构图与内容，笔墨苍润、墨色层次丰富，提升纸本肌理与皴擦效果。",
+)
 
 # CORS for local debugging
 app.add_middleware(
@@ -25,7 +52,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Demo collections（中文示例数据）
+# ----------------------
+# Demo collection data
+# ----------------------
 collections: List[Dict] = [
     {
         "id": "HBH-0001",
@@ -81,11 +110,21 @@ collections: List[Dict] = [
     },
 ]
 
+
 def filter_by_category(cat: str):
     if not cat:
         return collections
     return [it for it in collections if (it.get("category") or "").startswith(cat)]
 
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+
+# ----------------------
+# Frontend mock APIs
+# ----------------------
 @app.post("/frontend/pg/huang/huang-collection")
 async def huang_collection(
     category: str = Form(default=""),
@@ -98,6 +137,7 @@ async def huang_collection(
     start = (pageNo - 1) * pageSize
     page = all_[start : start + pageSize]
     return {"pageN": pageN, "pageNo": pageNo, "realPath": ".", "infomationList": page}
+
 
 @app.post("/frontend/pg/huang/get-dong-by-id")
 async def huang_detail(
@@ -129,6 +169,7 @@ async def huang_detail(
     }
     return {"bigPicSrcs": big_pic_srcs, "infomation": info, "smallPicSrc": small_pic_src}
 
+
 # VR works (demo descriptions)
 vr_scene_descs = {
     "HBH-0001": "Landscape scroll texture, soft ink lighting.",
@@ -136,6 +177,7 @@ vr_scene_descs = {
     "HBH-0003": "Raised terrain reflecting heavy ink stacking.",
     "HBH-0004": "Bamboo corridor composition, walk-through space.",
 }
+
 
 @app.post("/frontend/pg/huang/vr-works")
 async def huang_vr_works():
@@ -153,8 +195,81 @@ async def huang_vr_works():
         })
     return {"works": works}
 
+
+# ----------------------
+# Doubao style transfer APIs (image / video)
+# ----------------------
+
+def _parse_tags(raw: str) -> List[str]:
+    if not raw:
+        return []
+    return [t.strip() for t in raw.replace(";", ",").split(",") if t.strip()]
+
+
+@app.post("/api/style-transfer/image")
+async def api_style_image(
+    file: UploadFile = File(...),
+    prompt: str = Form(""),
+    ink_style: str = Form(""),
+    style_tags: str = Form(""),
+    img_count: int = Form(1),
+    size: str = Form(None),
+):
+    if not file or not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="请上传图片文件（image/*）")
+    image_bytes = await file.read()
+    if not image_bytes:
+        raise HTTPException(status_code=400, detail="文件为空")
+
+    tags = _parse_tags(style_tags)
+    prompt_text = build_prompt(prompt or BASE_PROMPT, ink_style, tags)
+    data_url = to_data_url(image_bytes, file.content_type or "image/png")
+
+    try:
+        urls = await generate_image(
+            SETTINGS,
+            data_url,
+            prompt_text,
+            n=max(1, img_count),
+            size=size,
+        )
+        return {"ok": True, "model": SETTINGS.image_model, "prompt": prompt_text, "urls": urls}
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=str(e))
+
+
+@app.post("/api/style-transfer/video")
+async def api_style_video(
+    image_url: str = Form(...),
+    prompt: str = Form(""),
+    ink_style: str = Form(""),
+    style_tags: str = Form(""),
+    video_motion: str = Form("diffusion"),
+    video_duration: int = Form(5),
+):
+    tags = _parse_tags(style_tags)
+    base_prompt = build_prompt(prompt or BASE_PROMPT, ink_style, tags)
+    prompt_text = f"{base_prompt}；动效：{video_motion}；时长：{video_duration}s；水印：true"
+
+    try:
+        task_id = await create_video_task(SETTINGS, prompt_text, image_url)
+        return {"ok": True, "task_id": task_id, "model": SETTINGS.video_model, "prompt": prompt_text}
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=str(e))
+
+
+@app.get("/api/style-transfer/video/{task_id}")
+async def api_style_video_query(task_id: str):
+    try:
+        data = await query_video_task(SETTINGS, task_id)
+        return {"ok": True, "model": SETTINGS.video_model, "data": data}
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=str(e))
+
+
 class NoCacheStaticFiles(StaticFiles):
     """Disable cache to make dev easier."""
+
     async def get_response(self, path: str, scope):
         response = await super().get_response(path, scope)
         if response.status_code == 200:
@@ -163,96 +278,6 @@ class NoCacheStaticFiles(StaticFiles):
             response.headers["Expires"] = "0"
         return response
 
-# --- Doubao Style Transfer ---
-async def _call_doubao_style_transfer(image_bytes: bytes, filename: str, content_type: Optional[str] = None) -> dict:
-    """Call Doubao Images Generations API with a data-url image.
-    Requires doubao config in config.json.
-    Returns {"image_base64": str} or {"image_url": str}.
-    """
-    doubao = (CONFIG or {}).get("doubao", {})
-    api_url = str(doubao.get("style_api_url", "")).strip()
-    api_key = str(doubao.get("api_key", "")).strip()
-    model = str(doubao.get("model", "doubao-seedream-4-0-250828"))
-    prompt = str(doubao.get("prompt", "Huang Binhong ink style."))
-    response_format = str(doubao.get("response_format", "url"))
-    size = str(doubao.get("size", "2K"))
-    stream = bool(doubao.get("stream", False))
-    watermark = bool(doubao.get("watermark", True))
-    seq_gen = str(doubao.get("sequential_image_generation", "auto"))
-    seq_opts = doubao.get("sequential_image_generation_options") if isinstance(doubao.get("sequential_image_generation_options"), dict) else {}
-    seq_max_images = int((seq_opts or {}).get("max_images", 1))
-    image_mode = str(doubao.get("image_mode", "base64"))
-
-    if not api_url or not api_key:
-        raise RuntimeError("Missing doubao api url or api key")
-    if httpx is None:
-        raise RuntimeError("httpx not installed: pip install httpx")
-
-    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
-    ct = (content_type or "image/png").split(";")[0]
-    b64 = base64.b64encode(image_bytes).decode("utf-8")
-    if image_mode.lower() != "base64":
-        # fallback to data-url
-        pass
-    image_list = [f"data:{ct};base64,{b64}"]
-
-    payload = {
-        "model": model,
-        "prompt": prompt,
-        "image": image_list,
-        "sequential_image_generation": seq_gen,
-        "sequential_image_generation_options": {"max_images": seq_max_images},
-        "response_format": response_format,
-        "size": size,
-        "stream": False if stream else False,
-        "watermark": watermark,
-    }
-
-    timeout = int(doubao.get("timeout", 60) or 60)
-    async with httpx.AsyncClient(timeout=timeout) as client:
-        resp = await client.post(api_url, headers=headers, json=payload)
-        if resp.status_code >= 400:
-            detail = resp.text
-            try:
-                detail = json.dumps(resp.json(), ensure_ascii=False)
-            except Exception:
-                pass
-            raise RuntimeError(f"Doubao API failed: {resp.status_code} {detail}")
-
-    try:
-        payload = resp.json()
-    except Exception:
-        return {"image_base64": base64.b64encode(resp.content).decode("utf-8")}
-
-    if isinstance(payload, dict):
-        if payload.get("image_base64"):
-            return {"image_base64": payload["image_base64"]}
-        if payload.get("image") and isinstance(payload["image"], dict) and payload["image"].get("base64"):
-            return {"image_base64": payload["image"]["base64"]}
-        if payload.get("data") and isinstance(payload["data"], list) and payload["data"]:
-            first = payload["data"][0]
-            if isinstance(first, dict):
-                if first.get("b64_json"):
-                    return {"image_base64": first["b64_json"]}
-                if first.get("url"):
-                    return {"image_url": first["url"]}
-        if payload.get("url"):
-            return {"image_url": payload["url"]}
-    raise RuntimeError("Unrecognized doubao response")
-
-@app.post("/api/hbh-style")
-async def hbh_style(file: UploadFile = File(...)):
-    """Receive an image and return stylized result via doubao."""
-    if not file or not file.content_type or not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="Please upload an image (image/*)")
-    image_bytes = await file.read()
-    if not image_bytes:
-        raise HTTPException(status_code=400, detail="Empty file")
-    try:
-        result = await _call_doubao_style_transfer(image_bytes, file.filename or "upload.png", file.content_type)
-        return {"ok": True, **result}
-    except Exception as e:
-        raise HTTPException(status_code=502, detail=str(e))
 
 # Static files mount
 app.mount("/", NoCacheStaticFiles(directory=".", html=True), name="static")

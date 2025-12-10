@@ -16,7 +16,13 @@ npm run build        # 生成生产构建
 cd backend && python main.py        # 启动后端（开发）
 cd backend && uvicorn main:app --reload --port 8000  # 后端热重载
 ```
-如需 AI 功能，复制 `.env.example` 为 `.env` 并配置 `REACT_APP_ARK_API_KEY`。
+如需 AI 功能，复制 `.env.example` 为 `.env` 并配置所需密钥（见下方“豆包 AI 服务配置”）。
+
+## 豆包 AI 服务配置
+- AI 讲解（前端）：`src/utils/aiService.js` 调用 `https://ark.cn-beijing.volces.com/api/v3/chat/completions`，模型 `doubao-seed-1-6-flash-250828`，需 `REACT_APP_ARK_API_KEY`。
+- 风格迁移图生图（后端）：接口 `/api/style-transfer/image` 依赖 `DOUBAO_API_KEY`，可按需覆盖 `DOUBAO_IMAGE_MODEL`（默认 `doubao-seedream-4-0-250828`）、`DOUBAO_IMAGE_URL`、`DOUBAO_IMAGE_RESPONSE_FORMAT`（默认 `url`）、`DOUBAO_IMAGE_SIZE`、`DOUBAO_IMAGE_WATERMARK`、`DOUBAO_IMAGE_TIMEOUT`。
+- 风格迁移图生视频（后端）：接口 `/api/style-transfer/video` 使用 `DOUBAO_VIDEO_MODEL`（默认 `doubao-seedance-1-0-pro-250528`）和 `DOUBAO_VIDEO_TASK_URL` / `DOUBAO_VIDEO_QUERY_URL`（默认指向 Ark v3 contents/generations，查询 URL 需保留结尾 `/` 以拼接 taskId），同样依赖 `DOUBAO_API_KEY`。
+- 基础提示语可通过 `DOUBAO_BASE_PROMPT` 调整；未提供 key 或错误配置会导致 502 返回。
 
 ## 代码风格与命名
 - 统一使用 2 空格缩进，UTF-8 编码。
