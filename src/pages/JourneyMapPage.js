@@ -252,6 +252,12 @@ function JourneyMapPage() {
       </div>
 
       {/* 静音按钮 - 左下角 */}
+      {/* 左下角返回首页按钮 */}
+      <Link to="/" className="a_back_left">
+        <img src="/images/a_home.png" alt="返回首页" />
+      </Link>
+
+      {/* 静音按钮 */}
       <button
         className="a_mute"
         onClick={(e) => handleAudioToggle(e)}
@@ -260,13 +266,8 @@ function JourneyMapPage() {
         <img src={isMuted ? "/images/mute.svg" : "/images/unmute.svg"} alt={isMuted ? "静音" : "取消静音"} />
       </button>
 
-      {/* 返回首页按钮 - 右下角 */}
-      <Link to="/" className="a_home">
-        <img src="/images/a_home.png" alt="返回首页" />
-      </Link>
-
       {/* 固定的地图容器 */}
-      <div className="map-container">
+      <div className="journey-map-container">
         <InteractiveMap
           currentJourney={currentJourney}
           journeys={journeys}
@@ -276,22 +277,22 @@ function JourneyMapPage() {
       </div>
 
       {/* 滚动的时间线容器 */}
-      <div className="timeline-container">
-        <div className="timeline-header">
-          <h1 className="main-title">黄宾虹先生游历纪</h1>
-          <p className="subtitle">一代宗师的艺术行旅</p>
+      <div className="journey-timeline-container">
+        <div className="journey-timeline-header">
+          <h1 className="journey-main-title">黄宾虹先生游历纪</h1>
+          <p className="journey-subtitle">一代宗师的艺术行旅</p>
 
           <AnimatePresence>
             {showScrollIndicator && (
               <motion.div
-                className="scroll-indicator"
+                className="journey-scroll-indicator"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
                 transition={{ delay: 1.5, duration: 0.6 }}
               >
-                <span className="scroll-text">向下滚动开始旅程</span>
-                <div className="scroll-arrow"></div>
+                <span className="journey-scroll-text">向下滚动开始旅程</span>
+                <div className="journey-scroll-arrow"></div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -312,8 +313,8 @@ function JourneyMapPage() {
           </div>
         ))}
 
-        <div className="timeline-footer">
-          <p className="footer-text">— 终 —</p>
+        <div className="journey-timeline-footer">
+          <p className="journey-footer-text">— 终 —</p>
         </div>
       </div>
 

@@ -276,16 +276,16 @@ function InteractiveMap({ currentJourney, journeys, isPlaying, onLocationClick, 
 
 
     return (
-        <div className="interactive-map-wrapper">
+        <div className="journey-interactive-map-wrapper">
             {/* 现代地图画布 - 作为底图 */}
             <div
                 ref={mapContainer}
-                className="map-canvas"
+                className="journey-map-canvas"
             />
 
             {/* 古风地图背景 */}
             <div
-                className="ancient-map-background"
+                className="journey-ancient-map-background"
                 style={{
                     backgroundImage: `url(/images/${ancientMapImage})`,
                     opacity: ancientMapOpacity
@@ -295,26 +295,26 @@ function InteractiveMap({ currentJourney, journeys, isPlaying, onLocationClick, 
 
 
             {/* 古风装饰边角 */}
-            <div className="ancient-decorations">
-                <div className="corner-decoration top-left">
+            <div className="journey-ancient-decorations">
+                <div className="journey-corner-decoration top-left">
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <path d="M 5 5 L 5 95 M 5 5 L 95 5" stroke="#3B4F3A" strokeWidth="2" fill="none" opacity="0.6" />
                         <circle cx="5" cy="5" r="3" fill="#D4A451" opacity="0.8" />
                     </svg>
                 </div>
-                <div className="corner-decoration top-right">
+                <div className="journey-corner-decoration top-right">
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <path d="M 95 5 L 5 5 M 95 5 L 95 95" stroke="#3B4F3A" strokeWidth="2" fill="none" opacity="0.6" />
                         <circle cx="95" cy="5" r="3" fill="#D4A451" opacity="0.8" />
                     </svg>
                 </div>
-                <div className="corner-decoration bottom-left">
+                <div className="journey-corner-decoration bottom-left">
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <path d="M 5 95 L 5 5 M 5 95 L 95 95" stroke="#3B4F3A" strokeWidth="2" fill="none" opacity="0.6" />
                         <circle cx="5" cy="95" r="3" fill="#D4A451" opacity="0.8" />
                     </svg>
                 </div>
-                <div className="corner-decoration bottom-right">
+                <div className="journey-corner-decoration bottom-right">
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <path d="M 95 95 L 5 95 M 95 95 L 95 5" stroke="#3B4F3A" strokeWidth="2" fill="none" opacity="0.6" />
                         <circle cx="95" cy="95" r="3" fill="#D4A451" opacity="0.8" />

@@ -1,4 +1,4 @@
-.interactive-map-wrapper {
+.journey-interactive-map-wrapper {
     position: relative;
     width: 100%;
     height: 100vh;
@@ -7,32 +7,33 @@
 }
 
 /* 现代地图画布 */
-.map-canvas {
+.journey-map-canvas {
     width: 100%;
     height: 100%;
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 10;
+    z-index: 1;
     transition: opacity 0.5s ease;
 }
 
 /* 隐藏高德地图的瓦片图层（底图），但保留标记层 */
-.map-canvas .amap-layers .amap-layer {
+.journey-map-canvas .amap-layers .amap-layer {
     opacity: 0 !important;
 }
 
 /* 确保标记层显示 */
-.map-canvas .amap-markers,
-.map-canvas .amap-marker,
-.map-canvas .amap-overlays {
+.journey-map-canvas .amap-markers,
+.journey-map-canvas .amap-marker,
+.journey-map-canvas .amap-overlays {
     opacity: 1 !important;
     visibility: visible !important;
     z-index: 1000 !important;
+    pointer-events: auto !important;
 }
 
 /* 古风地图背景层 - 在地图瓦片上方，标记下方 */
-.ancient-map-background {
+.journey-ancient-map-background {
     position: absolute;
     top: 0;
     left: 0;
@@ -41,7 +42,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    z-index: 50;
+    z-index: 5;
     pointer-events: none;
     transition: all 0.5s ease;
 }
@@ -378,7 +379,7 @@
 
 
 /* 古风装饰边角 */
-.ancient-decorations {
+.journey-ancient-decorations {
     position: absolute;
     top: 0;
     left: 0;
@@ -388,29 +389,29 @@
     z-index: 150;
 }
 
-.corner-decoration {
+.journey-corner-decoration {
     position: absolute;
     width: 100px;
     height: 100px;
     opacity: 0.7;
 }
 
-.corner-decoration.top-left {
+.journey-corner-decoration.top-left {
     top: 20px;
     left: 20px;
 }
 
-.corner-decoration.top-right {
+.journey-corner-decoration.top-right {
     top: 20px;
     right: 20px;
 }
 
-.corner-decoration.bottom-left {
+.journey-corner-decoration.bottom-left {
     bottom: 20px;
     left: 20px;
 }
 
-.corner-decoration.bottom-right {
+.journey-corner-decoration.bottom-right {
     bottom: 20px;
     right: 20px;
 }

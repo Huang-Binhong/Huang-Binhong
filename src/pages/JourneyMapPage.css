@@ -1,34 +1,41 @@
+/* 
+ * 层级结构（从高到低）：
+ * 1. 导航按钮 - z-index: 9999
+ * 2. 封面/结尾 - z-index: 600
+ * 3. 介绍栏 (.timeline-item) - z-index: 550
+ * 4. 地图标记 - z-index: 500
+ * 5. 章节背景 - z-index: 400
+ */
+
 .journey-map-page {
   position: relative;
   width: 100%;
   min-height: 100vh;
 }
 
-/* 固定的地图容器 */
-.map-container {
+/* 固定的地图容器 - 中间层级 */
+.journey-map-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100vh;
-  z-index: 1;
+  z-index: 500;
   pointer-events: none;
 }
 
-/* 地图内的交互元素需要能点击 */
-.map-container * {
+.journey-map-container * {
   pointer-events: auto;
 }
 
 /* 滚动的时间线容器 */
-.timeline-container {
+.journey-timeline-container {
   position: relative;
-  z-index: 10;
   width: 100%;
   pointer-events: none;
 }
 
-.timeline-header {
+.journey-timeline-header {
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -36,13 +43,14 @@
   justify-content: center;
   text-align: center;
   pointer-events: auto;
-  background: #F7F5F0 url('../assets/ancient-map.jpg') center/cover no-repeat;
+  background: #F7F5F0;
   position: relative;
   overflow: hidden;
+  z-index: 600;
 }
 
 /* 背景山水画图片层 */
-.timeline-header::after {
+.journey-timeline-header::after {
   content: '';
   position: absolute;
   top: 0;
@@ -54,13 +62,13 @@
   background-position: center;
   background-repeat: no-repeat;
   opacity: 0.8;
-  z-index: 1;
+  z-index: -1;
   pointer-events: none;
   filter: grayscale(10%) sepia(10%);
 }
 
 /* 渐变遮罩层 */
-.timeline-header::before {
+.journey-timeline-header::before {
   content: '';
   position: absolute;
   top: 0;
@@ -71,11 +79,11 @@
       rgba(247, 245, 240, 0.3) 0%,
       rgba(247, 245, 240, 0.2) 50%,
       rgba(247, 245, 240, 0.3) 100%);
-  z-index: 2;
+  z-index: -1;
   pointer-events: none;
 }
 
-.main-title {
+.journey-main-title {
   font-size: 56px;
   font-weight: 700;
   color: #2E2E2E;
@@ -84,25 +92,25 @@
   text-shadow: 2px 2px 4px rgba(59, 79, 58, 0.1);
   animation: fadeInDown 1s ease;
   position: relative;
-  z-index: 100;
+  z-index: 101;
 }
 
 /* 标题装饰 */
-.main-title::before,
-.main-title::after {
+.journey-main-title::before,
+.journey-main-title::after {
   content: '◆';
   color: #D4A451;
   margin: 0 20px;
   font-size: 24px;
 }
 
-.subtitle {
+.journey-subtitle {
   font-size: 20px;
   color: #3B4F3A;
   letter-spacing: 4px;
   animation: fadeInUp 1s ease 0.3s both;
   position: relative;
-  z-index: 100;
+  z-index: 101;
 }
 
 @keyframes fadeInDown {
@@ -128,7 +136,7 @@
 }
 
 /* 滚动指引 */
-.scroll-indicator {
+.journey-scroll-indicator {
   position: absolute;
   bottom: 80px;
   left: 50%;
@@ -137,11 +145,11 @@
   flex-direction: column;
   align-items: center;
   gap: 15px;
-  z-index: 100;
+  z-index: 101;
   pointer-events: none;
 }
 
-.scroll-text {
+.journey-scroll-text {
   font-size: 16px;
   color: #3B4F3A;
   letter-spacing: 3px;
@@ -151,7 +159,7 @@
   animation: scrollTextPulse 2s ease-in-out infinite;
 }
 
-.scroll-arrow {
+.journey-scroll-arrow {
   width: 30px;
   height: 50px;
   border: 3px solid #3B4F3A;
@@ -162,7 +170,7 @@
   box-shadow: 0 2px 8px rgba(59, 79, 58, 0.2);
 }
 
-.scroll-arrow::before {
+.journey-scroll-arrow::before {
   content: '';
   position: absolute;
   top: 10px;
@@ -204,7 +212,7 @@
   }
 }
 
-/* 游历章节 */
+/* 游历章节 - 不设置 z-index，让内部元素自由穿透 */
 .journey-section {
   min-height: 100vh;
   display: flex;
@@ -214,6 +222,8 @@
   transition: all 0.5s ease;
   background: rgba(247, 245, 240, 0.8) url('../assets/ancient-map.jpg') center/cover no-repeat;
   background-blend-mode: lighten;
+  position: relative;
+  /* 不设置 z-index，避免创建层叠上下文限制子元素 */
 }
 
 .journey-section.active {
@@ -221,12 +231,17 @@
   background-blend-mode: lighten;
 }
 
-/* 章节内的内容需要能交互 */
+/* 章节内的 timeline-item 使用固定定位的方式提升层级 */
+.journey-section .timeline-item {
+  position: relative;
+  z-index: 550;
+}
+
 .journey-section > * {
   pointer-events: auto;
 }
 
-.timeline-footer {
+.journey-timeline-footer {
   height: 50vh;
   display: flex;
   align-items: center;
@@ -236,19 +251,21 @@
       rgba(247, 245, 240, 0.8) 0%,
       rgba(247, 245, 240, 0.9) 50%,
       rgba(247, 245, 240, 1) 100%);
+  position: relative;
+  z-index: 600;
 }
 
-.footer-text {
+.journey-footer-text {
   font-size: 24px;
   color: #3B4F3A;
   letter-spacing: 8px;
 }
 
-/* Logo样式 */
+/* Logo样式 - 最高层级 */
 .nav_logo,
 .nav_logo2 {
   position: fixed;
-  z-index: 100;
+  z-index: 9999;
   animation: fadeIn 1s ease-out;
 }
 
@@ -268,30 +285,12 @@
   height: auto;
 }
 
-/* 返回首页按钮 - 右下角 */
-.a_home {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 100;
-  transition: transform 0.3s ease;
-}
-
-.a_home:hover {
-  transform: scale(1.1);
-}
-
-.a_home img {
-  width: 80px;
-  height: auto;
-}
-
 /* 静音按钮 - 左下角 */
 .a_mute {
   position: fixed;
   bottom: 30px;
   left: 30px;
-  z-index: 100;
+  z-index: 9999;
   transition: transform 0.3s ease;
   background: transparent;
   border: none;
@@ -308,6 +307,24 @@
   height: auto;
 }
 
+/* 返回首页按钮 - 右下角 */
+.a_back_left {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 9999;
+  transition: transform 0.3s ease;
+}
+
+.a_back_left:hover {
+  transform: scale(1.1);
+}
+
+.a_back_left img {
+  width: 80px;
+  height: auto;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -319,21 +336,21 @@
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .main-title {
+  .journey-main-title {
     font-size: 36px;
     letter-spacing: 6px;
   }
 
-  .subtitle {
+  .journey-subtitle {
     font-size: 16px;
     letter-spacing: 2px;
   }
 
-  .scroll-indicator {
+  .journey-scroll-indicator {
     bottom: 60px;
   }
 
-  .scroll-text {
+  .journey-scroll-text {
     font-size: 14px;
     letter-spacing: 2px;
   }
@@ -343,7 +360,7 @@
     max-width: 100px;
   }
 
-  .a_home img,
+  .a_back_left img,
   .a_mute img {
     width: 60px;
   }

@@ -118,9 +118,9 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
     }
 
     return (
-        <div className="timeline-container">
-            {/* 卷轴标题 */}
-            <div className="timeline-header">
+        <div className="timeline2-container">
+            {/* 顶部卷轴标题区域 */}
+            <div className="timeline2-header">
                 <div className="scroll-title-container">
                     <div className="scroll-title-left"></div>
                     <h1 className="scroll-title">黄宾虹生平与时代</h1>

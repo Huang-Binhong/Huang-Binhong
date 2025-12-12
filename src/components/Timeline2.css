@@ -33,7 +33,7 @@
 }
 
 /* 容器样式 - 卷轴效果 */
-.timeline-container {
+.timeline2-container {
     position: relative;
     padding: 60px 0 80px;
     background:
@@ -52,8 +52,8 @@
 }
 
 /* 卷轴装饰效果 */
-.timeline-container::before,
-.timeline-container::after {
+.timeline2-container::before,
+.timeline2-container::after {
     content: '';
     position: absolute;
     left: 0;
@@ -70,18 +70,18 @@
     pointer-events: none;
 }
 
-.timeline-container::before {
+.timeline2-container::before {
     top: 0;
     border-bottom: 1px solid rgba(139, 107, 71, 0.25);
 }
 
-.timeline-container::after {
+.timeline2-container::after {
     bottom: 0;
     border-top: 1px solid rgba(139, 107, 71, 0.25);
 }
 
 /* 卷轴标题区域 */
-.timeline-header {
+.timeline2-header {
     position: absolute;
     top: 25px;
     left: 40px;
