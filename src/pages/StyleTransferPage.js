@@ -12,7 +12,10 @@ import {
   HelpCircle,
   Loader2,
   Info,
-  Pen
+  Pen,
+  History,
+  BarChart2,
+  Share2
 } from 'lucide-react';
 import './StyleTransferPage.css';
 
@@ -32,6 +35,9 @@ const STYLE_TAGS = {
   中期: ['积墨山川', '浑厚华滋', '写生并重'],
   晚期: ['黑密厚重', '枯笔飞白', '气韵苍浑']
 };
+
+const isVideoUrl = (url) =>
+  typeof url === 'string' && /\.(mp4|webm|mov)(\?|$)/i.test(url);
 
 const API_BASE = (() => {
   const envBase = process.env.REACT_APP_API_URL || process.env.REACT_APP_BACKEND_URL;
@@ -60,6 +66,25 @@ function StyleTransferPage() {
   const [loadingStep, setLoadingStep] = useState('');
   const [resultReady, setResultReady] = useState(false);
   const [resultUrls, setResultUrls] = useState([]);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [historyItems, setHistoryItems] = useState([]);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showUsageModal, setShowUsageModal] = useState(false);
+
+  const totalHistoryCount = historyItems.length;
+  const imageHistoryCount = historyItems.filter((h) => h.type === 'image').length;
+  const videoHistoryCount = historyItems.filter((h) => h.type === 'video').length;
+  const imageRatio = totalHistoryCount > 0 ? (imageHistoryCount / totalHistoryCount) * 100 : 0;
+  const videoRatio = totalHistoryCount > 0 ? (videoHistoryCount / totalHistoryCount) * 100 : 0;
+  const usageData = {
+    totalCount: totalHistoryCount,
+    totalImageCount: imageHistoryCount,
+    totalVideoCount: videoHistoryCount,
+    typeBreakdown: [
+      { type: 'image', label: '风格生图', count: imageHistoryCount, color: THEME.accentSubtle },
+      { type: 'video', label: '水墨动画', count: videoHistoryCount, color: THEME.textSubtle },
+    ],
+  };
 
   const fileInputRef = useRef(null);
   const stepTimer = useRef(null);
@@ -81,7 +106,7 @@ function StyleTransferPage() {
   }, []);
 
   const processFile = (file) => {
-    if (!file || !file.type.startsWith('image/')) return;
+    if (!file) return;
     setSourceFile(file);
     const reader = new FileReader();
     reader.onload = (e) => setSourceImage(e.target.result);
@@ -100,49 +125,47 @@ function StyleTransferPage() {
   };
 
   const handleGenerate = () => {
-    if (!sourceFile) {
-      alert('请先上传参考底图，这是生成黄宾虹风格的基础。');
-      return;
-    }
-    if (mode === 'video') {
-      alert('当前仅对接图生图接口，图生视频需提供可访问的 image_url，后续接入对象存储后再开放。');
-      return;
-    }
     if (isGenerating) return;
 
-    setIsGenerating(true);
-    setResultReady(false);
-    setResultUrls([]);
-
-    const steps = [
-      '分析原图构图...',
-      '注入浑厚华滋意境...',
-      '细化水墨笔触...',
-      '最终装裱...'
-    ];
-
-    let stepIdx = 0;
-    setLoadingStep(steps[0]);
-    stepTimer.current = setInterval(() => {
-      stepIdx += 1;
-      if (stepIdx < steps.length) {
-        setLoadingStep(steps[stepIdx]);
+    if (mode === 'image') {
+      if (!sourceFile) {
+        alert('请先上传参考底图，这是生成黄宾虹风格的基础。');
+        return;
       }
-    }, 800);
 
-    const formData = new FormData();
-    formData.append('file', sourceFile);
-    formData.append('prompt', prompt);
-    formData.append('ink_style', inkStyle);
-    formData.append('style_tags', styleTags.join(','));
-    formData.append('img_count', String(imgCount));
+      setIsGenerating(true);
+      setResultReady(false);
+      setResultUrls([]);
 
-    fetch(`${API_BASE}/api/style-transfer/image`, {
-      method: 'POST',
-      body: formData,
-    })
-      .then(async (res) => {
-        if (!res.ok) {
+      const steps = [
+        '分析原图构图...',
+        '注入浑厚华滋意境...',
+        '细化水墨笔触...',
+        '最终装裱...'
+      ];
+
+      let stepIdx = 0;
+      setLoadingStep(steps[0]);
+      stepTimer.current = setInterval(() => {
+        stepIdx += 1;
+        if (stepIdx < steps.length) {
+          setLoadingStep(steps[stepIdx]);
+        }
+      }, 800);
+
+      const formData = new FormData();
+      formData.append('file', sourceFile);
+      formData.append('prompt', prompt);
+      formData.append('ink_style', inkStyle);
+      formData.append('style_tags', styleTags.join(','));
+      formData.append('img_count', String(imgCount));
+
+      fetch(`${API_BASE}/api/style-transfer/image`, {
+        method: 'POST',
+        body: formData,
+      })
+        .then(async (res) => {
+          if (!res.ok) {
             const contentType = res.headers.get('content-type') || '';
             if (contentType.includes('application/json')) {
               const data = await res.json();
@@ -151,25 +174,255 @@ function StyleTransferPage() {
             }
             const text = await res.text();
             throw new Error(text || '生成失败');
+          }
+          return res.json();
+        })
+        .then((data) => {
+          const urls = Array.isArray(data.urls) ? data.urls : [];
+          if (!urls.length) throw new Error('未返回生成结果');
+          setResultUrls(urls);
+          setResultReady(true);
+          setHistoryItems((prev) => [
+            {
+              id: `${Date.now()}-${prev.length + 1}`,
+              type: 'image',
+              mode: 'image',
+              urls,
+              createdAt: new Date().toISOString(),
+              prompt,
+              inkStyle,
+              styleTags,
+            },
+            ...prev,
+          ]);
+        })
+        .catch((err) => {
+          alert(`生成失败：${err.message || err}`);
+        })
+        .finally(() => {
+          if (stepTimer.current) {
+            clearInterval(stepTimer.current);
+          }
+          setIsGenerating(false);
+          setLoadingStep('');
+        });
+      return;
+    }
+
+    // 图生视频：基于已生成的风格图像 URL 提交任务
+    if (!resultUrls.length) {
+      alert('请先生成风格图片，再生成水墨动画。');
+      return;
+    }
+
+    setIsGenerating(true);
+    setLoadingStep('创建水墨动画任务...');
+
+    const videoForm = new FormData();
+    videoForm.append('image_url', resultUrls[0]); // 取第一张生成图作为视频底图
+    videoForm.append('prompt', prompt);
+    videoForm.append('ink_style', inkStyle);
+    videoForm.append('style_tags', styleTags.join(','));
+    videoForm.append('video_motion', videoMotion);
+    videoForm.append('video_duration', String(videoDuration));
+
+    fetch(`${API_BASE}/api/style-transfer/video`, {
+      method: 'POST',
+      body: videoForm,
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const contentType = res.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const data = await res.json();
+            const detail = data?.detail || JSON.stringify(data);
+            throw new Error(detail || '创建视频任务失败');
+          }
+          const text = await res.text();
+          throw new Error(text || '创建视频任务失败');
         }
         return res.json();
       })
       .then((data) => {
-        const urls = Array.isArray(data.urls) ? data.urls : [];
-        if (!urls.length) throw new Error('未返回生成结果');
-        setResultUrls(urls);
-        setResultReady(true);
+        const taskId = data.task_id || data.id;
+        if (taskId) {
+          alert(`已提交水墨动画任务，任务 ID：${taskId}`);
+        } else {
+          alert('已提交水墨动画请求，但未返回任务 ID，请检查后端日志。');
+        }
       })
       .catch((err) => {
-        alert(`生成失败：${err.message || err}`);
+        alert(`创建水墨动画失败：${err.message || err}`);
       })
       .finally(() => {
-        if (stepTimer.current) {
-          clearInterval(stepTimer.current);
-        }
         setIsGenerating(false);
         setLoadingStep('');
       });
+  };
+
+  const handleGenerateVideo = async () => {
+    if (isGenerating) return;
+
+    if (!sourceFile) {
+      alert('请先上传参考底图，这是生成水墨动画的基础。');
+      return;
+    }
+
+    setIsGenerating(true);
+    setResultReady(false);
+    setResultUrls([]);
+    setLoadingStep('正在生成水墨画面...');
+
+    try {
+      // 1. 先用当前底图生成一张水墨画面
+      const imageForm = new FormData();
+      imageForm.append('file', sourceFile);
+      imageForm.append('prompt', prompt);
+      imageForm.append('ink_style', inkStyle);
+      imageForm.append('style_tags', styleTags.join(','));
+      imageForm.append('img_count', '1');
+
+      const imageRes = await fetch(`${API_BASE}/api/style-transfer/image`, {
+        method: 'POST',
+        body: imageForm,
+      });
+
+      if (!imageRes.ok) {
+        const contentType = imageRes.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          const data = await imageRes.json();
+          const detail = data?.detail || JSON.stringify(data);
+          throw new Error(detail || '生成水墨画面失败');
+        }
+        const text = await imageRes.text();
+        throw new Error(text || '生成水墨画面失败');
+      }
+
+      const imageData = await imageRes.json();
+      const imageUrls = Array.isArray(imageData.urls) ? imageData.urls : [];
+      if (!imageUrls.length) {
+        throw new Error('未返回水墨画面 URL');
+      }
+
+      const imageUrl = imageUrls[0];
+      // 可以先用这张图占位，等视频好了再替换
+      setResultUrls([imageUrl]);
+      setResultReady(true);
+
+      // 2. 创建水墨动画任务
+      setLoadingStep('正在创建水墨动画任务...');
+
+      const videoForm = new FormData();
+      videoForm.append('image_url', imageUrl);
+      videoForm.append('prompt', prompt);
+      videoForm.append('ink_style', inkStyle);
+      videoForm.append('style_tags', styleTags.join(','));
+      videoForm.append('video_motion', videoMotion);
+      videoForm.append('video_duration', String(videoDuration));
+
+      const videoRes = await fetch(`${API_BASE}/api/style-transfer/video`, {
+        method: 'POST',
+        body: videoForm,
+      });
+
+      if (!videoRes.ok) {
+        const contentType = videoRes.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          const data = await videoRes.json();
+          const detail = data?.detail || JSON.stringify(data);
+          throw new Error(detail || '创建水墨动画任务失败');
+        }
+        const text = await videoRes.text();
+        throw new Error(text || '创建水墨动画任务失败');
+      }
+
+      const videoData = await videoRes.json();
+      const taskId = videoData.task_id || videoData.id;
+      if (!taskId) {
+        throw new Error('已提交水墨动画请求，但未返回任务 ID，请检查后台日志。');
+      }
+
+      // 3. 轮询查询任务结果，拿到真正的视频地址
+      setLoadingStep('水墨动画生成中，请稍候...');
+
+      const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      let finalVideoUrl = null;
+
+      for (let attempt = 0; attempt < 20; attempt += 1) {
+        const queryRes = await fetch(`${API_BASE}/api/style-transfer/video/${taskId}`);
+        if (!queryRes.ok) {
+          const contentType = queryRes.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const data = await queryRes.json();
+            const detail = data?.detail || JSON.stringify(data);
+            throw new Error(detail || '查询水墨动画任务失败');
+          }
+          const text = await queryRes.text();
+          throw new Error(text || '查询水墨动画任务失败');
+        }
+
+        const queryData = await queryRes.json();
+        const payload = queryData.data || queryData;
+        const statusRaw = payload.status || payload.task_status || '';
+        const status = typeof statusRaw === 'string' ? statusRaw.toLowerCase() : '';
+
+        if (status.includes('fail') || status === 'error') {
+          throw new Error(`水墨动画任务失败：${statusRaw || status}`);
+        }
+
+        // 在返回结构里尽力搜寻 mp4/webm/mov 视频地址
+        const urls = [];
+        const visit = (val) => {
+          if (!val) return;
+          if (typeof val === 'string') {
+            if (isVideoUrl(val) && !urls.includes(val)) {
+              urls.push(val);
+            }
+            return;
+          }
+          if (Array.isArray(val)) {
+            val.forEach(visit);
+          } else if (typeof val === 'object') {
+            Object.values(val).forEach(visit);
+          }
+        };
+
+        visit(payload);
+
+        if (urls.length) {
+          finalVideoUrl = urls[0];
+          break;
+        }
+
+        // 若还没结果，稍等再查
+        await sleep(3000);
+      }
+
+      if (finalVideoUrl) {
+        setResultUrls([finalVideoUrl]);
+        setResultReady(true);
+        setHistoryItems((prev) => [
+          {
+            id: `${Date.now()}-${prev.length + 1}`,
+            type: 'video',
+            mode: 'video',
+            urls: [finalVideoUrl],
+            createdAt: new Date().toISOString(),
+            prompt,
+            inkStyle,
+            styleTags,
+          },
+          ...prev,
+        ]);
+      } else {
+        alert('水墨动画任务已提交，但暂未拿到视频地址，可稍后重试或在后台查询任务。');
+      }
+    } catch (err) {
+      alert(`创建水墨动画失败：${err.message || err}`);
+    } finally {
+      setIsGenerating(false);
+      setLoadingStep('');
+    }
   };
 
   const handleReset = () => {
@@ -182,6 +435,9 @@ function StyleTransferPage() {
     setIsGenerating(false);
     setLoadingStep('');
     setResultUrls([]);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const sampleImage =
@@ -227,29 +483,36 @@ function StyleTransferPage() {
               </div>
             </div>
             <div className="st-header-actions" style={{ color: THEME.textSubtle }}>
-              <button className="st-icon-btn">
-                <Settings size={18} />
+              <button
+                type="button"
+                className="st-link-btn"
+                onClick={() => setShowHistoryModal(true)}
+              >
+                <History size={16} style={{ marginRight: 4 }} /> 历史
               </button>
-              <button className="st-icon-btn">
-                <HelpCircle size={18} />
+              <div className="st-divider" style={{ background: `${THEME.textSubtle}40` }} />
+              <button
+                type="button"
+                className="st-link-btn"
+                onClick={() => setShowUsageModal(true)}
+              >
+                <BarChart2 size={16} style={{ marginRight: 4 }} /> 用量
               </button>
-              <div className="st-avatar" style={{ background: THEME.bgMain, borderColor: `${THEME.accentSubtle}50` }}>
-                U
-              </div>
             </div>
           </header>
 
           <div className="st-layout">
             <aside className="st-sidebar" style={{ background: THEME.bgCard, borderColor: THEME.accentSubtle }}>
-              <div
-                className="st-card st-info"
-                style={{ background: THEME.bgMain, borderColor: `${THEME.accentSubtle}80`, color: THEME.textSubtle }}
-              >
-                <Info size={16} />
-                <span>
-                  <strong>风格转换：</strong> 上传照片，AI 将基于原图构图，重绘为“浑厚华滋”的黄宾虹水墨风格。
-                </span>
-              </div>
+              <div className="st-left-scroll">
+                <div
+                  className="st-card st-info"
+                  style={{ background: THEME.bgMain, borderColor: `${THEME.accentSubtle}80`, color: THEME.textSubtle }}
+                >
+                  <Info size={16} />
+                  <span>
+                    <strong>风格转换：</strong> 上传照片，AI 将基于原图构图，重绘为“浑厚华滋”的黄宾虹水墨风格。
+                  </span>
+                </div>
 
               <section className="st-card">
                 <div className="st-section-title" style={{ borderColor: `${THEME.accentSubtle}50`, color: THEME.textSubtle }}>
@@ -271,8 +534,8 @@ function StyleTransferPage() {
                     accept="image/*"
                     onChange={handleFileChange}
                   />
-                  {!sourceImage ? (
-                    <div className="st-dropzone-empty">
+                    {!sourceImage ? (
+                      <div className="st-dropzone-empty">
                       <div className="st-circle" style={{ background: THEME.bgCard, borderColor: `${THEME.accentSubtle}50` }}>
                         <ImageIcon size={24} color={THEME.accentMain} />
                       </div>
@@ -282,13 +545,17 @@ function StyleTransferPage() {
                   ) : (
                     <div className="st-preview">
                       <img src={sourceImage} alt="Preview" />
-                      <button
-                        className="st-close-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSourceImage(null);
-                        }}
-                      >
+                        <button
+                          className="st-close-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSourceImage(null);
+                            setSourceFile(null);
+                            if (fileInputRef.current) {
+                              fileInputRef.current.value = '';
+                            }
+                          }}
+                        >
                         <X size={16} />
                       </button>
                     </div>
@@ -456,17 +723,18 @@ function StyleTransferPage() {
                   </div>
                 </div>
               </section>
+              </div>
 
               <div className="st-actions" style={{ background: THEME.bgCard, borderColor: `${THEME.accentSubtle}50` }}>
                 <button className="st-btn ghost" onClick={handleReset}>
                   <RotateCcw size={18} /> 重置
                 </button>
-                <button
-                  className="st-btn primary"
-                  onClick={handleGenerate}
-                  disabled={isGenerating || !sourceImage}
-                  style={{ background: THEME.accentMain, color: THEME.textDark }}
-                >
+                  <button
+                    className="st-btn primary"
+                    onClick={mode === 'video' ? handleGenerateVideo : handleGenerate}
+                    disabled={isGenerating || !sourceImage}
+                    style={{ background: THEME.accentMain, color: THEME.textDark }}
+                  >
                   {isGenerating ? (
                     <>
                       <Loader2 size={18} className="animate-spin" /> 泼墨中...
@@ -528,20 +796,30 @@ function StyleTransferPage() {
                               className="st-result-card"
                               style={{ borderColor: `${THEME.accentMain}50`, background: THEME.bgCard }}
                             >
-                              <img
-                                src={url}
-                                alt={`Result ${idx + 1}`}
-                                className="st-result-img"
-                              />
+                              {isVideoUrl(url) ? (
+                                <video
+                                  src={url}
+                                  className="st-result-img"
+                                  autoPlay
+                                  loop
+                                  muted
+                                  playsInline
+                                />
+                              ) : (
+                                <img
+                                  src={url}
+                                  alt={`Result ${idx + 1}`}
+                                  className="st-result-img"
+                                />
+                              )}
                               <div className="st-result-mask" style={{ background: `${THEME.bgMain}e6` }}>
-                                <a
+                                <button
+                                  type="button"
                                   className="st-btn ghost"
-                                  href={url}
-                                  target="_blank"
-                                  rel="noreferrer"
+                                  onClick={() => setPreviewUrl(url)}
                                 >
                                   <Search size={16} /> 细赏
-                                </a>
+                                </button>
                                 <a
                                   className="st-btn primary"
                                   style={{ background: THEME.accentMain, color: THEME.textDark }}
@@ -571,6 +849,426 @@ function StyleTransferPage() {
         </div>
       </div>
 
+      {previewUrl && (
+        <div className="st-preview-overlay" onClick={() => setPreviewUrl(null)}>
+          <div
+            className="st-preview-dialog"
+            onClick={(e) => e.stopPropagation()}
+            style={{ background: THEME.bgMain }}
+          >
+            <button
+              type="button"
+              className="st-preview-close"
+              onClick={() => setPreviewUrl(null)}
+            >
+              <X size={18} />
+            </button>
+            <div className="st-preview-body">
+              {isVideoUrl(previewUrl) ? (
+                <video
+                  src={previewUrl}
+                  className="st-preview-full"
+                  controls
+                  autoPlay
+                  loop
+                  playsInline
+                />
+              ) : (
+                <img
+                  src={previewUrl}
+                  alt="生成作品大图"
+                  className="st-preview-full"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showHistoryModal && (
+        <div
+          className="st-modal-backdrop"
+          onClick={() => setShowHistoryModal(false)}
+        >
+          <div
+            className="st-modal"
+            style={{ backgroundColor: THEME.bgCard, borderColor: `${THEME.accentSubtle}50` }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="px-6 py-4 border-b flex justify-between items-center"
+              style={{ backgroundColor: THEME.bgCard, borderColor: `${THEME.accentSubtle}50` }}
+            >
+              <h2 className="text-xl font-bold flex items-center gap-3">
+                <History size={20} style={{ color: THEME.accentSubtle }} />
+                <span style={{ fontFamily: '"Noto Serif SC", serif' }}>墨海寻迹 (创作历史)</span>
+              </h2>
+              <button
+                type="button"
+                onClick={() => setShowHistoryModal(false)}
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                style={{ color: THEME.textSubtle }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div
+              className="p-6 overflow-y-auto space-y-4"
+              style={{ backgroundColor: THEME.bgMain }}
+            >
+              <p className="text-sm" style={{ color: THEME.textSubtle }}>
+                此乃您在 AI 笔下留下的丹青墨痕。
+              </p>
+
+              {historyItems.length === 0 ? (
+                <div
+                  className="text-center py-10"
+                  style={{ color: THEME.accentSubtle }}
+                >
+                  <Info size={30} className="mx-auto mb-2" />
+                  <p>尚无作品，请开始您的水墨创作。</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-4">
+                  {historyItems
+                    .filter((item) => Array.isArray(item.urls) && item.urls[0])
+                    .map((item) => {
+                      const created = new Date(item.createdAt);
+                      const timeLabel = `${created.getFullYear()}-${(created.getMonth() + 1)
+                        .toString()
+                        .padStart(2, '0')}-${created
+                        .getDate()
+                        .toString()
+                        .padStart(2, '0')} ${created
+                        .getHours()
+                        .toString()
+                        .padStart(2, '0')}:${created
+                        .getMinutes()
+                        .toString()
+                        .padStart(2, '0')}`;
+                      const isVideo = item.type === 'video' || item.mode === 'video';
+                      const firstUrl = item.urls[0];
+                      return (
+                        <div
+                          key={item.id}
+                          className="flex items-center rounded-xl p-3 shadow-md border hover:shadow-lg transition-all"
+                          style={{
+                            backgroundColor: THEME.bgCard,
+                            borderColor: `${THEME.accentSubtle}30`,
+                            cursor: firstUrl ? 'pointer' : 'default',
+                          }}
+                          onClick={() => {
+                            if (firstUrl) setPreviewUrl(firstUrl);
+                          }}
+                        >
+                          <div
+                            className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden relative mr-4 border"
+                            style={{ borderColor: THEME.accentMain }}
+                          >
+                            {isVideo ? (
+                              <Film
+                                size={28}
+                                className="absolute inset-0 m-auto opacity-50"
+                                style={{ color: THEME.accentSubtle }}
+                              />
+                            ) : (
+                              <ImageIcon
+                                size={28}
+                                className="absolute inset-0 m-auto opacity-50"
+                                style={{ color: THEME.accentSubtle }}
+                              />
+                            )}
+                            <div
+                              className="absolute inset-0 opacity-50"
+                              style={{
+                                backgroundImage: `url(${firstUrl})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                              }}
+                            />
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <p
+                              className="font-medium text-base truncate"
+                              style={{ color: THEME.textDark }}
+                            >
+                              {item.prompt ||
+                                (isVideo ? '山水动画长卷' : '浑厚山水画作')}
+                            </p>
+                            <p
+                              className="text-xs mt-1"
+                              style={{ color: THEME.textSubtle }}
+                            >
+                              <span
+                                className="px-1 rounded-sm text-[10px] font-semibold mr-2 border"
+                                style={{
+                                  borderColor: THEME.accentSubtle,
+                                  backgroundColor: THEME.bgMain,
+                                }}
+                              >
+                                {isVideo ? '水墨动画' : '风格生图'}
+                              </span>
+                              创作于 {timeLabel}
+                            </p>
+                          </div>
+
+                          {firstUrl && (
+                            <div className="ml-4 flex gap-2 flex-shrink-0">
+                              <a
+                                href={firstUrl}
+                                download
+                                className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                                style={{ color: THEME.accentSubtle }}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Download size={16} />
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+            </div>
+            <div
+              className="px-6 py-4 border-t text-right"
+              style={{
+                borderColor: `${THEME.accentSubtle}50`,
+                backgroundColor: THEME.bgCard,
+              }}
+            >
+              <button
+                type="button"
+                className="px-4 py-2 rounded-lg font-medium text-sm"
+                onClick={() => setShowHistoryModal(false)}
+                style={{
+                  backgroundColor: `${THEME.accentSubtle}30`,
+                  color: THEME.textDark,
+                }}
+              >
+                关闭
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showUsageModal && (
+        <div
+          className="st-modal-backdrop"
+          onClick={() => setShowUsageModal(false)}
+        >
+          <div
+            className="st-modal"
+            style={{ backgroundColor: THEME.bgCard, borderColor: `${THEME.accentSubtle}50` }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="px-6 py-4 border-b flex justify-between items-center"
+              style={{ backgroundColor: THEME.bgCard, borderColor: `${THEME.accentSubtle}50` }}
+            >
+              <h2 className="text-xl font-bold flex items-center gap-3">
+                <BarChart2 size={20} style={{ color: THEME.accentSubtle }} />
+                <span style={{ fontFamily: '"Noto Serif SC", serif' }}>
+                  墨宝清单 (创作统计)
+                </span>
+              </h2>
+              <button
+                type="button"
+                onClick={() => setShowUsageModal(false)}
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                style={{ color: THEME.textSubtle }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div
+              className="p-6 overflow-y-auto space-y-6"
+              style={{ backgroundColor: THEME.bgMain }}
+            >
+              <div
+                className="p-6 rounded-xl shadow-xl border-l-8"
+                style={{
+                  backgroundColor: THEME.bgCard,
+                  borderColor: THEME.accentMain,
+                }}
+              >
+                <div
+                  className="text-sm font-bold uppercase mb-3"
+                  style={{ color: THEME.textSubtle }}
+                >
+                  历史总创作数 (Total Creations)
+                </div>
+                <div className="flex items-baseline justify-between">
+                  <div
+                    className="text-6xl font-extrabold"
+                    style={{ color: THEME.textDark }}
+                  >
+                    {usageData.totalCount}
+                    <span
+                      className="text-2xl font-normal ml-2"
+                      style={{ color: THEME.accentSubtle }}
+                    >
+                      幅
+                    </span>
+                  </div>
+                  <PenTool
+                    size={40}
+                    style={{ color: THEME.accentSubtle }}
+                    className="opacity-50"
+                  />
+                </div>
+                <p
+                  className="text-xs mt-3"
+                  style={{ color: THEME.textSubtle }}
+                >
+                  这是您在黄宾虹画意生成器中累计创作的总量。
+                </p>
+              </div>
+
+              <div
+                className="p-5 rounded-xl shadow-lg border"
+                style={{
+                  backgroundColor: THEME.bgCard,
+                  borderColor: `${THEME.accentSubtle}50`,
+                }}
+              >
+                <h3
+                  className="text-lg font-bold mb-4"
+                  style={{ color: THEME.textDark }}
+                >
+                  创作类型占比
+                </h3>
+
+                <div
+                  className="relative w-full h-8 rounded-full overflow-hidden mb-4 shadow-inner"
+                  style={{ backgroundColor: THEME.textSubtle }}
+                >
+                  <div
+                    className="absolute left-0 top-0 h-full flex items-center justify-center"
+                    style={{
+                      width: `${imageRatio}%`,
+                      backgroundColor: THEME.accentSubtle,
+                      transition: 'width 0.7s ease-out',
+                    }}
+                  >
+                    {imageRatio > 10 && (
+                      <span className="text-xs font-bold text-white pr-2">
+                        {imageRatio.toFixed(1)}%
+                      </span>
+                    )}
+                  </div>
+                  {videoRatio > 10 && (
+                    <div
+                      className="absolute right-0 top-0 h-full flex items-center justify-center"
+                      style={{
+                        width: `${videoRatio}%`,
+                        transition: 'width 0.7s ease-out',
+                      }}
+                    >
+                      <span className="text-xs font-bold text-white pl-2">
+                        {videoRatio.toFixed(1)}%
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: THEME.accentSubtle }}
+                    />
+                    <span style={{ color: THEME.accentSubtle }}>
+                      风格生图 ({usageData.totalImageCount} 幅)
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: THEME.textSubtle }}
+                    />
+                    <span style={{ color: THEME.textSubtle }}>
+                      水墨动画 ({usageData.totalVideoCount} 幅)
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {usageData.typeBreakdown.map(
+                  ({ type, label, count, color }) => (
+                    <div
+                      key={type}
+                      className="p-4 rounded-xl shadow-md border flex items-center justify-between transition-transform"
+                      style={{
+                        backgroundColor: THEME.bgCard,
+                        borderColor: `${THEME.accentSubtle}50`,
+                      }}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div
+                          className="w-10 h-10 rounded-full flex items-center justify-center text-white"
+                          style={{ backgroundColor: color }}
+                        >
+                          {type === 'image' ? (
+                            <ImageIcon size={20} color={THEME.bgMain} />
+                          ) : (
+                            <Film size={20} color={THEME.bgMain} />
+                          )}
+                        </div>
+                        <div className="flex flex-col">
+                          <div
+                            className="text-sm font-semibold"
+                            style={{ color: THEME.textDark }}
+                          >
+                            {label}
+                          </div>
+                          <div
+                            className="text-xs"
+                            style={{ color: THEME.textSubtle }}
+                          >
+                            累计作品
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        className="text-3xl font-extrabold"
+                        style={{ color }}
+                      >
+                        {count}
+                      </div>
+                    </div>
+                  ),
+                )}
+              </div>
+            </div>
+
+            <div
+              className="px-6 py-4 border-t text-right"
+              style={{
+                borderColor: `${THEME.accentSubtle}50`,
+                backgroundColor: THEME.bgCard,
+              }}
+            >
+              <button
+                type="button"
+                className="px-4 py-2 rounded-lg font-medium text-sm"
+                onClick={() => setShowUsageModal(false)}
+                style={{
+                  backgroundColor: `${THEME.accentSubtle}30`,
+                  color: THEME.textDark,
+                }}
+              >
+                关闭
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
