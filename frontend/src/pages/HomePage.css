@@ -1,0 +1,192 @@
+@charset "utf-8";
+
+/* 全局样式 - 还原原版 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  font-size: 12px;
+  background: #ccc09a;
+  /* overflow: hidden; 注释掉以允许所有页面滚动 */
+}
+
+.home-page-original {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 背景图片 */
+.bg-body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: no-repeat center #c5a57f;
+  background-size: cover;
+  z-index: 0;
+}
+
+/* 头部容器 */
+.header {
+  position: fixed;
+  top: 20vh;
+  left: 0;
+  width: 100%;
+  height: 440px;
+  z-index: 100;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.in_main {
+  position: relative;
+  left: 50%;
+  width: 1200px;
+  top: 0px;
+  height: 440px;
+  margin-left: -600px;
+}
+
+/* Logo和装饰元素 */
+.right_bg {
+  position: absolute;
+  z-index: 200;
+  top: 0px;
+  left: 726px;
+}
+
+.logo {
+  position: absolute;
+  z-index: 200;
+  top: 110px;
+  left: 250px;
+}
+
+.logo2 {
+  position: absolute;
+  z-index: 200;
+  top: 238px;
+  left: 567px;
+}
+
+.logo3 {
+  position: absolute;
+  z-index: 200;
+  top: 238px;
+  left: 919px;
+}
+
+/* 导航按钮 - 观看 */
+.l_gk {
+  position: absolute;
+  z-index: 1000;
+  top: 325px;
+  left: 870px;
+  width: 50px;
+  height: 120px;
+  transition: top 300ms linear;
+}
+
+.l_gk:hover {
+  top: 305px;
+}
+
+/* 导航按钮 - 探索 */
+.l_ts {
+  position: absolute;
+  z-index: 1000;
+  top: 325px;
+  left: 950px;
+  width: 50px;
+  height: 120px;
+  transition: top 300ms linear;
+}
+
+.l_ts:hover {
+  top: 305px;
+}
+
+/* 导航按钮 - 创作 */
+.l_cz {
+  position: absolute;
+  z-index: 1000;
+  top: 325px;
+  left: 1030px;
+  width: 80px;
+  height: 120px;
+  transition: top 300ms linear;
+}
+
+.l_cz:hover {
+  top: 305px;
+}
+
+/* 下拉菜单 */
+.l_list {
+  position: absolute;
+  z-index: 1001;
+  top: 34px;
+  width: 50px;
+  text-align: center;
+  border-top: 1px solid #e9d7aa;
+}
+
+/* 菜单项基础样式 */
+.l_list a {
+  width: 50px;
+  height: 30px;
+  display: block;
+  background-repeat: no-repeat;
+  transition: background-position 0.3s ease;
+}
+
+.l_list a:hover {
+  background-position-x: -50px !important;
+}
+
+/* 响应式优化 */
+@media (max-width: 1280px) {
+  .in_main {
+    width: 100%;
+    margin-left: -50%;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    height: auto;
+    top: 10vh;
+  }
+
+  .in_main {
+    width: 100%;
+    height: auto;
+  }
+
+  .logo,
+  .logo2,
+  .logo3,
+  .right_bg {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin: 10px auto;
+    text-align: center;
+  }
+
+  .l_gk,
+  .l_ts,
+  .l_cz {
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+  }
+}

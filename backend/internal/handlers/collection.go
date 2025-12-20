@@ -1,0 +1,258 @@
+package handlers
+
+import (
+	"encoding/json"
+	"net/http"
+	"strconv"
+
+	"huang_bin_hong/internal/db"
+)
+
+// 作品列表响应
+type CollectionResponse struct {
+	PageN          int              `json:"pageN"`
+	PageNo         int              `json:"pageNo"`
+	RealPath       string           `json:"realPath"`
+	InfomationList []CollectionItem `json:"infomationList"`
+}
+
+type CollectionItem struct {
+	ID             string   `json:"id"`
+	CollectionName string   `json:"collectionName"`
+	Author         string   `json:"author"`
+	Age            string   `json:"age"`
+	Category       string   `json:"category"`
+	Texture        string   `json:"texture"`
+	CollectionSize string   `json:"collectionSize"`
+	CollectionTime string   `json:"collectionTime"`
+	CollectionUnit string   `json:"collectionUnit"`
+	Intro          string   `json:"intro"`
+	SmallPic       SmallPic `json:"smallPic"`
+}
+
+type SmallPic struct {
+	DirectoryName string `json:"directoryName"`
+	ResourceName  string `json:"resourceName"`
+}
+
+// 作品详情响应
+type DetailResponse struct {
+	BigPicSrcs  []string    `json:"bigPicSrcs"`
+	Infomation  InfoDetail  `json:"infomation"`
+	SmallPicSrc string      `json:"smallPicSrc"`
+}
+
+type InfoDetail struct {
+	ID             string `json:"id"`
+	CollectionName string `json:"collectionName"`
+	Author         string `json:"author"`
+	Age            string `json:"age"`
+	Category       string `json:"category"`
+	CollectionSize string `json:"collectionSize"`
+	CollectionTime string `json:"collectionTime"`
+	CollectionUnit string `json:"collectionUnit"`
+	Texture        string `json:"texture"`
+	Intro          string `json:"intro"`
+}
+
+// HuangCollection 作品列表API
+func HuangCollection(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// 支持 multipart/form-data 和 application/x-www-form-urlencoded
+	r.ParseMultipartForm(10 << 20)
+	category := r.FormValue("category")
+	pageNo, _ := strconv.Atoi(r.FormValue("pageNo"))
+	pageSize, _ := strconv.Atoi(r.FormValue("pageSize"))
+
+	if pageNo < 1 {
+		pageNo = 1
+	}
+	if pageSize < 1 {
+		pageSize = 12
+	}
+
+	// 查询作品
+	query := `SELECT work_id, title, category, style_period, material, creation_date, description, work_image_url
+			  FROM works WHERE 1=1`
+	args := []interface{}{}
+
+	if category != "" {
+		query += " AND category LIKE ?"
+		args = append(args, category+"%")
+	}
+
+	// 获取总数
+	countQuery := "SELECT COUNT(*) FROM works WHERE 1=1"
+	if category != "" {
+		countQuery += " AND category LIKE ?"
+	}
+	var total int
+	if category != "" {
+		db.DB.QueryRow(countQuery, category+"%").Scan(&total)
+	} else {
+		db.DB.QueryRow(countQuery).Scan(&total)
+	}
+
+	pageN := (total + pageSize - 1) / pageSize
+
+	// 分页查询
+	offset := (pageNo - 1) * pageSize
+	query += " LIMIT ? OFFSET ?"
+	args = append(args, pageSize, offset)
+
+	rows, err := db.DB.Query(query, args...)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	items := []CollectionItem{}
+	for rows.Next() {
+		var workID int
+		var title, cat, stylePeriod, material, creationDate, desc, imageURL string
+		rows.Scan(&workID, &title, &cat, &stylePeriod, &material, &creationDate, &desc, &imageURL)
+
+		// 提取文件名
+		fileName := imageURL
+		if len(imageURL) > 5 && imageURL[:5] == "work/" {
+			fileName = imageURL[5:]
+		}
+
+		item := CollectionItem{
+			ID:             strconv.Itoa(workID),
+			CollectionName: title,
+			Author:         "黄宾虹",
+			Age:            "近现代",
+			Category:       cat,
+			Texture:        material,
+			CollectionSize: "",
+			CollectionTime: creationDate,
+			CollectionUnit: "",
+			Intro:          desc,
+			SmallPic: SmallPic{
+				DirectoryName: "work",
+				ResourceName:  fileName,
+			},
+		}
+		items = append(items, item)
+	}
+
+	resp := CollectionResponse{
+		PageN:          pageN,
+		PageNo:         pageNo,
+		RealPath:       ".",
+		InfomationList: items,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
+}
+
+// HuangDetail 作品详情API
+func HuangDetail(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	r.ParseForm()
+	infomationId := r.FormValue("infomationId")
+
+	workID, err := strconv.Atoi(infomationId)
+	if err != nil {
+		json.NewEncoder(w).Encode(DetailResponse{
+			BigPicSrcs:  []string{},
+			Infomation:  InfoDetail{},
+			SmallPicSrc: "",
+		})
+		return
+	}
+
+	var title, cat, stylePeriod, material, creationDate, desc, imageURL string
+	err = db.DB.QueryRow(`SELECT title, category, style_period, material, creation_date, description, work_image_url
+						  FROM works WHERE work_id = ?`, workID).
+		Scan(&title, &cat, &stylePeriod, &material, &creationDate, &desc, &imageURL)
+
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(DetailResponse{
+			BigPicSrcs:  []string{},
+			Infomation:  InfoDetail{},
+			SmallPicSrc: "",
+		})
+		return
+	}
+
+	info := InfoDetail{
+		ID:             infomationId,
+		CollectionName: title,
+		Author:         "黄宾虹",
+		Age:            "近现代",
+		Category:       cat,
+		CollectionSize: "",
+		CollectionTime: creationDate,
+		CollectionUnit: "",
+		Texture:        material,
+		Intro:          desc,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(DetailResponse{
+		BigPicSrcs:  []string{imageURL},
+		Infomation:  info,
+		SmallPicSrc: imageURL,
+	})
+}
+
+// VRWork VR作品项
+type VRWork struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Img  string `json:"img"`
+	Desc string `json:"desc"`
+}
+
+// HuangVRWorks VR作品列表API
+func HuangVRWorks(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	rows, err := db.DB.Query(`SELECT work_id, title, description, work_image_url FROM works LIMIT 20`)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	works := []VRWork{}
+	for rows.Next() {
+		var workID int
+		var title, desc, imageURL string
+		rows.Scan(&workID, &title, &desc, &imageURL)
+
+		works = append(works, VRWork{
+			ID:   strconv.Itoa(workID),
+			Name: title,
+			Img:  imageURL,
+			Desc: desc,
+		})
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"works": works,
+	})
+}
+
+// Health 健康检查
+func Health(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+}

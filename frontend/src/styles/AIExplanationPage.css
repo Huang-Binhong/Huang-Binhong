@@ -1,0 +1,422 @@
+﻿.ai-page {
+  min-height: 100vh;
+  background-color: #F7F5F0; /* 米白色背景 */
+  padding: 40px;
+  font-family: "Songti SC", "SimSun", "STSong", "PingFang SC", serif; /* 宋体/衬线体，更具书卷气 */
+  color: #2E2E2E; /* 墨黑色文字 */
+  background-image: 
+    linear-gradient(90deg, rgba(232, 230, 225, 0.5) 1px, transparent 1px),
+    linear-gradient(rgba(232, 230, 225, 0.5) 1px, transparent 1px);
+  background-size: 20px 20px; /* 淡淡的网格纹理，仿宣纸 */
+}
+
+.ai-page-header {
+  background-color: #3B4F3A; /* 墨绿色 */
+  color: #F7F5F0; /* 米白色 */
+  padding: 30px;
+  margin-bottom: 40px;
+  text-align: center;
+  position: relative;
+  border: 2px solid #2E2E2E;
+  outline: 4px double #D4A451; /* 金色双线外框，仿匾额 */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.ai-page-header h1 {
+  margin: 0;
+  font-family: "Kaiti SC", "KaiTi", "STKaiti", "Source Han Serif CN", serif; /* 楷体/思源宋体 */
+  font-size: 2.5rem;
+  letter-spacing: 0.2em;
+  font-weight: normal;
+}
+
+.artwork-title-header {
+  margin-top: 10px;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-size: 1.2rem;
+  color: #D4A451;
+  letter-spacing: 0.1em;
+  font-style: italic;
+}
+
+.back-button {
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #F7F5F0;
+  text-decoration: none;
+  font-family: "Songti SC", "SimSun", serif;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(247, 245, 240, 0.3);
+  padding: 6px 16px;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  color: #2E2E2E;
+  background-color: #D4A451;
+  border-color: #D4A451;
+}
+
+.ai-page-content {
+  display: grid;
+  grid-template-columns: 40% 60%; /* 调整比例，右侧文字区域更宽 */
+  gap: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.artwork-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: sticky;
+  top: 40px; /* 滚动时固定左侧 */
+}
+
+.artwork-placeholder {
+  width: 100%;
+  min-height: 400px;
+  background-color: #E8E6E1; /* 绫子色 */
+  border: 12px solid #E8E6E1; /* 模拟装裱 */
+  outline: 1px solid #999;
+  box-shadow: 
+    inset 0 0 20px rgba(0,0,0,0.05),
+    0 10px 25px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.artwork-placeholder img {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  background-color: #fff;
+  max-width: 95% !important;
+  max-height: 95% !important;
+}
+
+.upload-section {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  width: 100%;
+  justify-content: center;
+}
+
+.instructions {
+  background-color: #FDFBF7;
+  padding: 24px;
+  border-left: 4px solid #3B4F3A;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.instructions h3 {
+  color: #3B4F3A;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  margin-top: 0;
+  border-bottom: 1px dashed #D4A451;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.instructions p {
+  margin: 8px 0;
+  line-height: 1.8;
+  color: #555;
+}
+
+.upload-button {
+  background-color: #3B4F3A;
+  color: #F7F5F0;
+  border: none;
+  border-radius: 2px; /* 方正一点，像印章 */
+  padding: 12px 30px;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-size: 18px;
+  cursor: pointer;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+}
+
+.upload-button:hover {
+  background-color: #2E2E2E;
+}
+
+.analyze-button {
+  background-color: #D4A451;
+  color: #2E2E2E;
+  border: none;
+  border-radius: 2px;
+  padding: 12px 30px;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-size: 18px;
+  cursor: pointer;
+  display: inline-block;
+  transition: all 0.3s ease;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+  font-weight: bold;
+}
+
+.analyze-button:hover:not(:disabled) {
+  background-color: #C0903A;
+  transform: translateY(-1px);
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+}
+
+.analyze-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background-color: #E0E0E0;
+  color: #999;
+}
+
+.artwork-info h3 {
+  color: #3B4F3A;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  border-bottom: 1px solid #D4A451;
+  padding-bottom: 8px;
+  margin-top: 0;
+}
+
+.artwork-info p {
+  line-height: 1.6;
+  margin: 16px 0;
+}
+
+/* AI响应内容区域 */
+.ai-response-content {
+  background-color: #FDFBF7;
+  padding: 40px;
+  border-radius: 2px;
+  /* 双重边框效果 */
+  box-shadow: 
+    0 0 0 1px #F7F5F0,
+    0 0 0 5px #E8E6E1,
+    0 5px 15px rgba(0,0,0,0.05);
+  min-height: 500px;
+}
+
+/* Markdown样式优化 */
+.ai-response-content h1,
+.ai-response-content h2,
+.ai-response-content h3,
+.ai-response-content h4,
+.ai-response-content h5,
+.ai-response-content h6 {
+  color: #2E2E2E;
+  font-family: "Kaiti SC", "KaiTi", "STKaiti", serif;
+  margin-top: 32px;
+  margin-bottom: 20px;
+  font-weight: normal;
+}
+
+.ai-response-content h1 {
+  font-size: 2.2em;
+  border-bottom: 2px solid #3B4F3A;
+  padding-bottom: 12px;
+  text-align: center;
+}
+
+.ai-response-content h2 {
+  font-size: 1.6em;
+  border-left: 5px solid #D4A451;
+  padding-left: 15px;
+  background: linear-gradient(to right, rgba(212, 164, 81, 0.1), transparent);
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.ai-response-content h3 {
+  font-size: 1.3em;
+  color: #3B4F3A;
+  border-bottom: 1px dotted #3B4F3A;
+  padding-bottom: 5px;
+  display: inline-block;
+}
+
+.ai-response-content p {
+  margin: 16px 0;
+  line-height: 2; /* 增加行高，更易阅读 */
+  font-size: 1.05em;
+  text-align: justify;
+}
+
+.ai-response-content ul,
+.ai-response-content ol {
+  padding-left: 24px;
+  margin: 20px 0;
+  background-color: rgba(232, 230, 225, 0.3);
+  padding: 20px 40px;
+  border-radius: 4px;
+}
+
+.ai-response-content li {
+  margin: 10px 0;
+  line-height: 1.8;
+}
+
+.ai-response-content code {
+  background-color: #E8E6E1;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-family: "Consolas", monospace;
+  color: #3B4F3A;
+}
+
+.ai-response-content pre {
+  background-color: #2E2E2E;
+  color: #F7F5F0;
+  padding: 20px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 24px 0;
+  border: 1px solid #D4A451;
+}
+
+.ai-response-content pre code {
+  background: none;
+  padding: 0;
+}
+
+.ai-response-content blockquote {
+  border-left: 4px solid #3B4F3A;
+  background-color: rgba(59, 79, 58, 0.05);
+  padding: 16px 24px;
+  margin: 24px 0;
+  color: #555;
+  font-style: italic;
+  font-family: "Kaiti SC", "KaiTi", serif;
+}
+
+.ai-response-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  border: 1px solid #E8E6E1;
+}
+
+.ai-response-content th,
+.ai-response-content td {
+  border: 1px solid #E8E6E1;
+  padding: 12px 16px;
+  text-align: left;
+}
+
+.ai-response-content th {
+  background-color: #3B4F3A;
+  color: #F7F5F0;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-weight: normal;
+  letter-spacing: 1px;
+}
+
+.ai-response-content tr:nth-child(even) {
+  background-color: rgba(232, 230, 225, 0.3);
+}
+
+@media (max-width: 768px) {
+  .ai-page-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .artwork-display {
+    position: static;
+  }
+  
+  .ai-page {
+    padding: 15px;
+  }
+  
+  .ai-page-header {
+    padding: 20px;
+  }
+  
+  .ai-page-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .upload-section {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .upload-button, .analyze-button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* 加载状态样式 */
+.ai-analyzing {
+  text-align: center;
+  padding: 40px;
+  background-color: #FDFBF7;
+  border-radius: 2px;
+  box-shadow: 
+    0 0 0 1px #F7F5F0,
+    0 0 0 5px #E8E6E1;
+}
+
+.ai-analyzing h3 {
+  color: #3B4F3A;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  margin-bottom: 20px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #E8E6E1;
+  border-top: 5px solid #D4A451; /* 金黄色 */
+  border-radius: 50%;
+  margin: 0 auto 20px auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 加载状态样式 */
+.ai-analyzing {
+  text-align: center;
+  padding: 40px;
+  background-color: #FDFBF7;
+  border-radius: 2px;
+  box-shadow: 
+    0 0 0 1px #F7F5F0,
+    0 0 0 5px #E8E6E1;
+}
+
+.ai-analyzing h3 {
+  color: #3B4F3A;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  margin-bottom: 20px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #E8E6E1;
+  border-top: 5px solid #D4A451; /* 金黄色 */
+  border-radius: 50%;
+  margin: 0 auto 20px auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

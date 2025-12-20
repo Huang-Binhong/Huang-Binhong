@@ -1,0 +1,91 @@
+/* 风格生成页：复用整体布局，卡片化视觉与细节优化 */
+
+:root {
+  --ink-border: #c4ad83;
+  --ink-card: #efe6c9;
+  --ink-card-deep: #e6d9b6;
+  --ink-btn: #9b8c5e;
+  --ink-btn-hover: #877847;
+  --ink-text: #333;
+}
+
+/* 覆盖左侧默认底色，改为透明以便卡片风格更突出 */
+.main_w_left { background: transparent !important; }
+
+.dropzone {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  border: 2px dashed var(--ink-border);
+  background: rgba(255,255,255,0.25);
+  color: var(--ink-text);
+  padding: 14px;
+  border-radius: 8px;
+}
+
+.dropzone.dragover {
+  border-color: var(--ink-btn);
+  background: rgba(255,255,255,0.36);
+}
+
+.preview {
+  width: 100%;
+  height: 380px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #f4ebcf;
+  border: 1px solid var(--ink-border);
+  border-radius: 6px;
+}
+.preview img { max-width: 100%; max-height: 100%; display: block; }
+
+.hint { font-size: 12px; color: var(--ink-text); opacity: .8; }
+.inline-hint { font-size: 12px; color: var(--ink-text); opacity: .75; margin-top: 8px; }
+.error { color: #a3121d; margin-top: 10px; }
+
+.btns { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.actions { display: flex; gap: 10px; margin-top: 12px; }
+.btn {
+  display: inline-block;
+  background: var(--ink-btn);
+  color: #fff;
+  padding: 9px 14px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+}
+.btn:hover { background: var(--ink-btn-hover); }
+.btn.secondary { background: transparent; color: var(--ink-text); border: 1px solid #bfae7d; }
+.btn.disabled, .btn[aria-disabled="true"] { opacity: .6; pointer-events: none; }
+
+.loader { display: none; font-size: 12px; color: #333; }
+.loader.on { display: inline-block; }
+
+.out {
+  width: 100%;
+  height: 420px;
+  background: #f4ebcf;
+  border: 1px solid var(--ink-border);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 6px;
+}
+.out img { max-width: 100%; max-height: 100%; display: block; }
+
+/* 卡片容器 */
+.panel-card {
+  background: linear-gradient(180deg, var(--ink-card), var(--ink-card-deep));
+  border: 1px solid var(--ink-border);
+  border-radius: 10px;
+  padding: 14px 14px 16px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+.panel-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink-text);
+  border-bottom: 1px solid var(--ink-border);
+  padding: 6px 2px 10px;
+}
+.panel-body { padding-top: 12px; }

@@ -1,0 +1,183 @@
+/* 引入全局字体，营造整体古风氛围 */
+:root {
+  --font-ancient: 'Ma Shan Zheng', cursive, 'Microsoft YaHei', sans-serif;
+}
+
+.relationship-page {
+  min-height: 100vh;
+  /* 背景色改为沉稳的靛青色 */
+  background: #293D55;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 1s ease-in-out;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-ancient);
+}
+
+/* 微妙的暗角效果，突出中心 */
+.relationship-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.4) 100%);
+  z-index: 0;
+}
+
+.nav_logo,
+.nav_logo2 {
+  position: fixed;
+  z-index: 100;
+  opacity: 0.8;
+}
+
+.nav_logo { top: 20px; right: 20px; }
+.nav_logo2 { top: 20px; left: 20px; }
+.nav_logo img, .nav_logo2 img { max-width: 150px; height: auto; }
+
+.a_home {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
+
+.a_home:hover { transform: scale(1.1); }
+.a_home img { width: 80px; height: auto; }
+
+.relationship_content {
+  position: relative;
+  z-index: 1;
+  padding: 50px 20px;
+  max-width: 1400px;
+  margin: 0 auto 40px;
+}
+
+.relationship_header {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #FAF5E9;
+}
+
+.relationship_header h1 {
+  font-family: var(--font-ancient);
+  font-size: 52px;
+  font-weight: normal;
+  margin-bottom: 15px;
+  color: #D4AF37;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+}
+
+.relationship_header p {
+  font-size: 20px;
+  color: rgba(250, 245, 233, 0.8);
+  letter-spacing: 2px;
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.legend_item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #FAF5E9;
+  font-size: 18px;
+}
+
+/* 图例改为方块，模拟印章 */
+.legend_dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  border: 2px solid rgba(250, 245, 233, 0.7);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* 画布模拟宣纸画卷 */
+.relationship_canvas {
+  display: block;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  border: 12px solid transparent;
+  border-image: linear-gradient(to bottom, #8c735b, #6b5543) 1;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+}
+
+/* 信息框设计为题跋卡片样式 */
+.person_info {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(244, 239, 230, 0.98);
+  padding: 25px 35px;
+  border-radius: 8px;
+  border: 2px solid #A08C7D;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  z-index: 50;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.person_info h3 {
+  font-family: var(--font-ancient);
+  font-size: 28px;
+  font-weight: normal;
+  color: #A83C32;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.relation_type {
+  font-size: 16px;
+  color: #8B4513;
+  margin-bottom: 12px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.person_desc {
+  font-size: 16px;
+  color: #3a2f2f;
+  line-height: 1.8;
+  text-align: justify;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .relationship_header h1 { font-size: 36px; }
+  .relationship_header p { font-size: 16px; }
+  .legend { flex-direction: column; align-items: center; gap: 15px; }
+  .person_info {
+    bottom: 80px;
+    left: 20px;
+    right: 20px;
+    transform: none;
+    padding: 20px;
+  }
+  .nav_logo img, .nav_logo2 img { max-width: 100px; }
+  .a_home img { width: 60px; }
+}
