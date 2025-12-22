@@ -64,9 +64,33 @@ func HuangCollection(w http.ResponseWriter, r *http.Request) {
 
 	// 支持 multipart/form-data 和 application/x-www-form-urlencoded
 	r.ParseMultipartForm(10 << 20)
+	r.ParseForm()
+
 	category := r.FormValue("category")
-	pageNo, _ := strconv.Atoi(r.FormValue("pageNo"))
-	pageSize, _ := strconv.Atoi(r.FormValue("pageSize"))
+	pageNoStr := r.FormValue("pageNo")
+	pageSizeStr := r.FormValue("pageSize")
+
+	// 如果 FormValue 为空，尝试从 MultipartForm 中获取
+	if r.MultipartForm != nil && r.MultipartForm.Value != nil {
+		if category == "" {
+			if vals, ok := r.MultipartForm.Value["category"]; ok && len(vals) > 0 {
+				category = vals[0]
+			}
+		}
+		if pageNoStr == "" {
+			if vals, ok := r.MultipartForm.Value["pageNo"]; ok && len(vals) > 0 {
+				pageNoStr = vals[0]
+			}
+		}
+		if pageSizeStr == "" {
+			if vals, ok := r.MultipartForm.Value["pageSize"]; ok && len(vals) > 0 {
+				pageSizeStr = vals[0]
+			}
+		}
+	}
+
+	pageNo, _ := strconv.Atoi(pageNoStr)
+	pageSize, _ := strconv.Atoi(pageSizeStr)
 
 	if pageNo < 1 {
 		pageNo = 1
@@ -160,8 +184,17 @@ func HuangDetail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 支持 multipart/form-data 和 application/x-www-form-urlencoded
+	r.ParseMultipartForm(10 << 20)
 	r.ParseForm()
+
 	infomationId := r.FormValue("infomationId")
+	// 如果 FormValue 为空，尝试从 MultipartForm 中获取
+	if infomationId == "" && r.MultipartForm != nil && r.MultipartForm.Value != nil {
+		if vals, ok := r.MultipartForm.Value["infomationId"]; ok && len(vals) > 0 {
+			infomationId = vals[0]
+		}
+	}
 
 	workID, err := strconv.Atoi(infomationId)
 	if err != nil {
