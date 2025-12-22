@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './ArtworkListPage.css';
 
 const BG_IMAGES = ['/images/list_bg1.jpg', '/images/list_bg2.jpg'];
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 function ArtworkListPage() {
+  const location = useLocation();
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentBg, setCurrentBg] = useState(0);
-  const [pageNo, setPageNo] = useState(1);
+  const [pageNo, setPageNo] = useState(() => {
+    // 如果是从主页进入（state 中有 fromHome 标记），从第一页开始
+    // 否则从 localStorage 恢复页码（刷新或从详情页返回）
+    if (location.state?.fromHome) {
+      return 1;
+    }
+    const savedPage = localStorage.getItem('artworkListPage');
+    return savedPage ? parseInt(savedPage, 10) : 1;
+  });
   const [pageN, setPageN] = useState(1);
   const pageSize = 12;
 
@@ -46,11 +55,47 @@ function ArtworkListPage() {
     };
 
     fetchArtworks();
+    // 保存当前页码到 localStorage
+    localStorage.setItem('artworkListPage', pageNo);
   }, [pageNo]);
 
   if (loading) {
     return <div className="loading">加载中...</div>;
   }
+
+  // 生成页码数组（智能显示）
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 7; // 最多显示7个页码
+
+    if (pageN <= maxVisible) {
+      // 总页数少于等于最大显示数，显示所有页码
+      for (let i = 1; i <= pageN; i++) {
+        pages.push(i);
+      }
+    } else {
+      // 总页数多于最大显示数，智能显示
+      if (pageNo <= 4) {
+        // 当前页在前面
+        for (let i = 1; i <= 5; i++) pages.push(i);
+        pages.push('...');
+        pages.push(pageN);
+      } else if (pageNo >= pageN - 3) {
+        // 当前页在后面
+        pages.push(1);
+        pages.push('...');
+        for (let i = pageN - 4; i <= pageN; i++) pages.push(i);
+      } else {
+        // 当前页在中间
+        pages.push(1);
+        pages.push('...');
+        for (let i = pageNo - 1; i <= pageNo + 1; i++) pages.push(i);
+        pages.push('...');
+        pages.push(pageN);
+      }
+    }
+    return pages;
+  };
 
   return (
     <div
@@ -106,17 +151,35 @@ function ArtworkListPage() {
           {/* 分页控件 */}
           <div className="pagination">
             <button
+              className="pagination-btn prev-btn"
               onClick={() => setPageNo(p => Math.max(1, p - 1))}
               disabled={pageNo <= 1}
             >
-              上一页
+              <span className="btn-text">上一页</span>
             </button>
-            <span>{pageNo} / {pageN}</span>
+
+            <div className="page-numbers">
+              {getPageNumbers().map((num, index) => (
+                num === '...' ? (
+                  <span key={`ellipsis-${index}`} className="page-ellipsis">...</span>
+                ) : (
+                  <button
+                    key={num}
+                    className={`page-number ${num === pageNo ? 'active' : ''}`}
+                    onClick={() => setPageNo(num)}
+                  >
+                    {num}
+                  </button>
+                )
+              ))}
+            </div>
+
             <button
+              className="pagination-btn next-btn"
               onClick={() => setPageNo(p => Math.min(pageN, p + 1))}
               disabled={pageNo >= pageN}
             >
-              下一页
+              <span className="btn-text">下一页</span>
             </button>
           </div>
         </div>

@@ -31,7 +31,7 @@ function HomePage() {
 
       <div className="main_content">
         <div className="navigation-grid">
-          <Link to="/artworks" className="nav-card">
+          <Link to="/artworks" state={{ fromHome: true }} className="nav-card">
             <img src="/images/l_gk.png" alt="观看作品全览" />
             <h3>观看</h3>
             <p>作品全览</p>

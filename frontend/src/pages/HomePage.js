@@ -71,6 +71,7 @@ function HomePage() {
             >
               <Link
                 to="/artworks"
+                state={{ fromHome: true }}
                 className="a_guangkan_zpql"
                 title="观看·作品全览"
                 style={{
