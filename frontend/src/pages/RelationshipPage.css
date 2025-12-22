@@ -1,11 +1,14 @@
 /* 引入全局字体，营造整体古风氛围 */
 :root {
   --font-ancient: 'Ma Shan Zheng', cursive, 'Microsoft YaHei', sans-serif;
+  --ink-color: #3a2f2f;
+  --seal-red: #A83C32;
+  --paper-bg: #f4efe6;
 }
 
 .relationship-page {
   min-height: 100vh;
-  /* 背景色改为沉稳的靛青色 */
+  /* 背景色改为沉稳的靛青色，而非纯黑 */
   background: #293D55;
   background-size: cover;
   background-position: center;
@@ -16,7 +19,7 @@
   font-family: var(--font-ancient);
 }
 
-/* 微妙的暗角效果，突出中心 */
+/* 改为微妙的暗角效果，突出中心 */
 .relationship-page::before {
   content: '';
   position: absolute;
@@ -32,7 +35,7 @@
 .nav_logo2 {
   position: fixed;
   z-index: 100;
-  opacity: 0.8;
+  opacity: 0.8; /* logo稍作透明，更好地融入背景 */
 }
 
 .nav_logo { top: 20px; right: 20px; }
@@ -56,21 +59,29 @@
   padding: 50px 20px;
   max-width: 1400px;
   margin: 0 auto 40px;
+  pointer-events: none; /* 让鼠标穿透容器，直接操作画布 */
+}
+
+/* 恢复子元素的鼠标事件 */
+.relationship_header,
+.legend,
+.person_info {
+  pointer-events: auto;
 }
 
 .relationship_header {
   text-align: center;
   margin-bottom: 30px;
-  color: #FAF5E9;
+  color: #FAF5E9; /* 文字改为柔和的月白色 */
 }
 
 .relationship_header h1 {
-  font-family: var(--font-ancient);
-  font-size: 52px;
-  font-weight: normal;
+  font-family: var(--font-ancient); /* 应用书法字体 */
+  font-size: 52px; /* 放大标题，更具气势 */
+  font-weight: normal; /* 书法字体通常不需要加粗 */
   margin-bottom: 15px;
-  color: #D4AF37;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  color: #D4AF37; /* 标题使用更纯粹的暗金色 */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 添加阴影增加立体感 */
   background: none;
   -webkit-background-clip: unset;
   -webkit-text-fill-color: unset;
@@ -78,14 +89,16 @@
 
 .relationship_header p {
   font-size: 20px;
-  color: rgba(250, 245, 233, 0.8);
-  letter-spacing: 2px;
+  color: rgba(250, 245, 233, 0.8); /* 副标题颜色调淡 */
+  letter-spacing: 2px; /* 增加字间距，更有韵味 */
 }
 
 .legend {
   display: flex;
   justify-content: center;
   gap: 30px;
+  flex-wrap: wrap;
+  row-gap: 15px;
   margin-bottom: 20px;
 }
 
@@ -97,21 +110,22 @@
   font-size: 18px;
 }
 
-/* 图例改为方块，模拟印章 */
+/* 图例改为圆形，模拟水墨点 */
 .legend_dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 3px;
-  border: 2px solid rgba(250, 245, 233, 0.7);
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid rgba(250, 245, 233, 0.4);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-/* 画布模拟宣纸画卷 */
+/* 画布模拟宣纸或画框 */
 .relationship_canvas {
   display: block;
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
+  pointer-events: auto; /* 确保画布可交互 */
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -119,65 +133,143 @@
   border-image: linear-gradient(to bottom, #8c735b, #6b5543) 1;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   border-radius: 4px;
+  cursor: default;
 }
 
-/* 信息框设计为题跋卡片样式 */
+/* 跟随人物的悬浮信息卡片 */
 .person_info {
   position: fixed;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(244, 239, 230, 0.98);
-  padding: 25px 35px;
-  border-radius: 8px;
-  border: 2px solid #A08C7D;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-  max-width: 500px;
-  z-index: 50;
-  animation: fadeIn 0.5s ease-out;
+  width: 240px;
+  min-height: auto;
+  background: rgba(244, 239, 230, 0.95);
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+  padding: 20px;
+  border-radius: 4px;
+  border: 1px solid #d4c4b7;
+  outline: 4px solid rgba(244, 239, 230, 0.4);
+  box-shadow:
+    0 0 0 1px #8c735b,
+    0 5px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeInZoom 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+.person_info::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle, rgba(168, 60, 50, 0.1) 0%, rgba(168, 60, 50, 0) 70%);
+  border-radius: 50%;
+  z-index: -1;
+  animation: pulse 4s infinite ease-in-out;
+}
+
+.person_info::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: -10px;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(58, 47, 47, 0.05) 0%, rgba(58, 47, 47, 0) 70%);
+  border-radius: 50%;
+  z-index: -1;
+  animation: pulse 5s infinite ease-in-out reverse;
+}
+
+@keyframes fadeInZoom {
+  from { opacity: 0; transform: translate(30px, -50%) scale(0.9); }
+  to { opacity: 1; transform: translate(30px, -50%) scale(1); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 0.8; }
 }
 
 .person_info h3 {
   font-family: var(--font-ancient);
-  font-size: 28px;
+  font-size: 24px;
   font-weight: normal;
-  color: #A83C32;
-  margin-bottom: 10px;
+  color: var(--seal-red);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(168, 60, 50, 0.3);
+  width: 100%;
   text-align: center;
+  position: relative;
+}
+
+.person_info h3::after {
+  content: '●';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: var(--seal-red);
+  background: #f4efe6;
+  padding: 0 4px;
 }
 
 .relation_type {
-  font-size: 16px;
+  font-size: 14px;
   color: #8B4513;
-  margin-bottom: 12px;
-  text-align: center;
+  margin-bottom: 15px;
+  padding: 2px 10px;
+  border: 1px solid #8B4513;
+  border-radius: 15px;
+  background: rgba(139, 69, 19, 0.05);
   font-weight: bold;
+  letter-spacing: 1px;
 }
 
 .person_desc {
-  font-size: 16px;
-  color: #3a2f2f;
+  font-size: 14px;
+  color: var(--ink-color);
   line-height: 1.8;
   text-align: justify;
+  width: 100%;
+  position: relative;
 }
 
-/* 响应式调整 */
+.person_desc_name {
+  font-family: var(--font-ancient);
+  color: var(--seal-red);
+  font-size: 140%;
+  font-weight: normal;
+  letter-spacing: 1px;
+}
+
 @media (max-width: 768px) {
   .relationship_header h1 { font-size: 36px; }
   .relationship_header p { font-size: 16px; }
   .legend { flex-direction: column; align-items: center; gap: 15px; }
-  .person_info {
-    bottom: 80px;
-    left: 20px;
-    right: 20px;
-    transform: none;
-    padding: 20px;
-  }
   .nav_logo img, .nav_logo2 img { max-width: 100px; }
   .a_home img { width: 60px; }
+
+  /* 移动端信息框改为底部固定 */
+  .person_info {
+    position: fixed;
+    top: auto !important;
+    left: 50% !important;
+    bottom: 20px;
+    right: auto;
+    transform: translateX(-50%) !important;
+    width: 90%;
+    max-width: 400px;
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
 }
