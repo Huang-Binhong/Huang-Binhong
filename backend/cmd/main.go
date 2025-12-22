@@ -85,6 +85,7 @@ func main() {
 
 	// AI分析API
 	mux.HandleFunc("/api/ai/analyze", handlers.AIAnalyze)
+	mux.HandleFunc("/api/ai/chat", handlers.AIChat)
 
 	// 静态文件服务（图片）
 	fs := http.FileServer(http.Dir("data"))

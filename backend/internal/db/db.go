@@ -89,7 +89,17 @@ func createTables() error {
 		FOREIGN KEY (person_id) REFERENCES persons(person_id)
 	);`
 
-	statements := []string{personsSQL, eventsSQL, relationsSQL, worksSQL}
+	// 创建 ai_analysis 表（存储AI分析结果）
+	aiAnalysisSQL := `
+	CREATE TABLE IF NOT EXISTS ai_analysis (
+		work_id INTEGER PRIMARY KEY,
+		initial_analysis TEXT NOT NULL,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		FOREIGN KEY (work_id) REFERENCES works(work_id)
+	);`
+
+	statements := []string{personsSQL, eventsSQL, relationsSQL, worksSQL, aiAnalysisSQL}
 	for _, stmt := range statements {
 		if _, err := DB.Exec(stmt); err != nil {
 			return err

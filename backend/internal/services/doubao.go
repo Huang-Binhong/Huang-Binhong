@@ -33,10 +33,11 @@ type DoubaoSettings struct {
 	VideoTimeout  time.Duration
 
 	// Chat/分析相关配置
-	ChatModel   string
-	ChatURL     string
-	ChatTimeout time.Duration
-	ChatPrompt  string
+	ChatModel          string
+	ChatURL            string
+	ChatTimeout        time.Duration
+	ChatPrompt         string
+	ChatCalligraphyPrompt string
 }
 
 // NewDoubaoSettings 从环境变量创建配置
@@ -63,6 +64,7 @@ func NewDoubaoSettings() *DoubaoSettings {
 		ChatURL:     getEnv("DOUBAO_CHAT_URL", "https://ark.cn-beijing.volces.com/api/v3/chat/completions"),
 		ChatTimeout: time.Duration(getIntEnv("DOUBAO_CHAT_TIMEOUT", 120)) * time.Second,
 		ChatPrompt:  getEnv("DOUBAO_CHAT_PROMPT", "请分析这幅艺术作品，解释笔法、墨色层次、构图布局、题款用印等特点，并介绍作品背后的故事。"),
+		ChatCalligraphyPrompt: getEnv("DOUBAO_CHAT_CALLIGRAPHY_PROMPT", "请分析这幅书法作品，解释笔法特点、墨色运用、章法布局、题款用印等特点，并介绍作品的艺术价值。"),
 	}
 }
 
@@ -407,6 +409,54 @@ func AnalyzeArtwork(settings *DoubaoSettings, imageDataURL string, prompt string
 				},
 			},
 		},
+	}
+
+	jsonData, err := json.Marshal(payload)
+	if err != nil {
+		return nil, fmt.Errorf("序列化请求失败: %v", err)
+	}
+
+	client := &http.Client{Timeout: settings.ChatTimeout}
+	req, err := http.NewRequest("POST", settings.ChatURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, fmt.Errorf("创建请求失败: %v", err)
+	}
+
+	req.Header.Set("Authorization", "Bearer "+settings.ChatAPIKey)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("请求失败: %v", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("读取响应失败: %v", err)
+	}
+
+	if resp.StatusCode >= 400 {
+		return nil, fmt.Errorf("Doubao chat error %d: %s", resp.StatusCode, string(body))
+	}
+
+	var result ChatResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, fmt.Errorf("解析响应失败: %v", err)
+	}
+
+	return &result, nil
+}
+
+// ChatWithHistory 带历史记录的对话
+func ChatWithHistory(settings *DoubaoSettings, messages []ChatMessage) (*ChatResponse, error) {
+	if settings.ChatAPIKey == "" {
+		return nil, fmt.Errorf("缺少 DOUBAO_CHAT_API_KEY")
+	}
+
+	payload := ChatRequest{
+		Model:    settings.ChatModel,
+		Messages: messages,
 	}
 
 	jsonData, err := json.Marshal(payload)

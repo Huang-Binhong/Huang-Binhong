@@ -420,3 +420,210 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* 对话容器样式 */
+.ai-chat-container {
+  background-color: #FDFBF7;
+  padding: 30px;
+  border-radius: 2px;
+  box-shadow:
+    0 0 0 1px #F7F5F0,
+    0 0 0 5px #E8E6E1,
+    0 5px 15px rgba(0,0,0,0.05);
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-chat-container h3 {
+  color: #3B4F3A;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  border-bottom: 2px solid #D4A451;
+  padding-bottom: 10px;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-bottom: 20px;
+  max-height: 600px;
+  padding-right: 10px;
+  scroll-behavior: smooth;
+}
+
+/* 自定义滚动条样式 */
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: #E8E6E1;
+  border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #3B4F3A;
+  border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: #2E2E2E;
+}
+
+.chat-message {
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-message.assistant {
+  background-color: rgba(59, 79, 58, 0.05);
+  border-left: 4px solid #3B4F3A;
+}
+
+.chat-message.user {
+  background-color: rgba(212, 164, 81, 0.1);
+  border-left: 4px solid #D4A451;
+}
+
+.message-label {
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-weight: bold;
+  color: #3B4F3A;
+  margin-bottom: 8px;
+  font-size: 0.9em;
+}
+
+.chat-message.user .message-label {
+  color: #D4A451;
+}
+
+.message-content {
+  line-height: 1.8;
+  color: #2E2E2E;
+}
+
+.message-content p {
+  margin: 8px 0;
+}
+
+.message-content h1,
+.message-content h2,
+.message-content h3 {
+  color: #3B4F3A;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  margin-top: 16px;
+  margin-bottom: 10px;
+}
+
+.message-content ul,
+.message-content ol {
+  padding-left: 24px;
+  margin: 12px 0;
+}
+
+.message-content li {
+  margin: 6px 0;
+}
+
+.chat-input-area {
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid #E8E6E1;
+  padding-top: 20px;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #E8E6E1;
+  border-radius: 4px;
+  font-family: "Songti SC", "SimSun", serif;
+  font-size: 16px;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: #3B4F3A;
+}
+
+.chat-input:disabled {
+  background-color: #F7F5F0;
+  cursor: not-allowed;
+}
+
+.send-button {
+  background-color: #3B4F3A;
+  color: #F7F5F0;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 30px;
+  font-family: "Kaiti SC", "KaiTi", serif;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+}
+
+.send-button:hover:not(:disabled) {
+  background-color: #2E2E2E;
+  transform: translateY(-1px);
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+}
+
+.send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #999;
+}
+
+/* 打字指示器 */
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 10px 0;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background-color: #3B4F3A;
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  30% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
