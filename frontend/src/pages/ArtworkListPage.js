@@ -20,7 +20,16 @@ function ArtworkListPage() {
     return savedPage ? parseInt(savedPage, 10) : 1;
   });
   const [pageN, setPageN] = useState(1);
+  const [category, setCategory] = useState(''); // '' means all, '画作' for Paintings, '书法' for Calligraphy
+  const [jumpPage, setJumpPage] = useState('');
   const pageSize = 12;
+
+  const formatYear = (value) => {
+    if (value === null || value === undefined) return '';
+    const text = String(value);
+    const match = text.match(/\d{4}/);
+    return match ? match[0] : text;
+  };
 
   useEffect(() => {
     // 背景轮播
@@ -38,6 +47,9 @@ function ArtworkListPage() {
         const formData = new FormData();
         formData.append('pageNo', pageNo);
         formData.append('pageSize', pageSize);
+        if (category) {
+          formData.append('category', category);
+        }
 
         const response = await fetch(`${API_BASE}/frontend/pg/huang/huang-collection`, {
           method: 'POST',
@@ -57,7 +69,28 @@ function ArtworkListPage() {
     fetchArtworks();
     // 保存当前页码到 localStorage
     localStorage.setItem('artworkListPage', pageNo);
-  }, [pageNo]);
+  }, [pageNo, category]);
+
+  const handleCategoryChange = (newCategory) => {
+    setCategory(newCategory);
+    setPageNo(1); // Reset to first page when filtering
+  };
+
+  const handleJump = () => {
+    const page = parseInt(jumpPage, 10);
+    if (!isNaN(page) && page >= 1 && page <= pageN) {
+      setPageNo(page);
+      setJumpPage('');
+    } else {
+      // Optional: Show error or visual feedback
+    }
+  };
+
+  const handleJumpKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleJump();
+    }
+  };
 
   if (loading) {
     return <div className="loading">加载中...</div>;
@@ -122,14 +155,35 @@ function ArtworkListPage() {
         <div className="padding_50">
           <div className="lujin">首页 / 观看 / 作品全览</div>
 
-          <div className="artwork-grid">
+          <div className="filter-container">
+            <button 
+              className={`filter-btn ${category === '' ? 'active' : ''}`}
+              onClick={() => handleCategoryChange('')}
+            >
+              全部
+            </button>
+            <button 
+              className={`filter-btn ${category === '画作' ? 'active' : ''}`}
+              onClick={() => handleCategoryChange('画作')}
+            >
+              画作
+            </button>
+            <button 
+              className={`filter-btn ${category === '书法' ? 'active' : ''}`}
+              onClick={() => handleCategoryChange('书法')}
+            >
+              书法
+            </button>
+          </div>
+
+          <div className="artwork-list-waterfall">
             {artworks.map((artwork) => (
               <Link
                 key={artwork.id}
                 to={`/artwork/${artwork.id}`}
-                className="artwork-card"
+                className="artwork-list-card"
               >
-                <div className="artwork-image">
+                <div className="artwork-list-image">
                   <img
                     src={`${API_BASE}/static/${artwork.smallPic.directoryName}/${artwork.smallPic.resourceName}`}
                     alt={artwork.collectionName}
@@ -138,11 +192,17 @@ function ArtworkListPage() {
                     }}
                   />
                 </div>
-                <div className="artwork-info">
+                <div className="artwork-list-info">
                   <h3>{artwork.collectionName}</h3>
-                  <p className="author">{artwork.author}</p>
-                  <p className="size">{artwork.collectionSize || artwork.collectionTime}</p>
-                  <p className="intro">{artwork.intro || '黄宾虹作品'}</p>
+                  {artwork.author && (
+                    <p className="artwork-list-author">作者：{artwork.author}</p>
+                  )}
+                  {artwork.collectionSize && (
+                    <p className="artwork-list-size">尺寸：{artwork.collectionSize}</p>
+                  )}
+                  {artwork.collectionTime && (
+                    <p className="artwork-list-year">年份：{formatYear(artwork.collectionTime)}</p>
+                  )}
                 </div>
               </Link>
             ))}
@@ -181,6 +241,21 @@ function ArtworkListPage() {
             >
               <span className="btn-text">下一页</span>
             </button>
+
+            <div className="jump-container">
+              <span className="jump-text">跳转至</span>
+              <input
+                type="number"
+                min="1"
+                max={pageN}
+                value={jumpPage}
+                onChange={(e) => setJumpPage(e.target.value)}
+                onKeyDown={handleJumpKeyDown}
+                className="jump-input"
+              />
+              <span className="jump-text">页</span>
+              <button className="jump-btn" onClick={handleJump}>GO</button>
+            </div>
           </div>
         </div>
       </div>

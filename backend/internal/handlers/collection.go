@@ -22,11 +22,13 @@ type CollectionItem struct {
 	Author         string   `json:"author"`
 	Age            string   `json:"age"`
 	Category       string   `json:"category"`
+	StylePeriod    string   `json:"stylePeriod"`
 	Texture        string   `json:"texture"`
 	CollectionSize string   `json:"collectionSize"`
 	CollectionTime string   `json:"collectionTime"`
 	CollectionUnit string   `json:"collectionUnit"`
 	Intro          string   `json:"intro"`
+	Description    string   `json:"description"`
 	SmallPic       SmallPic `json:"smallPic"`
 }
 
@@ -37,9 +39,9 @@ type SmallPic struct {
 
 // 作品详情响应
 type DetailResponse struct {
-	BigPicSrcs  []string    `json:"bigPicSrcs"`
-	Infomation  InfoDetail  `json:"infomation"`
-	SmallPicSrc string      `json:"smallPicSrc"`
+	BigPicSrcs  []string   `json:"bigPicSrcs"`
+	Infomation  InfoDetail `json:"infomation"`
+	SmallPicSrc string     `json:"smallPicSrc"`
 }
 
 type InfoDetail struct {
@@ -48,11 +50,13 @@ type InfoDetail struct {
 	Author         string `json:"author"`
 	Age            string `json:"age"`
 	Category       string `json:"category"`
+	StylePeriod    string `json:"stylePeriod"`
 	CollectionSize string `json:"collectionSize"`
 	CollectionTime string `json:"collectionTime"`
 	CollectionUnit string `json:"collectionUnit"`
 	Texture        string `json:"texture"`
 	Intro          string `json:"intro"`
+	Description    string `json:"description"`
 }
 
 // HuangCollection 作品列表API
@@ -100,7 +104,7 @@ func HuangCollection(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 查询作品
-	query := `SELECT work_id, title, category, style_period, material, creation_date, description, work_image_url
+	query := `SELECT work_id, title, category, style_period, material, creation_date, size, description, work_image_url
 			  FROM works WHERE 1=1`
 	args := []interface{}{}
 
@@ -138,8 +142,8 @@ func HuangCollection(w http.ResponseWriter, r *http.Request) {
 	items := []CollectionItem{}
 	for rows.Next() {
 		var workID int
-		var title, cat, stylePeriod, material, creationDate, desc, imageURL string
-		rows.Scan(&workID, &title, &cat, &stylePeriod, &material, &creationDate, &desc, &imageURL)
+		var title, cat, stylePeriod, material, creationDate, size, desc, imageURL string
+		rows.Scan(&workID, &title, &cat, &stylePeriod, &material, &creationDate, &size, &desc, &imageURL)
 
 		// 提取文件名
 		fileName := imageURL
@@ -153,11 +157,13 @@ func HuangCollection(w http.ResponseWriter, r *http.Request) {
 			Author:         "黄宾虹",
 			Age:            "近现代",
 			Category:       cat,
+			StylePeriod:    stylePeriod,
 			Texture:        material,
-			CollectionSize: "",
+			CollectionSize: size,
 			CollectionTime: creationDate,
 			CollectionUnit: "",
 			Intro:          desc,
+			Description:    desc,
 			SmallPic: SmallPic{
 				DirectoryName: "work",
 				ResourceName:  fileName,
@@ -206,10 +212,10 @@ func HuangDetail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var title, cat, stylePeriod, material, creationDate, desc, imageURL string
-	err = db.DB.QueryRow(`SELECT title, category, style_period, material, creation_date, description, work_image_url
+	var title, cat, stylePeriod, material, creationDate, size, desc, imageURL string
+	err = db.DB.QueryRow(`SELECT title, category, style_period, material, creation_date, size, description, work_image_url
 						  FROM works WHERE work_id = ?`, workID).
-		Scan(&title, &cat, &stylePeriod, &material, &creationDate, &desc, &imageURL)
+		Scan(&title, &cat, &stylePeriod, &material, &creationDate, &size, &desc, &imageURL)
 
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
@@ -227,11 +233,13 @@ func HuangDetail(w http.ResponseWriter, r *http.Request) {
 		Author:         "黄宾虹",
 		Age:            "近现代",
 		Category:       cat,
-		CollectionSize: "",
+		StylePeriod:    stylePeriod,
+		CollectionSize: size,
 		CollectionTime: creationDate,
 		CollectionUnit: "",
 		Texture:        material,
 		Intro:          desc,
+		Description:    desc,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

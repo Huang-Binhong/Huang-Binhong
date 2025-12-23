@@ -7,17 +7,30 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/xuri/excelize/v2"
+	_ "modernc.org/sqlite"
 )
 
 var DB *sql.DB
 
+func sqliteDSN(dbPath string) string {
+	if dbPath == "" || dbPath == ":memory:" || strings.HasPrefix(dbPath, "file:") {
+		return dbPath
+	}
+
+	absPath, err := filepath.Abs(dbPath)
+	if err != nil {
+		return "file:" + filepath.ToSlash(dbPath)
+	}
+	return "file:" + filepath.ToSlash(absPath)
+}
+
 // InitDB 初始化数据库连接并创建表
 func InitDB(dbPath string) error {
 	var err error
-	DB, err = sql.Open("sqlite3", dbPath)
+	DB, err = sql.Open("sqlite", sqliteDSN(dbPath))
 	if err != nil {
 		return fmt.Errorf("failed to open database: %w", err)
 	}
@@ -84,6 +97,7 @@ func createTables() error {
 		style_period TEXT,
 		material TEXT,
 		creation_date TEXT,
+		size TEXT,
 		description TEXT,
 		work_image_url TEXT,
 		FOREIGN KEY (person_id) REFERENCES persons(person_id)
@@ -102,6 +116,12 @@ func createTables() error {
 	statements := []string{personsSQL, eventsSQL, relationsSQL, worksSQL, aiAnalysisSQL}
 	for _, stmt := range statements {
 		if _, err := DB.Exec(stmt); err != nil {
+			return err
+		}
+	}
+
+	if _, err := DB.Exec("ALTER TABLE works ADD COLUMN size TEXT"); err != nil {
+		if !strings.Contains(err.Error(), "duplicate column name") {
 			return err
 		}
 	}
@@ -308,8 +328,8 @@ func importWorks(filePath string) error {
 	}
 
 	stmt, err := DB.Prepare(`INSERT OR REPLACE INTO works
-		(work_id, person_id, title, category, style_period, material, creation_date, description, work_image_url)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+		(work_id, person_id, title, category, style_period, material, creation_date, size, description, work_image_url)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return err
 	}
@@ -320,13 +340,13 @@ func importWorks(filePath string) error {
 		if i == 0 {
 			continue
 		}
-		for len(row) < 9 {
+		for len(row) < 10 {
 			row = append(row, "")
 		}
 
 		workID, _ := strconv.Atoi(row[0])
 		personID, _ := strconv.Atoi(row[1])
-		_, err := stmt.Exec(workID, personID, row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+		_, err := stmt.Exec(workID, personID, row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
 		if err != nil {
 			log.Printf("Warning: failed to insert work %d: %v", workID, err)
 			continue

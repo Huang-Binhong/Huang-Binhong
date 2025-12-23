@@ -16,6 +16,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+~$*.xlsx
 
 # ==================== 前端 (React) ====================
 frontend/node_modules/

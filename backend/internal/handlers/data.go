@@ -122,7 +122,7 @@ func GetRelations(w http.ResponseWriter, r *http.Request) {
 // GetWorks 获取作品列表（简化版）
 func GetWorks(w http.ResponseWriter, r *http.Request) {
 	rows, err := db.DB.Query(`
-		SELECT work_id, person_id, title, category, style_period, material, creation_date, description, work_image_url
+		SELECT work_id, person_id, title, category, style_period, material, creation_date, size, description, work_image_url
 		FROM works`)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -138,6 +138,7 @@ func GetWorks(w http.ResponseWriter, r *http.Request) {
 		StylePeriod  string `json:"style_period"`
 		Material     string `json:"material"`
 		CreationDate string `json:"creation_date"`
+		Size         string `json:"size"`
 		Description  string `json:"description"`
 		WorkImageURL string `json:"work_image_url"`
 	}
@@ -146,7 +147,7 @@ func GetWorks(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var w Work
 		rows.Scan(&w.WorkID, &w.PersonID, &w.Title, &w.Category, &w.StylePeriod,
-			&w.Material, &w.CreationDate, &w.Description, &w.WorkImageURL)
+			&w.Material, &w.CreationDate, &w.Size, &w.Description, &w.WorkImageURL)
 		works = append(works, w)
 	}
 

@@ -11,13 +11,21 @@ function ArtworkDetailPage() {
   const [lensVisible, setLensVisible] = useState(false);
   const [lensPos, setLensPos] = useState({ x: 0, y: 0 });
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+  const [imageOffset, setImageOffset] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(2);
   const [artwork, setArtwork] = useState(null);
   const [loading, setLoading] = useState(true);
   const imageContainerRef = useRef(null);
+  const imageRef = useRef(null);
   const lensSize = 180;
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const formatYear = (value) => {
+    if (value === null || value === undefined) return '';
+    const text = String(value);
+    const match = text.match(/\d{4}/);
+    return match ? match[0] : text;
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -47,11 +55,13 @@ function ArtworkDetailPage() {
             author: data.infomation.author || '黄宾虹',
             age: data.infomation.age || '近现代',
             category: data.infomation.category || '画作',
+            stylePeriod: data.infomation.stylePeriod || '',
             texture: data.infomation.texture || '纸本',
             collectionSize: data.infomation.collectionSize || '',
             collectionTime: data.infomation.collectionTime || '',
             collectionUnit: data.infomation.collectionUnit || '',
             intro: data.infomation.intro || '黄宾虹经典作品',
+            description: data.infomation.description || data.infomation.intro || '黄宾虹经典作品',
             image: `${API_BASE}/static/${data.smallPicSrc}`,
           });
         } else {
@@ -61,11 +71,13 @@ function ArtworkDetailPage() {
             author: '黄宾虹',
             age: '近现代',
             category: '画作',
+            stylePeriod: '',
             texture: '纸本',
             collectionSize: '',
             collectionTime: '',
             collectionUnit: '',
             intro: '黄宾虹作品',
+            description: '黄宾虹作品',
             image: '/images/bg1.jpg',
           });
         }
@@ -76,11 +88,13 @@ function ArtworkDetailPage() {
           author: '黄宾虹',
           age: '近现代',
           category: '画作',
+          stylePeriod: '',
           texture: '纸本',
           collectionSize: '',
           collectionTime: '',
           collectionUnit: '',
           intro: '黄宾虹作品',
+          description: '黄宾虹作品',
           image: '/images/bg1.jpg',
         });
       } finally {
@@ -94,9 +108,58 @@ function ArtworkDetailPage() {
   const handleMouseMove = (e) => {
     if (!imageContainerRef.current) return;
     const rect = imageContainerRef.current.getBoundingClientRect();
-    const x = clamp(e.clientX - rect.left, 0, rect.width);
-    const y = clamp(e.clientY - rect.top, 0, rect.height);
-    setImageSize({ width: rect.width, height: rect.height });
+    const rawX = e.clientX - rect.left;
+    const rawY = e.clientY - rect.top;
+
+    const containerWidth = rect.width;
+    const containerHeight = rect.height;
+
+    const naturalWidth = imageRef.current?.naturalWidth || 0;
+    const naturalHeight = imageRef.current?.naturalHeight || 0;
+
+    if (!naturalWidth || !naturalHeight || !containerWidth || !containerHeight) {
+      const x = clamp(rawX, 0, containerWidth);
+      const y = clamp(rawY, 0, containerHeight);
+      setImageOffset({ x: 0, y: 0 });
+      setImageSize({ width: containerWidth, height: containerHeight });
+      setLensPos({ x, y });
+      setLensVisible(true);
+      return;
+    }
+
+    const containerRatio = containerWidth / containerHeight;
+    const imageRatio = naturalWidth / naturalHeight;
+
+    let displayWidth = containerWidth;
+    let displayHeight = containerHeight;
+
+    if (imageRatio > containerRatio) {
+      displayWidth = containerWidth;
+      displayHeight = containerWidth / imageRatio;
+    } else {
+      displayHeight = containerHeight;
+      displayWidth = containerHeight * imageRatio;
+    }
+
+    const offsetX = (containerWidth - displayWidth) / 2;
+    const offsetY = (containerHeight - displayHeight) / 2;
+
+    const inImage =
+      rawX >= offsetX &&
+      rawX <= offsetX + displayWidth &&
+      rawY >= offsetY &&
+      rawY <= offsetY + displayHeight;
+
+    if (!inImage) {
+      setLensVisible(false);
+      return;
+    }
+
+    const x = clamp(rawX - offsetX, 0, displayWidth);
+    const y = clamp(rawY - offsetY, 0, displayHeight);
+
+    setImageOffset({ x: offsetX, y: offsetY });
+    setImageSize({ width: displayWidth, height: displayHeight });
     setLensPos({ x, y });
     setLensVisible(true);
   };
@@ -118,12 +181,18 @@ function ArtworkDetailPage() {
   }
 
   const lensLeft = Math.max(
-    0,
-    Math.min(lensPos.x - lensSize / 2, Math.max(imageSize.width - lensSize, 0))
+    imageOffset.x,
+    Math.min(
+      imageOffset.x + lensPos.x - lensSize / 2,
+      imageOffset.x + Math.max(imageSize.width - lensSize, 0)
+    )
   );
   const lensTop = Math.max(
-    0,
-    Math.min(lensPos.y - lensSize / 2, Math.max(imageSize.height - lensSize, 0))
+    imageOffset.y,
+    Math.min(
+      imageOffset.y + lensPos.y - lensSize / 2,
+      imageOffset.y + Math.max(imageSize.height - lensSize, 0)
+    )
   );
   const bgPosX = imageSize.width ? (lensPos.x / imageSize.width) * 100 : 0;
   const bgPosY = imageSize.height ? (lensPos.y / imageSize.height) * 100 : 0;
@@ -158,32 +227,37 @@ function ArtworkDetailPage() {
           <div className="artwork_image_section">
             <div
               className="main_image"
-              ref={imageContainerRef}
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-              onWheel={handleWheel}
             >
-              <img
-                src={artwork.image}
-                alt={artwork.collectionName}
-                onError={(e) => {
-                  e.target.src = '/images/bg1.jpg';
-                }}
-              />
-              {lensVisible && imageSize.width > 0 && imageSize.height > 0 && (
-                <div
-                  className="zoom_lens"
-                  style={{
-                    width: lensSize,
-                    height: lensSize,
-                    left: lensLeft,
-                    top: lensTop,
-                    backgroundImage: `url(${artwork.image})`,
-                    backgroundSize: `${bgWidth}px ${bgHeight}px`,
-                    backgroundPosition: `${bgPosX}% ${bgPosY}%`
+              <div
+                className="main_image_viewport"
+                ref={imageContainerRef}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                onWheel={handleWheel}
+              >
+                <img
+                  ref={imageRef}
+                  src={artwork.image}
+                  alt={artwork.collectionName}
+                  onError={(e) => {
+                    e.target.src = '/images/bg1.jpg';
                   }}
                 />
-              )}
+                {lensVisible && imageSize.width > 0 && imageSize.height > 0 && (
+                  <div
+                    className="zoom_lens"
+                    style={{
+                      width: lensSize,
+                      height: lensSize,
+                      left: lensLeft,
+                      top: lensTop,
+                      backgroundImage: `url(${artwork.image})`,
+                      backgroundSize: `${bgWidth}px ${bgHeight}px`,
+                      backgroundPosition: `${bgPosX}% ${bgPosY}%`
+                    }}
+                  />
+                )}
+              </div>
             </div>
           </div>
 
@@ -196,8 +270,8 @@ function ArtworkDetailPage() {
                 <span className="info_value">{artwork.author}</span>
               </div>
               <div className="info_item">
-                <span className="info_label">年代：</span>
-                <span className="info_value">{artwork.age}</span>
+                <span className="info_label">时期：</span>
+                <span className="info_value">{artwork.stylePeriod}</span>
               </div>
               <div className="info_item">
                 <span className="info_label">质地：</span>
@@ -211,21 +285,15 @@ function ArtworkDetailPage() {
               )}
               {artwork.collectionTime && (
                 <div className="info_item">
-                  <span className="info_label">创作时间：</span>
-                  <span className="info_value">{artwork.collectionTime}</span>
-                </div>
-              )}
-              {artwork.collectionUnit && (
-                <div className="info_item">
-                  <span className="info_label">收藏单位：</span>
-                  <span className="info_value">{artwork.collectionUnit}</span>
+                  <span className="info_label">年份：</span>
+                  <span className="info_value">{formatYear(artwork.collectionTime)}</span>
                 </div>
               )}
             </div>
 
             <div className="artwork_description">
-              <h3>作品简介</h3>
-              <p>{artwork.intro}</p>
+              <h3>作品介绍</h3>
+              <p>{artwork.description}</p>
             </div>
 
             <div className="action_buttons">
