@@ -110,7 +110,7 @@
   position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible;
   background: #f5f5f5;
 }
 
@@ -121,6 +121,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible; /* 允许放大镜框超出边界 */
+  border-radius: 8px;
+  cursor: crosshair;
 }
 
 .main_image_viewport img {
@@ -128,21 +131,219 @@
   height: 100%;
   object-fit: contain;
   display: block;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-.zoom_lens {
+/* 放大镜指示框 */
+.magnifier_lens {
   position: absolute;
   pointer-events: none;
-  border: 2px solid #c9a066;
-  border-radius: 50%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-  background-repeat: no-repeat;
-  opacity: 0.95;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  border: 3px solid #c9a066;
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.8),
+    0 0 20px rgba(201, 160, 102, 0.5),
+    inset 0 0 40px rgba(255, 255, 255, 0.1);
+  background: rgba(201, 160, 102, 0.1);
+  z-index: 10;
+  opacity: 0;
+  animation: fadeInLens 0.15s ease-out forwards;
+  transition: width 0.2s ease, height 0.2s ease;
 }
 
-.zoom_lens:hover {
-  transform: scale(1.01);
+@keyframes fadeInLens {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 放大预览窗口 */
+.magnifier_preview {
+  position: absolute;
+  top: 0;
+  right: -330px;
+  width: 300px;
+  height: 300px;
+  border: 3px solid #c9a066;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  z-index: 20;
+  opacity: 0;
+  animation: fadeInPreview 0.2s ease-out forwards;
+}
+
+@keyframes fadeInPreview {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.magnifier_preview_inner {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-color: #fff;
+  will-change: background-position;
+}
+
+.magnifier_zoom_info {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: bold;
+  backdrop-filter: blur(5px);
+}
+
+/* 功能按钮 */
+.image_controls {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  gap: 10px;
+  z-index: 15;
+}
+
+.control_btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.control_btn:hover {
+  background: #c9a066;
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(201, 160, 102, 0.4);
+}
+
+.control_btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* 提示信息 */
+.magnifier_hint {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  animation: fadeInHint 0.3s ease-out forwards;
+  z-index: 5;
+}
+
+@keyframes fadeInHint {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.magnifier_hint svg {
+  flex-shrink: 0;
+}
+
+/* 全屏查看模态框 */
+.fullscreen_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.fullscreen_content {
+  position: relative;
+  max-width: 95vw;
+  max-height: 95vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fullscreen_content img {
+  max-width: 100%;
+  max-height: 95vh;
+  object-fit: contain;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+  animation: zoomIn 0.3s ease-out;
+}
+
+.fullscreen_close {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  border: 2px solid white;
+  background: transparent;
+  color: white;
+  font-size: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.fullscreen_close:hover {
+  background: white;
+  color: black;
+  transform: rotate(90deg);
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .artwork_info_section {
@@ -257,6 +458,18 @@
   .detail_main {
     padding: 0 20px;
   }
+
+  /* 在平板和移动设备上，将预览窗口移到下方 */
+  .magnifier_preview {
+    top: auto;
+    bottom: -320px;
+    right: 50%;
+    transform: translateX(50%);
+  }
+
+  .artwork_image_section {
+    margin-bottom: 350px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -280,5 +493,30 @@
 
   .main_image_viewport {
     height: clamp(260px, 50vh, 420px);
+  }
+
+  .magnifier_preview {
+    width: 250px;
+    height: 250px;
+    bottom: -270px;
+  }
+
+  .magnifier_hint {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
+  .image_controls {
+    top: 10px;
+    right: 10px;
+  }
+
+  .control_btn {
+    width: 35px;
+    height: 35px;
+  }
+
+  .artwork_image_section {
+    margin-bottom: 280px;
   }
 }

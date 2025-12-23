@@ -71,6 +71,9 @@ func HuangCollection(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
 	category := r.FormValue("category")
+	stylePeriod := r.FormValue("stylePeriod")
+	sort := r.FormValue("sort")
+	shuffleSeedStr := r.FormValue("shuffleSeed")
 	pageNoStr := r.FormValue("pageNo")
 	pageSizeStr := r.FormValue("pageSize")
 
@@ -79,6 +82,21 @@ func HuangCollection(w http.ResponseWriter, r *http.Request) {
 		if category == "" {
 			if vals, ok := r.MultipartForm.Value["category"]; ok && len(vals) > 0 {
 				category = vals[0]
+			}
+		}
+		if stylePeriod == "" {
+			if vals, ok := r.MultipartForm.Value["stylePeriod"]; ok && len(vals) > 0 {
+				stylePeriod = vals[0]
+			}
+		}
+		if sort == "" {
+			if vals, ok := r.MultipartForm.Value["sort"]; ok && len(vals) > 0 {
+				sort = vals[0]
+			}
+		}
+		if shuffleSeedStr == "" {
+			if vals, ok := r.MultipartForm.Value["shuffleSeed"]; ok && len(vals) > 0 {
+				shuffleSeedStr = vals[0]
 			}
 		}
 		if pageNoStr == "" {
@@ -113,22 +131,52 @@ func HuangCollection(w http.ResponseWriter, r *http.Request) {
 		args = append(args, category+"%")
 	}
 
+	if stylePeriod != "" {
+		query += " AND style_period = ?"
+		args = append(args, stylePeriod)
+	}
+
 	// 获取总数
 	countQuery := "SELECT COUNT(*) FROM works WHERE 1=1"
 	if category != "" {
 		countQuery += " AND category LIKE ?"
 	}
+	if stylePeriod != "" {
+		countQuery += " AND style_period = ?"
+	}
 	var total int
-	if category != "" {
-		db.DB.QueryRow(countQuery, category+"%").Scan(&total)
+	if category != "" || stylePeriod != "" {
+		countArgs := []interface{}{}
+		if category != "" {
+			countArgs = append(countArgs, category+"%")
+		}
+		if stylePeriod != "" {
+			countArgs = append(countArgs, stylePeriod)
+		}
+		db.DB.QueryRow(countQuery, countArgs...).Scan(&total)
 	} else {
 		db.DB.QueryRow(countQuery).Scan(&total)
 	}
 
 	pageN := (total + pageSize - 1) / pageSize
 
+	orderBy := ""
+	orderArgs := []interface{}{}
+	switch sort {
+	case "year_asc":
+		orderBy = " ORDER BY CAST(creation_date AS INTEGER) ASC, work_id ASC"
+	case "year_desc":
+		orderBy = " ORDER BY CAST(creation_date AS INTEGER) DESC, work_id DESC"
+	default:
+		shuffleSeed, _ := strconv.ParseInt(shuffleSeedStr, 10, 64)
+		orderBy = " ORDER BY abs((work_id * 1103515245 + ?) % 2147483647) ASC"
+		orderArgs = append(orderArgs, shuffleSeed)
+	}
+
 	// 分页查询
 	offset := (pageNo - 1) * pageSize
+	query += orderBy
+	args = append(args, orderArgs...)
 	query += " LIMIT ? OFFSET ?"
 	args = append(args, pageSize, offset)
 

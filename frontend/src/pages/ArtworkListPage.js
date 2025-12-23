@@ -4,23 +4,54 @@ import './ArtworkListPage.css';
 
 const BG_IMAGES = ['/images/list_bg1.jpg', '/images/list_bg2.jpg'];
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+const LIST_STATE_STORAGE_KEY = 'artworkListState';
 
 function ArtworkListPage() {
   const location = useLocation();
+  const getInitialListState = () => {
+    if (location.state?.fromHome) {
+      const shuffleSeed = Math.floor(Date.now() + Math.random() * 1000000);
+      return {
+        pageNo: 1,
+        category: '',
+        stylePeriod: '',
+        sortOrder: 'default',
+        shuffleSeed,
+      };
+    }
+
+    try {
+      const raw = localStorage.getItem(LIST_STATE_STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+
+      const pageNo = Number.isFinite(Number(parsed?.pageNo)) ? Math.max(1, Number(parsed.pageNo)) : 1;
+      const category = typeof parsed?.category === 'string' ? parsed.category : '';
+      const stylePeriod = typeof parsed?.stylePeriod === 'string' ? parsed.stylePeriod : '';
+      const sortOrder =
+        parsed?.sortOrder === 'default' || parsed?.sortOrder === 'year_asc' || parsed?.sortOrder === 'year_desc'
+          ? parsed.sortOrder
+          : 'default';
+      const shuffleSeed = Number.isFinite(Number(parsed?.shuffleSeed)) ? Number(parsed.shuffleSeed) : undefined;
+
+      return { pageNo, category, stylePeriod, sortOrder, shuffleSeed };
+    } catch {
+      return null;
+    }
+  };
+
+  const initialListState = getInitialListState();
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentBg, setCurrentBg] = useState(0);
   const [pageNo, setPageNo] = useState(() => {
-    // 如果是从主页进入（state 中有 fromHome 标记），从第一页开始
-    // 否则从 localStorage 恢复页码（刷新或从详情页返回）
-    if (location.state?.fromHome) {
-      return 1;
-    }
-    const savedPage = localStorage.getItem('artworkListPage');
-    return savedPage ? parseInt(savedPage, 10) : 1;
+    return initialListState?.pageNo ?? 1;
   });
   const [pageN, setPageN] = useState(1);
-  const [category, setCategory] = useState(''); // '' means all, '画作' for Paintings, '书法' for Calligraphy
+  const [category, setCategory] = useState(() => initialListState?.category ?? ''); // '' means all, '画作' for Paintings, '书法' for Calligraphy
+  const [stylePeriod, setStylePeriod] = useState(() => initialListState?.stylePeriod ?? ''); // '' means all, '早期' | '中期' | '晚期'
+  const [sortOrder, setSortOrder] = useState(() => initialListState?.sortOrder ?? 'default'); // default | year_desc | year_asc
+  const [shuffleSeed, setShuffleSeed] = useState(() => initialListState?.shuffleSeed ?? Math.floor(Date.now()));
   const [jumpPage, setJumpPage] = useState('');
   const pageSize = 12;
 
@@ -50,6 +81,14 @@ function ArtworkListPage() {
         if (category) {
           formData.append('category', category);
         }
+        if (stylePeriod) {
+          formData.append('stylePeriod', stylePeriod);
+        }
+        if (sortOrder && sortOrder !== 'default') {
+          formData.append('sort', sortOrder);
+        } else {
+          formData.append('shuffleSeed', String(shuffleSeed));
+        }
 
         const response = await fetch(`${API_BASE}/frontend/pg/huang/huang-collection`, {
           method: 'POST',
@@ -67,13 +106,45 @@ function ArtworkListPage() {
     };
 
     fetchArtworks();
-    // 保存当前页码到 localStorage
-    localStorage.setItem('artworkListPage', pageNo);
-  }, [pageNo, category]);
+  }, [pageNo, category, stylePeriod, sortOrder]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      LIST_STATE_STORAGE_KEY,
+      JSON.stringify({
+        pageNo,
+        category,
+        stylePeriod,
+        sortOrder,
+        shuffleSeed,
+      })
+    );
+  }, [pageNo, category, stylePeriod, sortOrder, shuffleSeed]);
 
   const handleCategoryChange = (newCategory) => {
     setCategory(newCategory);
     setPageNo(1); // Reset to first page when filtering
+  };
+
+  const handleStylePeriodChange = (newStylePeriod) => {
+    setStylePeriod(newStylePeriod);
+    setPageNo(1);
+  };
+
+  const handleSortOrderChange = (newSortOrder) => {
+    if (newSortOrder === 'default' && sortOrder !== 'default') {
+      setShuffleSeed(Math.floor(Date.now() + Math.random() * 1000000));
+    }
+    setSortOrder(newSortOrder);
+    setPageNo(1);
+  };
+
+  const handleResetFilters = () => {
+    setCategory('');
+    setStylePeriod('');
+    setSortOrder('default');
+    setShuffleSeed(Math.floor(Date.now() + Math.random() * 1000000));
+    setPageNo(1);
   };
 
   const handleJump = () => {
@@ -156,24 +227,67 @@ function ArtworkListPage() {
           <div className="lujin">首页 / 观看 / 作品全览</div>
 
           <div className="filter-container">
-            <button 
-              className={`filter-btn ${category === '' ? 'active' : ''}`}
-              onClick={() => handleCategoryChange('')}
-            >
-              全部
-            </button>
-            <button 
-              className={`filter-btn ${category === '画作' ? 'active' : ''}`}
-              onClick={() => handleCategoryChange('画作')}
-            >
-              画作
-            </button>
-            <button 
-              className={`filter-btn ${category === '书法' ? 'active' : ''}`}
-              onClick={() => handleCategoryChange('书法')}
-            >
-              书法
-            </button>
+            <div className="filter-left">
+              <button 
+                className={`filter-btn ${category === '' ? 'active' : ''}`}
+                onClick={() => handleCategoryChange('')}
+              >
+                全部
+              </button>
+              <button 
+                className={`filter-btn ${category === '画作' ? 'active' : ''}`}
+                onClick={() => handleCategoryChange('画作')}
+              >
+                画作
+              </button>
+              <button 
+                className={`filter-btn ${category === '书法' ? 'active' : ''}`}
+                onClick={() => handleCategoryChange('书法')}
+              >
+                书法
+              </button>
+            </div>
+
+            <div className="filter-combos">
+              <div className="filter-combo">
+                <label className="filter-combo-label" htmlFor="sortOrder">排序</label>
+                <select
+                  id="sortOrder"
+                  className="filter-combo-select"
+                  value={sortOrder}
+                  onChange={(e) => handleSortOrderChange(e.target.value)}
+                >
+                  <option value="default">默认（乱序）</option>
+                  <option value="year_desc">按年份：降序</option>
+                  <option value="year_asc">按年份：升序</option>
+                </select>
+              </div>
+
+              <div className="filter-combo">
+                <label className="filter-combo-label" htmlFor="stylePeriod">时期</label>
+                <select
+                  id="stylePeriod"
+                  className="filter-combo-select"
+                  value={stylePeriod}
+                  onChange={(e) => handleStylePeriodChange(e.target.value)}
+                >
+                  <option value="">全部</option>
+                  <option value="早期">早期</option>
+                  <option value="中期">中期</option>
+                  <option value="晚期">晚期</option>
+                </select>
+              </div>
+
+              <button
+                type="button"
+                className="filter-reset-btn"
+                onClick={handleResetFilters}
+                disabled={category === '' && stylePeriod === '' && sortOrder === 'default'}
+                title="重置筛选与排序"
+              >
+                重置
+              </button>
+            </div>
           </div>
 
           <div className="artwork-list-waterfall">
