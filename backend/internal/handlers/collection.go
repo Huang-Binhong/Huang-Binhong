@@ -122,7 +122,7 @@ func HuangCollection(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 查询作品
-	query := `SELECT work_id, title, category, style_period, material, creation_date, size, description, work_image_url
+	query := `SELECT work_id, title, category, COALESCE(style_period, ''), COALESCE(material, ''), COALESCE(creation_date, ''), COALESCE(size, ''), COALESCE(description, ''), work_image_url
 			  FROM works WHERE 1=1`
 	args := []interface{}{}
 
@@ -250,6 +250,11 @@ func HuangDetail(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// 如果还是空，尝试从 PostForm 中获取
+	if infomationId == "" {
+		infomationId = r.PostFormValue("infomationId")
+	}
+
 	workID, err := strconv.Atoi(infomationId)
 	if err != nil {
 		json.NewEncoder(w).Encode(DetailResponse{
@@ -261,7 +266,7 @@ func HuangDetail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var title, cat, stylePeriod, material, creationDate, size, desc, imageURL string
-	err = db.DB.QueryRow(`SELECT title, category, style_period, material, creation_date, size, description, work_image_url
+	err = db.DB.QueryRow(`SELECT title, category, COALESCE(style_period, ''), COALESCE(material, ''), COALESCE(creation_date, ''), COALESCE(size, ''), COALESCE(description, ''), work_image_url
 						  FROM works WHERE work_id = ?`, workID).
 		Scan(&title, &cat, &stylePeriod, &material, &creationDate, &size, &desc, &imageURL)
 
