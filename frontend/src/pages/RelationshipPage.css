@@ -34,9 +34,10 @@
   opacity: 0.8; /* logo稍作透明，更好地融入背景 */
 }
 
-.nav_logo { top: 20px; right: 20px; }
-.nav_logo2 { top: 20px; left: 20px; }
+.nav_logo { top: 20px; right: 24px; }
+.nav_logo2 { top: 90px; left: 60px; }
 .nav_logo img, .nav_logo2 img { max-width: 150px; height: auto; }
+.nav_logo2 img { max-width: 190px; }
 
 .a_home {
   position: fixed;
