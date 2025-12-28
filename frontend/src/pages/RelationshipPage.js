@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import './RelationshipPage.css';
 import paperBg from '../images/rice_paper_bg.jpg';
 
-const BG_IMAGES = ['/images/list_bg1.jpg', '/images/list_bg2.jpg'];
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 const FALLBACK_CENTER = {
@@ -152,7 +151,6 @@ const renderWithHighlights = (text, highlights, className) => {
 function RelationshipPage() {
   const canvasRef = useRef(null);
   const [selectedPerson, setSelectedPerson] = useState(null);
-  const [currentBg, setCurrentBg] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const [relationData, setRelationData] = useState({
@@ -195,13 +193,6 @@ function RelationshipPage() {
       .filter((n) => n.length >= 2)
       .sort((a, b) => b.length - a.length);
   }, [relationData.center?.name, relationData.relations]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentBg((prev) => (prev + 1) % BG_IMAGES.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -712,7 +703,7 @@ function RelationshipPage() {
   }
 
   return (
-    <div className="relationship-page" style={{ backgroundImage: `url(${BG_IMAGES[currentBg]})` }}>
+    <div className="relationship-page">
       <div className="nav_logo">
         <img src="/images/list_logo.png" alt="" />
       </div>

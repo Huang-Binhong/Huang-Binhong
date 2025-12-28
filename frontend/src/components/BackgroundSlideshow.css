@@ -1,0 +1,36 @@
+.bg-slideshow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, rgba(197, 165, 127, 0.35) 0%, rgba(248, 246, 241, 0.7) 100%);
+}
+
+.bg-slideshow__layer {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0;
+  transition: opacity var(--bg-fade-ms, 1200ms) ease-in-out;
+  will-change: opacity;
+  transform: translateZ(0);
+}
+
+.bg-slideshow__layer.is-visible {
+  opacity: 1;
+}
+
+.bg-slideshow__wash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(139, 69, 19, 0.16) 0%, rgba(0, 0, 0, 0.42) 100%);
+  opacity: 0.45;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-slideshow__layer {
+    transition: none;
+  }
+}

@@ -2,12 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './ArtworkDetailPage.css';
 
-const BG_IMAGES = ['/images/list_bg1.jpg', '/images/list_bg2.jpg'];
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 function ArtworkDetailPage() {
   const { id } = useParams();
-  const [currentBg, setCurrentBg] = useState(0);
   const [magnifierActive, setMagnifierActive] = useState(false);
   const [magnifierPos, setMagnifierPos] = useState({ x: 0, y: 0 });
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
@@ -28,13 +26,6 @@ function ArtworkDetailPage() {
     const match = text.match(/\d{4}/);
     return match ? match[0] : text;
   };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentBg((prev) => (prev + 1) % BG_IMAGES.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     // 从后端获取作品详情
@@ -237,9 +228,6 @@ function ArtworkDetailPage() {
   return (
     <div
       className="artwork-detail-page"
-      style={{
-        backgroundImage: `url(${BG_IMAGES[currentBg]})`
-      }}
     >
       <div className="nav_logo">
         <img src="/images/list_logo.png" alt="" />
@@ -391,7 +379,11 @@ function ArtworkDetailPage() {
               >
                 AI艺术讲解
               </Link>
-              <Link to="/style-transfer" className="btn_style">
+              <Link
+                to={`/artwork/${id}/style-transfer`}
+                state={{ artwork: artwork, fromPath: `/artwork/${id}` }}
+                className="btn_style"
+              >
                 风格迁移
               </Link>
             </div>

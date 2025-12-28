@@ -19,8 +19,6 @@ import {
 } from 'lucide-react';
 import './StyleTransferPage.css';
 
-const BG_IMAGES = ['/images/list_bg1.jpg', '/images/list_bg2.jpg'];
-
 const THEME = {
   bgMain: '#F8F6F1',
   bgCard: '#EDE8DF',
@@ -63,7 +61,6 @@ const API_BASE = (() => {
 })();
 
 function StyleTransferPage() {
-  const [currentBg, setCurrentBg] = useState(0);
   const [sourceImage, setSourceImage] = useState(null);
   const [sourceFile, setSourceFile] = useState(null);
   const [prompt, setPrompt] = useState('');
@@ -100,14 +97,6 @@ function StyleTransferPage() {
 
   const fileInputRef = useRef(null);
   const stepTimer = useRef(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentBg((prev) => (prev + 1) % BG_IMAGES.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
 
   useEffect(() => {
     return () => {
@@ -482,9 +471,6 @@ function StyleTransferPage() {
     <div
       className="style-transfer-page notranslate"
       translate="no"
-      style={{
-        backgroundImage: `url(${BG_IMAGES[currentBg]})`
-      }}
     >
       <div className="nav_logo">
         <img src="/images/list_logo.png" alt="" />

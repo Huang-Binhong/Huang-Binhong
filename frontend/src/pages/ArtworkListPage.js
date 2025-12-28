@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './ArtworkListPage.css';
 
-const BG_IMAGES = ['/images/list_bg1.jpg', '/images/list_bg2.jpg'];
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 const LIST_STATE_STORAGE_KEY = 'artworkListState';
 
@@ -43,7 +42,6 @@ function ArtworkListPage() {
   const initialListState = getInitialListState();
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentBg, setCurrentBg] = useState(0);
   const [pageNo, setPageNo] = useState(() => {
     return initialListState?.pageNo ?? 1;
   });
@@ -61,14 +59,6 @@ function ArtworkListPage() {
     const match = text.match(/\d{4}/);
     return match ? match[0] : text;
   };
-
-  useEffect(() => {
-    // 背景轮播
-    const interval = setInterval(() => {
-      setCurrentBg((prev) => (prev + 1) % BG_IMAGES.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     // 从后端获取数据
@@ -204,9 +194,6 @@ function ArtworkListPage() {
   return (
     <div
       className="artwork-list-page"
-      style={{
-        backgroundImage: `url(${BG_IMAGES[currentBg]})`
-      }}
     >
       <div className="nav_logo">
         <img src="/images/list_logo.png" alt="" />

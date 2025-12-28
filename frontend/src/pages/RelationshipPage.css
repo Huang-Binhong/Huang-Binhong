@@ -8,12 +8,7 @@
 
 .relationship-page {
   min-height: 100vh;
-  /* 背景色改为沉稳的靛青色，而非纯黑 */
-  background: #293D55;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  transition: background-image 1s ease-in-out;
+  background: transparent;
   position: relative;
   overflow: hidden;
   font-family: var(--font-ancient);
@@ -29,6 +24,7 @@
   bottom: 0;
   background: radial-gradient(circle, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.4) 100%);
   z-index: 0;
+  opacity: 0.35;
 }
 
 .nav_logo,

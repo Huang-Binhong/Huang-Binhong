@@ -6,7 +6,6 @@ function HomePage() {
   const [showNav1, setShowNav1] = useState(false);
   const [showNav2, setShowNav2] = useState(false);
   const [showNav3, setShowNav3] = useState(false);
-  const [currentBg, setCurrentBg] = useState(0);
 
   useEffect(() => {
     // 禁用右键菜单
@@ -16,29 +15,13 @@ function HomePage() {
     };
     document.addEventListener('contextmenu', handleContextMenu);
 
-    // 背景图片切换
-    const bgImages = ['/images/bg1.jpg', '/images/bg2.jpg'];
-    const interval = setInterval(() => {
-      setCurrentBg((prev) => (prev + 1) % bgImages.length);
-    }, 5000);
-
     return () => {
       document.removeEventListener('contextmenu', handleContextMenu);
-      clearInterval(interval);
     };
   }, []);
 
   return (
     <div className="home-page-original">
-      {/* 背景切换 */}
-      <div
-        className="bg-body"
-        style={{
-          backgroundImage: `url(${currentBg === 0 ? '/images/bg1.jpg' : '/images/bg2.jpg'})`,
-          transition: 'background-image 1s ease-in-out'
-        }}
-      />
-
       <div className="header">
         <div className="in_main">
           <div className="right_bg" data-scroll-reveal="enter right after 0s">
