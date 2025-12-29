@@ -31,7 +31,71 @@
     --font-body: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
     --font-classic: 'Ma Shan Zheng', 'ZCOOL XiaoWei', cursive;
 }
+/* src/components/Timeline2/Timeline2.css */
+/* 添加以下样式 */
 
+/* 事件数量徽章 */
+.event-count-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff4d4f;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.event-count-badge .count-number {
+    margin-left: 2px;
+    line-height: 1;
+}
+
+/* 模态框标题区域 */
+.modal-title-container {
+    width: 100%;
+}
+
+.modal-title-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* 事件切换器 */
+.event-switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.event-counter {
+    font-size: 14px;
+    color: #666;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* 卡片悬停效果 */
+.event-card-top:hover .event-count-badge,
+.event-card-bottom:hover .event-count-badge {
+    transform: scale(1.1);
+    transition: transform 0.2s;
+}
+
+/* 卡片内容适配 */
+.event-card-content {
+    position: relative;
+    z-index: 1;
+}
 /* 容器样式 - 卷轴效果 */
 .timeline2-container {
     position: relative;
