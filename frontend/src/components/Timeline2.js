@@ -5,12 +5,15 @@ import {
     EnvironmentOutlined,
     CalendarOutlined,
     LeftOutlined,
-    RightOutlined
+    RightOutlined,
+    SwapOutlined
 } from '@ant-design/icons';
 import './Timeline2.css';
 
 const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const [selectedYearEvents, setSelectedYearEvents] = useState([]);
+    const [currentEventIndex, setCurrentEventIndex] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
     const [scrollPosition, setScrollPosition] = useState(0);
     const timelineRef = useRef(null);
@@ -21,9 +24,9 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
     const totalYears = maxYear - minYear;
 
     // 每个年份的宽度（像素）
-    const yearWidth = 160; // 稍微缩小一点
+    const yearWidth = 160;
 
-    // 按年份分组事件
+    // 按年份分组事件，每个年份只取一个事件显示
     const getEventsByYear = (events) => {
         const eventsByYear = {};
         events.forEach(event => {
@@ -38,33 +41,52 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
     const personalEventsByYear = getEventsByYear(personalEvents);
     const historicalEventsByYear = getEventsByYear(historicalEvents);
 
-    const handleEventClick = (event) => {
+    // 处理事件点击
+    const handleEventClick = (event, allEvents, eventType) => {
         setSelectedEvent(event);
+        setSelectedYearEvents(allEvents);
+        setCurrentEventIndex(allEvents.findIndex(e => e.id === event.id));
         setModalVisible(true);
     };
 
+    // 模态框中切换事件
+    const handleSwitchEvent = (direction) => {
+        if (!selectedYearEvents || selectedYearEvents.length <= 1) return;
+
+        let newIndex;
+        if (direction === 'next') {
+            newIndex = (currentEventIndex + 1) % selectedYearEvents.length;
+        } else {
+            newIndex = (currentEventIndex - 1 + selectedYearEvents.length) % selectedYearEvents.length;
+        }
+
+        setCurrentEventIndex(newIndex);
+        setSelectedEvent(selectedYearEvents[newIndex]);
+    };
+
+    // 样式相关函数
     const getTypeColor = (type) => {
         const colors = {
-            birth: '#8B0000',         // 深红
-            education: '#2E8B57',     // 海绿
-            work: '#8B4513',         // 鞍褐
-            creation: '#3B4F3A',      // 墨绿
-            award: '#D4A451',         // 金色
-            death: '#696969',         // 暗灰
-            travel: '#4682B4',        // 钢蓝
-            collection: '#B8860B',    // 暗金
-            publication: '#A52A2A',   // 棕色
-            exhibition: '#CD853F',    // 秘鲁色
-            political: '#8B0000',     // 深红
-            military: '#B22222',      // 砖红
-            diplomatic: '#8B4513',    // 鞍褐
-            economic: '#DAA520',      // 金菊
-            industrial: '#696969',    // 暗灰
-            education_hist: '#2E8B57', // 海绿
-            cultural: '#D2691E',      // 巧克力色
-            social: '#CD853F'         // 秘鲁色
+            birth: '#8B0000',
+            education: '#2E8B57',
+            work: '#8B4513',
+            creation: '#3B4F3A',
+            award: '#D4A451',
+            death: '#696969',
+            travel: '#4682B4',
+            collection: '#B8860B',
+            publication: '#A52A2A',
+            exhibition: '#CD853F',
+            political: '#8B0000',
+            military: '#B22222',
+            diplomatic: '#8B4513',
+            economic: '#DAA520',
+            industrial: '#696969',
+            education_hist: '#2E8B57',
+            cultural: '#D2691E',
+            social: '#CD853F'
         };
-        return colors[type] || '#8B7355'; // 默认用赭石色
+        return colors[type] || '#8B7355';
     };
 
     const getTypeText = (type) => {
@@ -83,11 +105,14 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
             industrial: '工业',
             education_hist: '教育',
             cultural: '文化',
-            social: '社会'
+            social: '社会',
+            recommendation:'推荐',
+            other:'其他'
         };
         return texts[type] || type;
     };
 
+    // 滚轮控制
     const scrollLeft = () => {
         if (timelineRef.current) {
             timelineRef.current.scrollLeft -= 400;
@@ -129,8 +154,6 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                 <div className="scroll-subtitle">年谱画卷（1865-1955）</div>
             </div>
 
-
-
             {/* 时间轴主体 */}
             <div
                 className="timeline-content"
@@ -143,7 +166,7 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                 >
                     {/* 双面尺子 */}
                     <div className="double-ruler">
-                        {/* 时间轴标尺 - 显示所有年份 */}
+                        {/* 时间轴标尺 */}
                         <div className="timeline-ruler">
                             {Array.from({ length: totalYears + 1 }, (_, i) => {
                                 const year = minYear + i;
@@ -156,10 +179,7 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                                         className={`ruler-tick ${isDecade ? 'decade-tick' : ''}`}
                                         style={{ left: `${leftPosition}px` }}
                                     >
-                                        {/* 刻度线 */}
                                         <div className="tick-line"></div>
-
-                                        {/* 年份标签 */}
                                         <div className="year-tick-label">
                                             {year}
                                         </div>
@@ -168,7 +188,6 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                             })}
                         </div>
 
-                        {/* 尺子主体 - 古代卷尺样式 */}
                         <div className="ruler-body">
                             <div className="ruler-wood-grain"></div>
                             <div className="ruler-ink-line"></div>
@@ -183,38 +202,41 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
 
                                 if (!yearEvents) return null;
 
+                                const firstEvent = yearEvents[0];
+                                const hasMultipleEvents = yearEvents.length > 1;
+
                                 return (
                                     <div
                                         key={`personal-${year}`}
                                         className="event-year-container event-year-top"
                                         style={{ left: `${leftPosition}px` }}
                                     >
-                                        {/* 连接线 - 朱砂色 */}
                                         <div className="year-connector personal-connector"></div>
 
-                                        {/* 上方事件卡片 */}
-                                        {yearEvents.map((event) => (
-                                            <div
-                                                key={event.id}
-                                                className="event-card-top"
-                                                onClick={() => handleEventClick(event)}
-                                            >
-                                                <div className="event-card-content">
-                                                    <div className="event-title">
-                                                        {event.title}
-                                                    </div>
-                                                    <div className="event-type">
-                                                        <Tag
-                                                            color={getTypeColor(event.type)}
-                                                            size="small"
-                                                            className="type-tag"
-                                                        >
-                                                            {getTypeText(event.type)}
-                                                        </Tag>
-                                                    </div>
+                                        <div
+                                            className="event-card-top"
+                                            onClick={() => handleEventClick(firstEvent, yearEvents, 'personal')}
+                                        >
+                                            <div className="event-card-content">
+                                                <div className="event-title">
+                                                    {firstEvent.title}
+                                                    {hasMultipleEvents && (
+                                                        <span className="event-count-badge">
+                                                            +{yearEvents.length - 1}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className="event-type">
+                                                    <Tag
+                                                        color={getTypeColor(firstEvent.type)}
+                                                        size="small"
+                                                        className="type-tag"
+                                                    >
+                                                        {getTypeText(firstEvent.type)}
+                                                    </Tag>
                                                 </div>
                                             </div>
-                                        ))}
+                                        </div>
                                     </div>
                                 );
                             })}
@@ -229,38 +251,41 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
 
                                 if (!yearEvents) return null;
 
+                                const firstEvent = yearEvents[0];
+                                const hasMultipleEvents = yearEvents.length > 1;
+
                                 return (
                                     <div
                                         key={`historical-${year}`}
                                         className="event-year-container event-year-bottom"
                                         style={{ left: `${leftPosition}px` }}
                                     >
-                                        {/* 连接线 - 墨色 */}
                                         <div className="year-connector historical-connector"></div>
 
-                                        {/* 下方事件卡片 */}
-                                        {yearEvents.map((event) => (
-                                            <div
-                                                key={event.id}
-                                                className="event-card-bottom"
-                                                onClick={() => handleEventClick(event)}
-                                            >
-                                                <div className="event-card-content">
-                                                    <div className="event-title">
-                                                        {event.title}
-                                                    </div>
-                                                    <div className="event-type">
-                                                        <Tag
-                                                            color={getTypeColor(event.type)}
-                                                            size="small"
-                                                            className="type-tag"
-                                                        >
-                                                            {getTypeText(event.type)}
-                                                        </Tag>
-                                                    </div>
+                                        <div
+                                            className="event-card-bottom"
+                                            onClick={() => handleEventClick(firstEvent, yearEvents, 'historical')}
+                                        >
+                                            <div className="event-card-content">
+                                                <div className="event-title">
+                                                    {firstEvent.title}
+                                                    {hasMultipleEvents && (
+                                                        <span className="event-count-badge">
+                                                            +{yearEvents.length - 1}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className="event-type">
+                                                    <Tag
+                                                        color={getTypeColor(firstEvent.type)}
+                                                        size="small"
+                                                        className="type-tag"
+                                                    >
+                                                        {getTypeText(firstEvent.type)}
+                                                    </Tag>
                                                 </div>
                                             </div>
-                                        ))}
+                                        </div>
                                     </div>
                                 );
                             })}
@@ -268,7 +293,6 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                     </div>
                 </div>
             </div>
-
 
             {/* 事件详情模态框 */}
             <Modal
@@ -282,12 +306,37 @@ const Timeline2 = ({ personalEvents = [], historicalEvents = [], loading }) => {
                 {selectedEvent && (
                     <div className="event-detail">
                         <div className="event-meta">
-                            <Tag color={getTypeColor(selectedEvent.type)} className="detail-type-tag">
-                                {getTypeText(selectedEvent.type)}
-                            </Tag>
-                            <span className="meta-item"><CalendarOutlined /> {selectedEvent.year}年</span>
-                            {selectedEvent.location && (
-                                <span className="meta-item"><EnvironmentOutlined /> {selectedEvent.location}</span>
+                            <div className="meta-left">
+                                <Tag color={getTypeColor(selectedEvent.type)} className="detail-type-tag">
+                                    {getTypeText(selectedEvent.type)}
+                                </Tag>
+                                <span className="meta-item">
+                                    <CalendarOutlined /> {selectedEvent.year}年
+                                </span>
+                                {selectedEvent.location && (
+                                    <span className="meta-item">
+                                        <EnvironmentOutlined /> {selectedEvent.location}
+                                    </span>
+                                )}
+                            </div>
+                            {selectedYearEvents && selectedYearEvents.length > 1 && (
+                                <div className="event-switcher">
+                                    <Button
+                                        icon={<LeftOutlined />}
+                                        size="small"
+                                        onClick={() => handleSwitchEvent('prev')}
+                                        disabled={selectedYearEvents.length <= 1}
+                                    />
+                                    <span className="event-counter">
+                                        {currentEventIndex + 1} / {selectedYearEvents.length}
+                                    </span>
+                                    <Button
+                                        icon={<RightOutlined />}
+                                        size="small"
+                                        onClick={() => handleSwitchEvent('next')}
+                                        disabled={selectedYearEvents.length <= 1}
+                                    />
+                                </div>
                             )}
                         </div>
 

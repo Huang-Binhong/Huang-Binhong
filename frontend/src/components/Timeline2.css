@@ -1011,3 +1011,89 @@
     -webkit-overflow-scrolling: touch !important;
     overflow-anchor: none !important;
 }
+.event-count-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 6px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #8B7355;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    border: 1px solid #d4a451;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* 模态框头部 */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* 事件切换器 */
+.event-switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.event-counter {
+    font-size: 14px;
+    color: #666;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* 调整模态框中的标签样式 */
+.detail-type-tag {
+    font-size: 14px;
+    padding: 4px 12px;
+    margin-right: 12px;
+}
+
+/* 事件元信息 */
+.event-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #666;
+    font-size: 14px;
+}
+
+/* 卡片悬停效果增强 */
+.event-card-top:hover .event-count-badge,
+.event-card-bottom:hover .event-count-badge {
+    background: #d4a451;
+    color: white;
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .modal-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .event-switcher {
+        align-self: flex-end;
+    }
+
+    .event-meta {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+}

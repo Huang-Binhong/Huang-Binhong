@@ -1,0 +1,12 @@
+﻿go : WORK=C:\Users\Lenovo\AppData\Local\Temp\go-build1306702050
+所在位置 行:1 字符: 1
++ go build -x cmd/main.go 2>&1 | Out-File build_errors.txt -Encoding UT ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WORK=C:\Users\L...build1306702050:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+mkdir -p $WORK\b108\
+cd D:\Program Files\Go\src\runtime\cgo
+TERM='dumb' CGO_LDFLAGS='' "D:\\Program Files\\Go\\pkg\\tool\\windows_amd64\\cgo.exe" -objdir "$WORK\\b108\\" -importpath runtime/cgo -import_runtime_cgo=false -import_syscall=false "-ldflags=\"-O2\" \"-g\"" -- -I "$WORK\\b108\\" -
+O2 -g -Wall -Werror -fno-stack-protector -Wdeclaration-after-statement "D:\\Program Files\\Go\\src\\runtime\\cgo\\cgo.go"
+runtime/cgo: D:\Program Files\Go\pkg\tool\windows_amd64\cgo.exe: exit status 2
