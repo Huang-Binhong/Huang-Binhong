@@ -220,7 +220,7 @@ function AIExplanationPage() {
                 onClick={chatMessages.length > 0 ? handleRefreshChat : handleAIAnalysis}
                 disabled={isAnalyzing}
               >
-                {isAnalyzing ? 'AI分析中...' : (chatMessages.length > 0 ? '刷新聊天' : 'AI智能分析')}
+                {isAnalyzing ? 'AI分析中...' : (chatMessages.length > 0 ? '翰墨重谈' : 'AI智能分析')}
               </button>
             )}
           </div>

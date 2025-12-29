@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,6 +18,7 @@ function JourneyMapPage() {
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [audioReady, setAudioReady] = useState(false);
+  const prevJourneyRef = useRef(0);
 
   const journeys = [
     {
@@ -27,13 +28,13 @@ function JourneyMapPage() {
       location: '金华',
       position: [119.6455, 29.1121],
       description: '黄宾虹出生于浙江金华,自幼受家学熏陶,开始接触书画艺术。',
-      artworks: [
-        {
-          title: '启蒙时期习作',
-          image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800',
-          description: '幼年时期的书法练习'
-        }
-      ],
+      // artworks: [
+      //   {
+      //     title: '启蒙时期习作',
+      //     image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800',
+      //     description: '幼年时期的书法练习'
+      //   }
+      // ],
       people: ['父亲黄定华'],
       path: []
     },
@@ -47,12 +48,12 @@ function JourneyMapPage() {
       artworks: [
         {
           title: '新安江图',
-          image: 'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?w=800',
+          image: '/images/Xinan.jpg',
           description: '描绘徽州山水的早期代表作'
         },
         {
           title: '黄山写生册',
-          image: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800',
+          image: 'images/Huangshan.jpg',
           description: '黄山实地写生作品集'
         }
       ],
@@ -72,15 +73,10 @@ function JourneyMapPage() {
       description: '赴沪发展,寓居上海三十载,艺术创作进入黄金时期,与众多文人雅士交游。',
       artworks: [
         {
-          title: '沪上胜景图',
-          image: 'https://images.unsplash.com/photo-1604999333679-b86d54738315?w=800',
-          description: '描绘上海城市风貌'
+          title: '秋山萧树',
+          image: 'images/Qiushan.jpg',
+          description: '描绘上海风貌'
         },
-        {
-          title: '墨笔山水',
-          image: 'https://images.unsplash.com/photo-1615485500834-bc10199bc727?w=800',
-          description: '成熟期山水画代表作'
-        }
       ],
       people: ['黄炎培', '曾熙', '李瑞清'],
       path: [
@@ -100,12 +96,12 @@ function JourneyMapPage() {
       artworks: [
         {
           title: '山水长卷',
-          image: 'https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=800',
+          image: 'images/Beiping.jpg',
           description: '气势磅礴的长卷巨制'
         },
         {
           title: '黄山松涛',
-          image: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800',
+          image: 'images/BeipingHuangshan.jpg',
           description: '描绘黄山松树的力作'
         }
       ],
@@ -126,14 +122,14 @@ function JourneyMapPage() {
       description: '晚年定居杭州栖霞岭,继续创作,直至终老。',
       artworks: [
         {
-          title: '西湖卧游图',
-          image: 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800',
+          title: '西泠湖山图',
+          image: 'images/Xihu.jpg',
           description: '晚年西湖题材代表作'
         },
         {
-          title: '钱江潮',
-          image: 'https://images.unsplash.com/photo-1604999565976-8913ad2ddb7c?w=800',
-          description: '描绘钱塘江大潮的壮观景象'
+          title: '西湖皋亭',
+          image: 'images/Xihu2.jpg',
+          description: '晚年西湖题材代表作'
         }
       ],
       people: ['吴昌硕', '潘天寿'],
@@ -221,6 +217,18 @@ function JourneyMapPage() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // 当切换到不同时期时，自动关闭故事面板
+  useEffect(() => {
+    // 只有当真正切换到不同的 journey 时才关闭面板
+    if (prevJourneyRef.current !== currentJourney) {
+      console.log('Journey changed from', prevJourneyRef.current, 'to', currentJourney, 'closing panel');
+      setShowStoryPanel(false);
+      setSelectedLocation(null);
+      prevJourneyRef.current = currentJourney;
+    }
+  }, [currentJourney]);
+
   const handleLocationClick = (location) => {
     setSelectedLocation(location);
     setShowStoryPanel(true);
@@ -319,15 +327,19 @@ function JourneyMapPage() {
       </div>
 
       {/* 故事面板 */}
-      {showStoryPanel && selectedLocation && (
-        <StoryPanel
-          journey={selectedLocation}
-          onClose={() => {
-            setShowStoryPanel(false);
-            setSelectedLocation(null);
-          }}
-        />
-      )}
+      <AnimatePresence mode="wait">
+        {showStoryPanel && selectedLocation && (
+          <StoryPanel
+            key={selectedLocation.id}
+            journey={selectedLocation}
+            onClose={() => {
+              console.log('Panel close button clicked');
+              setShowStoryPanel(false);
+              setSelectedLocation(null);
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
