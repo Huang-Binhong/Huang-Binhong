@@ -17,7 +17,10 @@ export const analyzeArtwork = async (imageFile, prompt = '', category = '', work
   try {
     // 创建 FormData
     const formData = new FormData();
-    formData.append('file', imageFile);
+    // 只有在提供文件时才添加file字段
+    if (imageFile) {
+      formData.append('file', imageFile);
+    }
     if (prompt) {
       formData.append('prompt', prompt);
     }

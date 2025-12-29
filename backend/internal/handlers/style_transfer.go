@@ -296,7 +296,14 @@ func AIAnalyze(w http.ResponseWriter, r *http.Request) {
 	// 获取上传的文件
 	file, header, err := r.FormFile("file")
 	if err != nil {
-		http.Error(w, "请上传图片文件", http.StatusBadRequest)
+		// 如果没有文件且没有缓存，返回需要分析的状态
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success":      true,
+			"cached":       false,
+			"needAnalysis": true,
+			"data":         nil,
+		})
 		return
 	}
 	defer file.Close()

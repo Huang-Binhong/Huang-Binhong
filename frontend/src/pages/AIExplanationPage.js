@@ -59,6 +59,30 @@ function AIExplanationPage() {
           console.error('加载作品图片失败:', err);
         });
     }
+
+    // 自动检查并加载缓存的分析结果
+    const loadCachedAnalysis = async () => {
+      if (!artwork.id) return;
+      
+      try {
+        // 调用API查询缓存（不上传文件）
+        const result = await analyzeArtwork(null, '', artwork?.category, artwork?.id);
+        
+        if (result.success && result.cached && result.data) {
+          // 如果有缓存，直接显示
+          console.log('加载缓存的分析结果');
+          setAnalysisResult(result);
+          setChatMessages([{
+            role: 'assistant',
+            content: result.data.content
+          }]);
+        }
+      } catch (error) {
+        console.error('加载缓存失败:', error);
+      }
+    };
+
+    loadCachedAnalysis();
   }, [artwork, navigate]);
 
   const handleImageUpload = (event) => {
