@@ -50,6 +50,8 @@ backend/go.work
 # ==================== 数据文件 ====================
 # SQLite 数据库（首次运行自动生成）
 backend/data/*.db
+# 但是保留主数据库文件（包含AI赏析缓存）
+!backend/data/huang_bin_hong.db
 backend/data/*.db-journal
 backend/data/*.db-shm
 backend/data/*.db-wal
