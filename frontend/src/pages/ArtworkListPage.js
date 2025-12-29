@@ -211,8 +211,6 @@ function ArtworkListPage() {
 
       <div className="list_main">
         <div className="padding_50">
-          <div className="lujin">首页 / 观看 / 作品全览</div>
-
           <div className="filter-container">
             <div className="filter-left">
               <button 

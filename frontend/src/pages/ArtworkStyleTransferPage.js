@@ -340,8 +340,6 @@ function ArtworkStyleTransferPage() {
       </Link>
 
       <div className="style_main">
-        <div className="breadcrumb">首页 / 作品 / 风格迁移 / {artwork?.collectionName || '作品'}</div>
-
         <div className="style_content">
           <header
             className="st-header"

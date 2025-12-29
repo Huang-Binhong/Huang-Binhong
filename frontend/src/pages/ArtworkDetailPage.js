@@ -244,8 +244,6 @@ function ArtworkDetailPage() {
       </Link>
 
       <div className="detail_main">
-        <div className="breadcrumb">首页 / 观看 / 作品全览 / {artwork.collectionName}</div>
-
         <div className="detail_content">
           <div className="artwork_image_section">
             <div className="main_image">

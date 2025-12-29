@@ -487,8 +487,6 @@ function StyleTransferPage() {
       </Link>
 
       <div className="style_main">
-        <div className="breadcrumb">首页 / 创作 / AI风格迁移</div>
-
         <div className="style_content">
           <header className="st-header" style={{ background: THEME.bgCard, borderColor: THEME.accentSubtle }}>
             <div className="st-header-left">
