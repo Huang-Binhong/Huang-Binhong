@@ -9,6 +9,10 @@
     padding: 24px;
 }
 
+.nav_logo2 img {
+    filter: brightness(1.18) contrast(1.06);
+}
+
 .person-basic-info {
     margin-bottom: 32px;
     border-radius: 8px;

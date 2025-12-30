@@ -280,10 +280,17 @@
 }
 
 .nav_logo img,
-.nav_logo2 img {
-  max-width: 150px;
+.nav_logo2 img,
+.nav_logo3 img {
+  max-width: 1000px;
   height: auto;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
 }
+
+.nav_logo2 img {
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3)) brightness(1.18) contrast(1.06);
+}
+
 
 /* 静音按钮 - 左下角 */
 .a_mute {
