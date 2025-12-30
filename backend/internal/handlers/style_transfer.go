@@ -18,6 +18,7 @@ import (
 var (
 	doubaoSettings *services.DoubaoSettings
 	basePrompt     string
+	negativePrompt string
 	initOnce       sync.Once
 )
 
@@ -27,7 +28,11 @@ func getDoubaoSettings() *services.DoubaoSettings {
 		doubaoSettings = services.NewDoubaoSettings()
 		basePrompt = os.Getenv("DOUBAO_BASE_PROMPT")
 		if basePrompt == "" {
-			basePrompt = "将输入图片迁移为黄宾虹风格，保留主体构图与内容，笔墨苍润、墨色层次丰富，提升纸本肌理与皴擦效果。"
+			basePrompt = "将输入图片迁移为黄宾虹水墨风格，保留主体构图与比例关系；以湿润墨韵、渗化晕染、墨色层次与笔墨团块为主，边界柔和、少硬线条；增强纸本肌理与皴擦，整体苍润浑厚。"
+		}
+		negativePrompt = os.Getenv("DOUBAO_NEGATIVE_PROMPT")
+		if negativePrompt == "" {
+			negativePrompt = "平涂大黑块、单一墨团、涂抹感、纸面纯白发亮、薄灰发白、素描、线稿、铅笔、炭笔、强轮廓、硬边描线、过度锐化、高对比边缘、漫画感、过分清晰的边界"
 		}
 	})
 	return doubaoSettings
@@ -48,6 +53,23 @@ func parseTags(raw string) []string {
 		}
 	}
 	return tags
+}
+
+func parseStrength(raw string, defaultVal float64) float64 {
+	if raw == "" {
+		return defaultVal
+	}
+	v, err := strconv.ParseFloat(raw, 64)
+	if err != nil {
+		return defaultVal
+	}
+	if v < 0 {
+		return 0
+	}
+	if v > 1 {
+		return 1
+	}
+	return v
 }
 
 // StyleTransferImage 图片风格迁移
@@ -95,6 +117,7 @@ func StyleTransferImage(w http.ResponseWriter, r *http.Request) {
 	styleTags := r.FormValue("style_tags")
 	imgCountStr := r.FormValue("img_count")
 	size := r.FormValue("size")
+	strengthStr := r.FormValue("strength")
 
 	imgCount := 1
 	if imgCountStr != "" {
@@ -105,10 +128,14 @@ func StyleTransferImage(w http.ResponseWriter, r *http.Request) {
 
 	// 构建提示词
 	tags := parseTags(styleTags)
-	if prompt == "" {
-		prompt = basePrompt
-	}
-	promptText := services.BuildPrompt(prompt, inkStyle, tags)
+	strength := parseStrength(strengthStr, 0.8)
+	promptText := services.BuildPrompt(basePrompt, services.PromptOptions{
+		UserPrompt:     prompt,
+		InkStyle:       inkStyle,
+		StyleTags:      tags,
+		Strength:       strength,
+		NegativePrompt: negativePrompt,
+	})
 
 	// 转换为 data URL
 	dataURL := services.ToDataURL(imageBytes, contentType)
@@ -131,6 +158,7 @@ func StyleTransferImage(w http.ResponseWriter, r *http.Request) {
 		"ok":     true,
 		"model":  settings.ImageModel,
 		"prompt": promptText,
+		"strength": strength,
 		"urls":   urls,
 	})
 }
@@ -163,6 +191,7 @@ func StyleTransferVideo(w http.ResponseWriter, r *http.Request) {
 	styleTags := r.FormValue("style_tags")
 	videoMotion := r.FormValue("video_motion")
 	videoDurationStr := r.FormValue("video_duration")
+	strengthStr := r.FormValue("strength")
 
 	if videoMotion == "" {
 		videoMotion = "diffusion"
@@ -174,17 +203,35 @@ func StyleTransferVideo(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	if videoDuration < 2 {
+		videoDuration = 2
+	}
+	if videoDuration > 12 {
+		videoDuration = 12
+	}
+
 	// 构建提示词
 	tags := parseTags(styleTags)
-	if prompt == "" {
-		prompt = basePrompt
-	}
-	basePromptText := services.BuildPrompt(prompt, inkStyle, tags)
-	promptText := fmt.Sprintf("%s；动效：%s；时长：%ds；水印：true", basePromptText, videoMotion, videoDuration)
+	strength := parseStrength(strengthStr, 0.8)
+	promptText := services.BuildPrompt(basePrompt, services.PromptOptions{
+		UserPrompt:     prompt,
+		InkStyle:       inkStyle,
+		StyleTags:      tags,
+		Strength:       strength,
+		VideoMotion:    videoMotion,
+		NegativePrompt: negativePrompt,
+	})
 
 	// 创建任务
 	settings := getDoubaoSettings()
-	taskID, err := services.CreateVideoTask(settings, promptText, imageURL)
+	wm := settings.VideoWatermark
+	params := services.VideoTaskParams{
+		Duration:        videoDuration,
+		FramesPerSecond: 24,
+		Seed:            -1,
+		Watermark:       &wm,
+	}
+	taskID, err := services.CreateVideoTask(settings, promptText, imageURL, params)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadGateway)
@@ -201,6 +248,9 @@ func StyleTransferVideo(w http.ResponseWriter, r *http.Request) {
 		"task_id": taskID,
 		"model":   settings.VideoModel,
 		"prompt":  promptText,
+		"duration": videoDuration,
+		"fps":      params.FramesPerSecond,
+		"watermark": wm,
 	})
 }
 

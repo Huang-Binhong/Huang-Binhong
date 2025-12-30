@@ -13,6 +13,11 @@ const THEME = {
   accentSubtle: '#A09778'
 };
 
+const DEFAULT_INK_STYLE = 'thick';
+const DEFAULT_STRENGTH = 0.8;
+const DEFAULT_VIDEO_MOTION = 'diffusion';
+const DEFAULT_VIDEO_DURATION = 5;
+
 const isLikelyVideoUrl = (url) => {
   if (typeof url !== 'string') return false;
   if (/\.(mp4|webm|mov)(\?|$)/i.test(url)) return true;
@@ -162,6 +167,9 @@ function ArtworkStyleTransferPage() {
       formData.append('file', targetFile);
       if (styleTags) formData.append('style_tags', styleTags);
       formData.append('img_count', '1');
+      formData.append('prompt', '');
+      formData.append('ink_style', DEFAULT_INK_STYLE);
+      formData.append('strength', String(DEFAULT_STRENGTH));
 
       const res = await fetch(`${API_BASE}/api/style-transfer/image`, {
         method: 'POST',
@@ -203,6 +211,9 @@ function ArtworkStyleTransferPage() {
       imageForm.append('file', targetFile);
       if (styleTags) imageForm.append('style_tags', styleTags);
       imageForm.append('img_count', '1');
+      imageForm.append('prompt', '');
+      imageForm.append('ink_style', DEFAULT_INK_STYLE);
+      imageForm.append('strength', String(DEFAULT_STRENGTH));
 
       const imageRes = await fetch(`${API_BASE}/api/style-transfer/image`, {
         method: 'POST',
@@ -226,6 +237,11 @@ function ArtworkStyleTransferPage() {
       const videoForm = new FormData();
       videoForm.append('image_url', imageUrl);
       if (styleTags) videoForm.append('style_tags', styleTags);
+      videoForm.append('prompt', '');
+      videoForm.append('ink_style', DEFAULT_INK_STYLE);
+      videoForm.append('strength', String(DEFAULT_STRENGTH));
+      videoForm.append('video_motion', DEFAULT_VIDEO_MOTION);
+      videoForm.append('video_duration', String(DEFAULT_VIDEO_DURATION));
 
       const videoRes = await fetch(`${API_BASE}/api/style-transfer/video`, {
         method: 'POST',

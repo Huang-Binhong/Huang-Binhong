@@ -160,6 +160,7 @@ function StyleTransferPage() {
       formData.append('ink_style', inkStyle);
       formData.append('style_tags', styleTags.join(','));
       formData.append('img_count', String(imgCount));
+      formData.append('strength', String(strength));
 
       fetch(`${API_BASE}/api/style-transfer/image`, {
         method: 'POST',
@@ -226,6 +227,7 @@ function StyleTransferPage() {
     videoForm.append('style_tags', styleTags.join(','));
     videoForm.append('video_motion', videoMotion);
     videoForm.append('video_duration', String(videoDuration));
+    videoForm.append('strength', String(strength));
 
     fetch(`${API_BASE}/api/style-transfer/video`, {
       method: 'POST',
@@ -282,6 +284,7 @@ function StyleTransferPage() {
       imageForm.append('ink_style', inkStyle);
       imageForm.append('style_tags', styleTags.join(','));
       imageForm.append('img_count', '1');
+      imageForm.append('strength', String(strength));
 
       const imageRes = await fetch(`${API_BASE}/api/style-transfer/image`, {
         method: 'POST',
@@ -320,6 +323,7 @@ function StyleTransferPage() {
       videoForm.append('style_tags', styleTags.join(','));
       videoForm.append('video_motion', videoMotion);
       videoForm.append('video_duration', String(videoDuration));
+      videoForm.append('strength', String(strength));
 
       const videoRes = await fetch(`${API_BASE}/api/style-transfer/video`, {
         method: 'POST',

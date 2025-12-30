@@ -133,7 +133,11 @@ DB_PATH=data/huang_bin_hong.db
 DATA_DIR=data/datas
 
 # 豆包 AI 配置（必填）
+# 你可以只配置 DOUBAO_API_KEY（图/视频/聊天共用），也可以分别配置不同功能的 Key
 DOUBAO_API_KEY=your_api_key_here
+DOUBAO_IMAGE_API_KEY=your_image_api_key_here
+DOUBAO_VIDEO_API_KEY=your_video_api_key_here
+DOUBAO_CHAT_API_KEY=your_chat_api_key_here
 
 # 图片生成配置
 DOUBAO_IMAGE_MODEL=doubao-seedream-4-0-250828
@@ -141,13 +145,15 @@ DOUBAO_IMAGE_URL=https://ark.cn-beijing.volces.com/api/v3/images/generations
 DOUBAO_IMAGE_SIZE=2K
 DOUBAO_IMAGE_WATERMARK=true
 DOUBAO_IMAGE_TIMEOUT=60
-DOUBAO_BASE_PROMPT=将输入图片迁移为黄宾虹风格...
+DOUBAO_BASE_PROMPT=将输入图片迁移为黄宾虹晚期山水水墨风格：以积墨法为核心，浓/淡/破/渍/宿/焦墨交织；多次透明叠加与皴擦堆叠形成浑厚华滋，墨色灰阶丰富、层层渗化，局部点苔；纸色温润微黄、宣纸吸墨肌理明显；边界柔和不做硬描线，避免平涂大黑块与单一墨团。
+DOUBAO_NEGATIVE_PROMPT=平涂大黑块,单一墨团,涂抹感,纸面纯白发亮,薄灰发白,素描,线稿,铅笔,炭笔,强轮廓,硬边描线,过度锐化,高对比边缘,漫画感,过分清晰边界
 
 # 视频生成配置
 DOUBAO_VIDEO_MODEL=doubao-seedance-1-0-pro-250528
 DOUBAO_VIDEO_TASK_URL=https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks
 DOUBAO_VIDEO_QUERY_URL=https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks
 DOUBAO_VIDEO_TIMEOUT=60
+DOUBAO_VIDEO_WATERMARK=false
 
 # AI 分析配置
 DOUBAO_CHAT_MODEL=doubao-seed-1-6-flash-250828

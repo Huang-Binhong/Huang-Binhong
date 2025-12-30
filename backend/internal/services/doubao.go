@@ -31,6 +31,7 @@ type DoubaoSettings struct {
 	VideoTaskURL  string
 	VideoQueryURL string
 	VideoTimeout  time.Duration
+	VideoWatermark bool
 
 	// Chat/分析相关配置
 	ChatModel          string
@@ -59,6 +60,7 @@ func NewDoubaoSettings() *DoubaoSettings {
 		VideoTaskURL:  getEnv("DOUBAO_VIDEO_TASK_URL", "https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks"),
 		VideoQueryURL: getEnv("DOUBAO_VIDEO_QUERY_URL", "https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks/"),
 		VideoTimeout:  time.Duration(getIntEnv("DOUBAO_VIDEO_TIMEOUT", 60)) * time.Second,
+		VideoWatermark: getBoolEnv("DOUBAO_VIDEO_WATERMARK", false),
 
 		ChatModel:   getEnv("DOUBAO_CHAT_MODEL", "doubao-seed-1-6-flash-250828"),
 		ChatURL:     getEnv("DOUBAO_CHAT_URL", "https://ark.cn-beijing.volces.com/api/v3/chat/completions"),
@@ -95,22 +97,106 @@ func getIntEnv(key string, defaultVal int) int {
 	return defaultVal
 }
 
-// BuildPrompt 构建提示词
-func BuildPrompt(basePrompt, inkStyle string, styleTags []string) string {
-	var styleBits []string
-	if inkStyle != "" {
-		styleBits = append(styleBits, inkStyle)
+type PromptOptions struct {
+	UserPrompt     string
+	InkStyle       string
+	StyleTags      []string
+	Strength       float64
+	VideoMotion    string
+	NegativePrompt string
+}
+
+func strengthHint(strength float64) string {
+	if strength <= 0 {
+		return ""
 	}
-	for _, tag := range styleTags {
+	switch {
+	case strength >= 0.9:
+		return "严格保留原图构图、比例、透视与主体边界，仅转换笔墨与材质表现"
+	case strength >= 0.75:
+		return "较高保留原图结构与关键细节，优先体现墨色层次与纸本渗化"
+	case strength >= 0.55:
+		return "结构与写意平衡，允许适度简化细节以增强水墨气韵"
+	case strength >= 0.35:
+		return "偏写意处理，可适度重构笔墨节奏与留白；强调皴擦层次与墨色灰阶过渡，避免涂抹式大墨团与硬边描线"
+	default:
+		return "更写意概括，强化积墨/破墨/渍墨的层层堆叠与渗化晕染灰阶，保留主体大轮廓即可；避免大片纯黑实涂与单一墨团"
+	}
+}
+
+func inkStyleHint(inkStyle string) string {
+	switch strings.ToLower(strings.TrimSpace(inkStyle)) {
+	case "thick":
+		return "浑厚华滋、积墨（多层透明叠加而非平涂）、破墨/渍墨/宿墨交织，皴擦层层堆叠、墨色灰阶丰富，见笔触与纸本渗化；避免大块纯黑墨团、涂抹感与边界硬切"
+	case "dry":
+		return "干裂秋风、枯笔飞白、干皴擦、笔触颗粒感更强、墨色更苍劲；可少量见焦墨点苔与皴擦毛边，但不做线稿"
+	case "light":
+		return "淡墨清韵、淡墨层染、清润空灵、留白更大、墨色更通透；以灰阶与渗化层次取胜，避免发白寡淡"
+	default:
+		if strings.TrimSpace(inkStyle) == "" {
+			return ""
+		}
+		return strings.TrimSpace(inkStyle)
+	}
+}
+
+func videoMotionHint(motion string) string {
+	switch strings.ToLower(strings.TrimSpace(motion)) {
+	case "diffusion":
+		return "水墨晕染扩散式动态：墨色在纸面自然渗化、层层洇开，节奏舒缓"
+	case "parallax":
+		return "层峦推移式动态：前景/中景/远景分层微动，镜头缓慢平移或轻推近"
+	default:
+		return ""
+	}
+}
+
+func normalizeText(s string) string {
+	return strings.TrimSpace(strings.ReplaceAll(strings.ReplaceAll(s, "\n", " "), "\r", " "))
+}
+
+// BuildPrompt 构建提示词（将“控制参数”留给请求参数，prompt 专注画面/风格）
+func BuildPrompt(basePrompt string, opts PromptOptions) string {
+	basePrompt = normalizeText(basePrompt)
+	userPrompt := normalizeText(opts.UserPrompt)
+	negative := normalizeText(opts.NegativePrompt)
+
+	var parts []string
+	if basePrompt != "" {
+		parts = append(parts, basePrompt)
+	}
+
+	if userPrompt != "" {
+		parts = append(parts, fmt.Sprintf("意境微调：%s", userPrompt))
+	}
+
+	if hint := strengthHint(opts.Strength); hint != "" {
+		parts = append(parts, fmt.Sprintf("保留度：%s", hint))
+	}
+
+	var styleBits []string
+	if hint := inkStyleHint(opts.InkStyle); hint != "" {
+		styleBits = append(styleBits, hint)
+	}
+	for _, tag := range opts.StyleTags {
+		tag = strings.TrimSpace(tag)
 		if tag != "" {
 			styleBits = append(styleBits, tag)
 		}
 	}
-	styleSuffix := strings.Join(styleBits, "；")
-	if styleSuffix != "" {
-		return fmt.Sprintf("%s；风格提示：%s", basePrompt, styleSuffix)
+	if len(styleBits) > 0 {
+		parts = append(parts, fmt.Sprintf("风格提示：%s", strings.Join(styleBits, "；")))
 	}
-	return basePrompt
+
+	if hint := videoMotionHint(opts.VideoMotion); hint != "" {
+		parts = append(parts, fmt.Sprintf("动态风格：%s", hint))
+	}
+
+	if negative != "" {
+		parts = append(parts, fmt.Sprintf("避免：%s", negative))
+	}
+
+	return strings.Join(parts, "；")
 }
 
 // ToDataURL 将图片字节转换为 data URL
@@ -217,8 +303,19 @@ func GenerateImage(settings *DoubaoSettings, imageDataURL, prompt string, n int,
 
 // VideoTaskRequest 视频任务请求
 type VideoTaskRequest struct {
-	Model   string        `json:"model"`
-	Content []VideoContent `json:"content"`
+	Model                string         `json:"model"`
+	Content              []VideoContent `json:"content"`
+	CallbackURL          string         `json:"callback_url,omitempty"`
+	ReturnLastFrame      bool           `json:"return_last_frame,omitempty"`
+	ServiceTier          string         `json:"service_tier,omitempty"`
+	ExecutionExpiresAfter int           `json:"execution_expires_after,omitempty"`
+	GenerateAudio        *bool          `json:"generate_audio,omitempty"`
+	Resolution           string         `json:"resolution,omitempty"`
+	Ratio                string         `json:"ratio,omitempty"`
+	Duration             int            `json:"duration,omitempty"`
+	FramesPerSecond      int            `json:"framespersecond,omitempty"`
+	Seed                 int64          `json:"seed,omitempty"`
+	Watermark            *bool          `json:"watermark,omitempty"`
 }
 
 // VideoContent 视频内容
@@ -239,8 +336,22 @@ type VideoTaskResponse struct {
 	TaskID string `json:"task_id"`
 }
 
+type VideoTaskParams struct {
+	CallbackURL          string
+	ReturnLastFrame      bool
+	ServiceTier          string
+	ExecutionExpiresAfter int
+	GenerateAudio        *bool
+	Resolution           string
+	Ratio                string
+	Duration             int
+	FramesPerSecond      int
+	Seed                 int64
+	Watermark            *bool
+}
+
 // CreateVideoTask 创建视频生成任务
-func CreateVideoTask(settings *DoubaoSettings, prompt, imageURL string) (string, error) {
+func CreateVideoTask(settings *DoubaoSettings, prompt, imageURL string, params VideoTaskParams) (string, error) {
 	if settings.VideoAPIKey == "" {
 		return "", fmt.Errorf("缺少 DOUBAO_VIDEO_API_KEY")
 	}
@@ -251,6 +362,21 @@ func CreateVideoTask(settings *DoubaoSettings, prompt, imageURL string) (string,
 			{Type: "text", Text: prompt},
 			{Type: "image_url", ImageURL: &ImageURL{URL: imageURL}},
 		},
+		CallbackURL:          params.CallbackURL,
+		ReturnLastFrame:      params.ReturnLastFrame,
+		ServiceTier:          params.ServiceTier,
+		ExecutionExpiresAfter: params.ExecutionExpiresAfter,
+		Resolution:           params.Resolution,
+		Ratio:                params.Ratio,
+		Duration:             params.Duration,
+		FramesPerSecond:      params.FramesPerSecond,
+		Seed:                 params.Seed,
+	}
+	if params.GenerateAudio != nil {
+		payload.GenerateAudio = params.GenerateAudio
+	}
+	if params.Watermark != nil {
+		payload.Watermark = params.Watermark
 	}
 
 	jsonData, err := json.Marshal(payload)
